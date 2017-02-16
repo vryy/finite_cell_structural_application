@@ -16,26 +16,6 @@
 
 // Project includes
 #include "finite_cell_structural_application.h"
-#include "geometries/quadrilateral_2d_4.h"
-#include "geometries/quadrilateral_2d_8.h"
-#include "geometries/quadrilateral_2d_9.h"
-#include "geometries/triangle_2d_3.h"
-#include "geometries/triangle_2d_6.h"
-#include "geometries/triangle_3d_3.h"
-#include "geometries/tetrahedra_3d_4.h"
-#include "geometries/tetrahedra_3d_10.h"
-#include "geometries/prism_3d_6.h"
-#include "geometries/prism_3d_15.h"
-#include "geometries/quadrilateral_3d_4.h"
-#include "geometries/quadrilateral_3d_8.h"
-#include "geometries/quadrilateral_3d_9.h"
-#include "geometries/hexahedra_3d_8.h"
-#include "geometries/hexahedra_3d_20.h"
-#include "geometries/hexahedra_3d_27.h"
-#include "geometries/line_2d.h"
-#include "geometries/line_2d_2.h"
-#include "geometries/line_3d_2.h"
-#include "geometries/line_3d_3.h"
 #include "finite_cell_application/custom_geometries/finite_cell_geometry.h"
 
 namespace Kratos
@@ -60,6 +40,17 @@ namespace Kratos
         // calling base class register to register Kratos components
         KratosApplication::Register();
         std::cout << "Initializing KratosFiniteCellStructuralApplication... " << std::endl;
+
+        KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell2D3N", mKinematicLinearFiniteCell2D3N )
+        KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell2D6N", mKinematicLinearFiniteCell2D6N )
+        KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell2D4N", mKinematicLinearFiniteCell2D4N )
+        KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell2D8N", mKinematicLinearFiniteCell2D8N )
+        KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell2D9N", mKinematicLinearFiniteCell2D9N )
+        KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell3D4N", mKinematicLinearFiniteCell3D4N )
+        KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell3D10N", mKinematicLinearFiniteCell3D10N )
+        KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell3D8N", mKinematicLinearFiniteCell3D8N )
+        KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell3D20N", mKinematicLinearFiniteCell3D20N )
+        KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell3D27N", mKinematicLinearFiniteCell3D27N )
     }
 
 } // namespace Kratos
