@@ -24,7 +24,7 @@
 #include "includes/variables.h"
 #include "includes/kratos_application.h"
 #include "structural_application/custom_elements/kinematic_linear.h"
-
+#include "custom_conditions/line_force_with_function.h"
 
 namespace Kratos
 {
@@ -187,6 +187,11 @@ namespace Kratos
         const KinematicLinear mKinematicLinearFiniteCell3D8N;
         const KinematicLinear mKinematicLinearFiniteCell3D20N;
         const KinematicLinear mKinematicLinearFiniteCell3D27N;
+
+        const LineForceWithFunction mLineForceWithFunction2D2N;
+        const LineForceWithFunction mLineForceWithFunction2D3N;
+        const LineForceWithFunction mLineForceWithFunction3D2N;
+        const LineForceWithFunction mLineForceWithFunction3D3N;
 
         ///@}
         ///@name Private Operators

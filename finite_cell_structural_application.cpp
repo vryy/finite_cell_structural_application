@@ -33,6 +33,10 @@ namespace Kratos
     , mKinematicLinearFiniteCell3D8N( 0, Element::GeometryType::Pointer( new FiniteCellGeometry< Hexahedra3D8 <Node<3> > >( Element::GeometryType::PointsArrayType( 8, Node<3>() ) ) ) )
     , mKinematicLinearFiniteCell3D20N( 0, Element::GeometryType::Pointer( new FiniteCellGeometry< Hexahedra3D20 <Node<3> > >( Element::GeometryType::PointsArrayType( 20, Node<3>() ) ) ) )
     , mKinematicLinearFiniteCell3D27N( 0, Element::GeometryType::Pointer( new FiniteCellGeometry< Hexahedra3D27 <Node<3> > >( Element::GeometryType::PointsArrayType( 27, Node<3>() ) ) ) )
+    , mLineForceWithFunction2D2N( 0, Element::GeometryType::Pointer( new Line2D2 <Node<3> >( Element::GeometryType::PointsArrayType( 2, Node<3>() ) ) ) )
+    , mLineForceWithFunction2D3N( 0, Element::GeometryType::Pointer( new Line2D3 <Node<3> >( Element::GeometryType::PointsArrayType( 3, Node<3>() ) ) ) )
+    , mLineForceWithFunction3D2N( 0, Element::GeometryType::Pointer( new Line3D2 <Node<3> >( Element::GeometryType::PointsArrayType( 2, Node<3>() ) ) ) )
+    , mLineForceWithFunction3D3N( 0, Element::GeometryType::Pointer( new Line3D3 <Node<3> >( Element::GeometryType::PointsArrayType( 3, Node<3>() ) ) ) )
     {}
 
     void KratosFiniteCellStructuralApplication::Register()
@@ -51,6 +55,12 @@ namespace Kratos
         KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell3D8N", mKinematicLinearFiniteCell3D8N )
         KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell3D20N", mKinematicLinearFiniteCell3D20N )
         KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell3D27N", mKinematicLinearFiniteCell3D27N )
+
+        KRATOS_REGISTER_CONDITION( "LineForceWithFunction2D2N", mLineForceWithFunction2D2N )
+        KRATOS_REGISTER_CONDITION( "LineForceWithFunction2D3N", mLineForceWithFunction2D3N )
+        KRATOS_REGISTER_CONDITION( "LineForceWithFunction3D2N", mLineForceWithFunction3D2N )
+        KRATOS_REGISTER_CONDITION( "LineForceWithFunction3D3N", mLineForceWithFunction3D3N )
+
     }
 
 } // namespace Kratos

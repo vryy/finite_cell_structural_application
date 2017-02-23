@@ -5,10 +5,13 @@ message("**** configuring KratosFiniteCellStructuralApplication ****")
 ######### add include directory here
 include_directories( ${CMAKE_SOURCE_DIR}/kratos )
 include_directories( ${CMAKE_SOURCE_DIR}/applications )
+include_directories( ${CMAKE_SOURCE_DIR}/applications/finite_cell_application )
+include_directories( ${CMAKE_SOURCE_DIR}/applications/structural_application )
 #######################################################################
 
 ######### add compilation units here
 set( KRATOS_FINITE_CELL_APPLICATION_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/custom_conditions/line_force_with_function.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/finite_cell_structural_application.cpp 
 	${CMAKE_CURRENT_SOURCE_DIR}/custom_python/finite_cell_structural_python_application.cpp
 )
