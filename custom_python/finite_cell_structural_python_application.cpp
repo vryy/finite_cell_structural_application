@@ -19,6 +19,7 @@
 // Project includes
 #include "includes/define.h"
 #include "finite_cell_structural_application.h"
+#include "custom_python/add_custom_utilities_to_python.h"
 
 namespace Kratos
 {
@@ -32,6 +33,8 @@ namespace Python
 
         class_<KratosFiniteCellStructuralApplication, KratosFiniteCellStructuralApplication::Pointer, bases<KratosApplication>, boost::noncopyable>
         ("KratosFiniteCellStructuralApplication");
+
+        FiniteCellStructuralApplication_AddCustomUtilitiesToPython();
 
     }
 

@@ -164,47 +164,47 @@ void LineForceWithFunction::CalculateRightHandSide( VectorType& rRightHandSideVe
     typedef Function<PointType, Vector> FunctionR3RnType;
 
     FunctionR3RnType::Pointer pLoadFuntion;
+
     #pragma omp critical
     {
         boost::python::object pyObject = GetProperties()[LOAD_FUNCTION];
         pLoadFuntion = boost::python::extract<FunctionR3RnType::Pointer>(pyObject);
+    }
 
-        if(pLoadFuntion == NULL)
-            KRATOS_THROW_ERROR(std::logic_error, "LOAD_FUNCTION is not provided for LineForceWithFunction", Id())
+    if(pLoadFuntion == NULL)
+        KRATOS_THROW_ERROR(std::logic_error, "LOAD_FUNCTION is not provided for LineForceWithFunction", Id())
 
-        for ( unsigned int PointNumber = 0; PointNumber < integration_points.size(); ++PointNumber )
+    for ( unsigned int PointNumber = 0; PointNumber < integration_points.size(); ++PointNumber )
+    {
+        noalias(GlobalCoords) = ZeroVector(3);
+        for ( unsigned int i = 0; i < GetGeometry().size(); ++i )
+            noalias(GlobalCoords) += Ncontainer(PointNumber, i) * GetGeometry()[i].GetInitialPosition();
+
+        noalias( Load ) = pLoadFuntion->GetValue(GlobalCoords);
+//        KRATOS_WATCH(Load)
+
+        double IntegrationWeight = integration_points[PointNumber].Weight();
+
+        if(dim == 2) IntegrationWeight *= GetProperties()[THICKNESS];
+
+        Vector t = ZeroVector( dim );//tangential vector
+        for ( unsigned int n = 0; n < GetGeometry().size(); ++n )
         {
-            noalias(GlobalCoords) = ZeroVector(3);
-            for ( unsigned int i = 0; i < GetGeometry().size(); ++i )
-                noalias(GlobalCoords) += Ncontainer(PointNumber, i) * GetGeometry()[i].GetInitialPosition();
-
-            noalias( Load ) = pLoadFuntion->GetValue(GlobalCoords);
-    //        KRATOS_WATCH(Load)
-
-            double IntegrationWeight = integration_points[PointNumber].Weight();
-
-            if(dim == 2) IntegrationWeight *= GetProperties()[THICKNESS];
-
-            Vector t = ZeroVector( dim );//tangential vector
-            for ( unsigned int n = 0; n < GetGeometry().size(); ++n )
-            {
-                t[0] += GetGeometry().GetPoint( n ).X0() * DN_DeContainer[PointNumber]( n, 0 );
-                t[1] += GetGeometry().GetPoint( n ).Y0() * DN_DeContainer[PointNumber]( n, 0 );
-                if(dim == 3)
-                    t[2] += GetGeometry().GetPoint( n ).Z0() * DN_DeContainer[PointNumber]( n, 0 );
-            }
-
-            // calculating length
-            double dL = norm_2(t);
-    //        KRATOS_WATCH(dL)
-
-            // RIGHT HAND SIDE VECTOR
-            for ( unsigned int prim = 0; prim < GetGeometry().size(); ++prim )
-                for ( unsigned int i = 0; i < dim; ++i )
-                    rRightHandSideVector( prim * dim + i ) +=
-                        Ncontainer( PointNumber, prim ) * Load( i ) * IntegrationWeight * dL;
+            t[0] += GetGeometry().GetPoint( n ).X0() * DN_DeContainer[PointNumber]( n, 0 );
+            t[1] += GetGeometry().GetPoint( n ).Y0() * DN_DeContainer[PointNumber]( n, 0 );
+            if(dim == 3)
+                t[2] += GetGeometry().GetPoint( n ).Z0() * DN_DeContainer[PointNumber]( n, 0 );
         }
 
+        // calculating length
+        double dL = norm_2(t);
+//        KRATOS_WATCH(dL)
+
+        // RIGHT HAND SIDE VECTOR
+        for ( unsigned int prim = 0; prim < GetGeometry().size(); ++prim )
+            for ( unsigned int i = 0; i < dim; ++i )
+                rRightHandSideVector( prim * dim + i ) +=
+                    Ncontainer( PointNumber, prim ) * Load( i ) * IntegrationWeight * dL;
     }
 
     KRATOS_CATCH( "" )
