@@ -11,7 +11,7 @@
 
 // Project includes
 #include "includes/element.h"
-#include "finite_cell_application/custom_algebra/function.h"
+#include "finite_cell_application/custom_algebra/function/function.h"
 #include "custom_python/add_custom_utilities_to_python.h"
 #include "custom_utilities/immersed_boundary_load_utility.h"
 
@@ -27,13 +27,20 @@ using namespace boost::python;
 void FiniteCellStructuralApplication_AddCustomUtilitiesToPython()
 {
 
-    void(ImmersedBoundaryLoadUtility::*pointer_to_SetupImmersedPointForce)(
-        ModelPart&, const FunctionR1R3&, const double&, const double&, const int&,
-        const FunctionR1R3&) const = &ImmersedBoundaryLoadUtility::SetupImmersedPointForce;
+    ModelPart::ConditionsContainerType(ImmersedBoundaryLoadUtility::*pointer_to_SetupImmersedPointForce)(
+        ModelPart&, const FunctionR1R3::Pointer&, const double&, const double&, const int&,
+        const FunctionR1R3::Pointer&, const bool&) const = &ImmersedBoundaryLoadUtility::SetupImmersedPointForce<0>;
+
+    ModelPart::ConditionsContainerType(ImmersedBoundaryLoadUtility::*pointer_to_SetupImmersedPointForceWithBin)(
+        ModelPart&, const FunctionR1R3::Pointer&, const double&, const double&, const int&,
+        const FunctionR1R3::Pointer&, const bool&) const = &ImmersedBoundaryLoadUtility::SetupImmersedPointForce<1>;
 
     class_<ImmersedBoundaryLoadUtility, ImmersedBoundaryLoadUtility::Pointer, boost::noncopyable>
     ("ImmersedBoundaryLoadUtility", init<>())
+    .def("InitializeBinning", &ImmersedBoundaryLoadUtility::InitializeBinning)
     .def("SetupImmersedPointForce", pointer_to_SetupImmersedPointForce)
+    .def("SetupImmersedPointForceWithBin", pointer_to_SetupImmersedPointForceWithBin)
+    .def("Clean", &ImmersedBoundaryLoadUtility::Clean)
     ;
 
 }

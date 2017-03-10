@@ -26,7 +26,7 @@
 #include "includes/condition.h"
 #include "includes/ublas_interface.h"
 #include "includes/variables.h"
-#include "finite_cell_application/custom_algebra/function.h"
+#include "finite_cell_application/custom_algebra/function/function.h"
 
 
 namespace Kratos

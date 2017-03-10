@@ -15,6 +15,7 @@
 
 
 // Project includes
+#include "geometries/point_3d.h"
 #include "finite_cell_structural_application.h"
 #include "finite_cell_application/custom_geometries/finite_cell_geometry.h"
 
@@ -37,6 +38,7 @@ namespace Kratos
     , mLineForceWithFunction2D3N( 0, Element::GeometryType::Pointer( new Line2D3 <Node<3> >( Element::GeometryType::PointsArrayType( 3, Node<3>() ) ) ) )
     , mLineForceWithFunction3D2N( 0, Element::GeometryType::Pointer( new Line3D2 <Node<3> >( Element::GeometryType::PointsArrayType( 2, Node<3>() ) ) ) )
     , mLineForceWithFunction3D3N( 0, Element::GeometryType::Pointer( new Line3D3 <Node<3> >( Element::GeometryType::PointsArrayType( 3, Node<3>() ) ) ) )
+    , mImmersedPointForce3D( 0, Element::GeometryType::Pointer( new Point3D <Node<3> >( Element::GeometryType::PointsArrayType( 1, Node<3>() ) ) ) )
     {}
 
     void KratosFiniteCellStructuralApplication::Register()
@@ -60,6 +62,8 @@ namespace Kratos
         KRATOS_REGISTER_CONDITION( "LineForceWithFunction2D3N", mLineForceWithFunction2D3N )
         KRATOS_REGISTER_CONDITION( "LineForceWithFunction3D2N", mLineForceWithFunction3D2N )
         KRATOS_REGISTER_CONDITION( "LineForceWithFunction3D3N", mLineForceWithFunction3D3N )
+
+        KRATOS_REGISTER_CONDITION( "ImmersedPointForce3D", mImmersedPointForce3D )
 
     }
 

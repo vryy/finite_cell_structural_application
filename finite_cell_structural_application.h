@@ -25,6 +25,7 @@
 #include "includes/kratos_application.h"
 #include "structural_application/custom_elements/kinematic_linear.h"
 #include "custom_conditions/line_force_with_function.h"
+#include "custom_conditions/immersed_point_force.h"
 
 namespace Kratos
 {
@@ -192,6 +193,8 @@ namespace Kratos
         const LineForceWithFunction mLineForceWithFunction2D3N;
         const LineForceWithFunction mLineForceWithFunction3D2N;
         const LineForceWithFunction mLineForceWithFunction3D3N;
+
+        const ImmersedPointForce mImmersedPointForce3D;
 
         ///@}
         ///@name Private Operators

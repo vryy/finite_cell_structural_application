@@ -39,8 +39,15 @@ class ImmersedPointForce : public Condition
          */
         ImmersedPointForce();
         ImmersedPointForce( IndexType NewId, GeometryType::Pointer pGeometry);
+        ImmersedPointForce( IndexType NewId, GeometryType::Pointer pGeometry, PropertiesType::Pointer pProperties);
         ImmersedPointForce( IndexType NewId,
                         GeometryType::Pointer pGeometry,
+                        const array_1d<double, 3>& rForce,
+                        Element::Pointer pMasterElement,
+                        Point<3>& rMasterLocalPoint );
+        ImmersedPointForce( IndexType NewId,
+                        GeometryType::Pointer pGeometry,
+                        PropertiesType::Pointer pProperties,
                         const array_1d<double, 3>& rForce,
                         Element::Pointer pMasterElement,
                         Point<3>& rMasterLocalPoint );
@@ -53,12 +60,12 @@ class ImmersedPointForce : public Condition
         /**
          * Operations.
          */
-        
-        Condition::Pointer Create( IndexType NewId, 
-                                   GeometryType::Pointer pGeometry,
-                                   const array_1d<double, 3>& rForce,
-                                   Element::Pointer pMasterElement,
-                                   Point<3>& rMasterLocalPoint ) const;
+
+        virtual Condition::Pointer Create(IndexType NewId, NodesArrayType const& ThisNodes,
+                                PropertiesType::Pointer pProperties) const;
+
+        virtual Condition::Pointer Create(IndexType NewId, GeometryType::Pointer pGeom,
+                                PropertiesType::Pointer pProperties) const;
 
         /**
          * Calculates the local system contributions for this contact element

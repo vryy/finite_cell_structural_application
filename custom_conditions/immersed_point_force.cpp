@@ -24,9 +24,15 @@ ImmersedPointForce::ImmersedPointForce()
 
 ImmersedPointForce::ImmersedPointForce( IndexType NewId, 
                               GeometryType::Pointer pGeometry)
-: Condition( NewId, pGeometry)
+: Condition( NewId, pGeometry )
 {
-    //DO NOT ADD DOFS HERE!!!
+}
+
+ImmersedPointForce::ImmersedPointForce( IndexType NewId, 
+                              GeometryType::Pointer pGeometry,
+                              PropertiesType::Pointer pProperties)
+: Condition( NewId, pGeometry, pProperties )
+{
 }
 
 ImmersedPointForce::ImmersedPointForce( IndexType NewId,
@@ -35,24 +41,19 @@ ImmersedPointForce::ImmersedPointForce( IndexType NewId,
                                     Element::Pointer pMasterElement,
                                     Point<3>& rMasterLocalPoint )
 : Condition( NewId, pGeometry )
+, mPointForce(rForce), mMasterLocalPoint(rMasterLocalPoint), mpMasterElement(pMasterElement)
 {
-    mPointForce = rForce;
-    mMasterLocalPoint = rMasterLocalPoint;    
-    mpMasterElement = pMasterElement;
 }
 
-//********************************************************
-//**** Operations ****************************************
-//********************************************************
-        
-
-Condition::Pointer ImmersedPointForce::Create( IndexType NewId, 
-                                   GeometryType::Pointer pGeometry,
-                                   const array_1d<double, 3>& rForce,
-                                   Element::Pointer pMasterElement,
-                                   Point<3>& rMasterLocalPoint ) const
+ImmersedPointForce::ImmersedPointForce( IndexType NewId,
+                                    GeometryType::Pointer pGeometry,
+                                    PropertiesType::Pointer pProperties,
+                                    const array_1d<double, 3>& rForce,  
+                                    Element::Pointer pMasterElement,
+                                    Point<3>& rMasterLocalPoint )
+: Condition( NewId, pGeometry, pProperties )
+, mPointForce(rForce), mMasterLocalPoint(rMasterLocalPoint), mpMasterElement(pMasterElement)
 {
-    return Condition::Pointer( new ImmersedPointForce(NewId, pGeometry, rForce, pMasterElement, rMasterLocalPoint) );
 }
 
 /**
@@ -62,6 +63,22 @@ ImmersedPointForce::~ImmersedPointForce()
 {
 }
 
+
+//********************************************************
+//**** Operations ****************************************
+//********************************************************
+
+Condition::Pointer ImmersedPointForce::Create(IndexType NewId, NodesArrayType const& ThisNodes,
+                                        PropertiesType::Pointer pProperties) const
+{
+    return Condition::Pointer(new ImmersedPointForce(NewId, GetGeometry().Create(ThisNodes), pProperties));
+}
+
+Condition::Pointer ImmersedPointForce::Create(IndexType NewId, GeometryType::Pointer pGeom,
+                                        PropertiesType::Pointer pProperties) const
+{
+    return Condition::Pointer(new ImmersedPointForce(NewId, pGeom, pProperties));
+}
 
 void ImmersedPointForce::Initialize()
 {
@@ -154,7 +171,8 @@ void ImmersedPointForce::CalculateAll( MatrixType& rLeftHandSideMatrix,
         for( unsigned int dim = 0; dim < Dim; ++dim )
             rRightHandSideVector[Dim*node + dim] += mPointForce[dim] * ShapeFunctionValuesOnMaster[node];
     }
-
+//KRATOS_WATCH(mpMasterElement->Id())
+//KRATOS_WATCH(rRightHandSideVector)
     KRATOS_CATCH("")
 }
 
@@ -185,6 +203,11 @@ void ImmersedPointForce::EquationIdVector( EquationIdVectorType& rResult,
         if(Dim == 3)
             rResult[index+2] = mpMasterElement->GetGeometry()[node].GetDof(DISPLACEMENT_Z).EquationId();
     }
+//KRATOS_WATCH(mpMasterElement->Id())
+//std::cout << "EquationId:";
+//for(int i = 0; i < ndofs; ++i)
+//    std::cout << " " << rResult[i];
+//std::cout << std::endl;
 }
 
 //************************************************************************************
