@@ -86,8 +86,6 @@ void ImmersedPointForce::Initialize()
     KRATOS_CATCH("")
 }
 
-//************************************************************************************ 
-//************************************************************************************
 //************************************************************************************
 //************************************************************************************
 /**
@@ -121,11 +119,11 @@ void ImmersedPointForce::CalculateLocalSystem( MatrixType& rLeftHandSideMatrix,
     CalculateAll( rLeftHandSideMatrix, rRightHandSideVector, rCurrentProcessInfo,
                   CalculateStiffnessMatrixFlag, CalculateResidualVectorFlag);
 }
-    //************************************************************************************
-//************************************************************************************    /
+
+//************************************************************************************/
+//************************************************************************************/
 /**
- * This function calculates all system contributions due to the contact problem
- * with regard to the current master and slave partners.
+ * This function calculates all system contributions of the immersed point force to the system.
  * All Conditions are assumed to be defined in 2D/3D space and having 2/3 DOFs per node 
  */
 void ImmersedPointForce::CalculateAll( MatrixType& rLeftHandSideMatrix, 
@@ -181,7 +179,6 @@ void ImmersedPointForce::CalculateAll( MatrixType& rLeftHandSideMatrix,
 /**
 * Setting up the EquationIdVector for the current partners.    
 * All conditions are assumed to be defined in 2D/3D space with 2/3 DOFs per node.
-* All Equation IDs are given Master first, Slave second
 */
 void ImmersedPointForce::EquationIdVector( EquationIdVectorType& rResult, 
                                       ProcessInfo& CurrentProcessInfo)
@@ -215,7 +212,6 @@ void ImmersedPointForce::EquationIdVector( EquationIdVectorType& rResult,
 /**
  * Setting up the DOF list for the current partners.
  * All conditions are assumed to be defined in 2D/3D space with 2/3 DOFs per Node.
- * All DOF are given Master first, Slave second
  */
 //************************************************************************************
 //************************************************************************************

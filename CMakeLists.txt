@@ -11,6 +11,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/applications/structural_application )
 
 ######### add compilation units here
 set( KRATOS_FINITE_CELL_APPLICATION_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/custom_elements/extrapolated_kinematic_linear.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/custom_conditions/line_force_with_function.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/custom_conditions/immersed_point_force.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/finite_cell_structural_application.cpp 

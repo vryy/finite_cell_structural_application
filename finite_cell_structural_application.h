@@ -26,6 +26,7 @@
 #include "structural_application/custom_elements/kinematic_linear.h"
 #include "custom_conditions/line_force_with_function.h"
 #include "custom_conditions/immersed_point_force.h"
+#include "custom_elements/extrapolated_kinematic_linear.h"
 
 namespace Kratos
 {
@@ -99,7 +100,7 @@ namespace Kratos
         /// Turn back information as a string.
         virtual std::string Info() const
         {
-            return "Finite Cell method for structural simulation";
+            return "Finite Cell Method for structural simulation";
         }
 
         /// Print information about this object.
@@ -188,6 +189,17 @@ namespace Kratos
         const KinematicLinear mKinematicLinearFiniteCell3D8N;
         const KinematicLinear mKinematicLinearFiniteCell3D20N;
         const KinematicLinear mKinematicLinearFiniteCell3D27N;
+
+        const ExtrapolatedKinematicLinear mExtrapolatedKinematicLinearFiniteCell2D3N;
+        const ExtrapolatedKinematicLinear mExtrapolatedKinematicLinearFiniteCell2D6N;
+        const ExtrapolatedKinematicLinear mExtrapolatedKinematicLinearFiniteCell2D4N;
+        const ExtrapolatedKinematicLinear mExtrapolatedKinematicLinearFiniteCell2D8N;
+        const ExtrapolatedKinematicLinear mExtrapolatedKinematicLinearFiniteCell2D9N;
+        const ExtrapolatedKinematicLinear mExtrapolatedKinematicLinearFiniteCell3D4N;
+        const ExtrapolatedKinematicLinear mExtrapolatedKinematicLinearFiniteCell3D10N;
+        const ExtrapolatedKinematicLinear mExtrapolatedKinematicLinearFiniteCell3D8N;
+        const ExtrapolatedKinematicLinear mExtrapolatedKinematicLinearFiniteCell3D20N;
+        const ExtrapolatedKinematicLinear mExtrapolatedKinematicLinearFiniteCell3D27N;
 
         const LineForceWithFunction mLineForceWithFunction2D2N;
         const LineForceWithFunction mLineForceWithFunction2D3N;

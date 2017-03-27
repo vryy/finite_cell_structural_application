@@ -29,18 +29,21 @@ void FiniteCellStructuralApplication_AddCustomUtilitiesToPython()
 
     ModelPart::ConditionsContainerType(ImmersedBoundaryLoadUtility::*pointer_to_SetupImmersedPointForce)(
         ModelPart&, const FunctionR1R3::Pointer&, const double&, const double&, const int&,
-        const FunctionR1R3::Pointer&, const bool&) const = &ImmersedBoundaryLoadUtility::SetupImmersedPointForce<0>;
+        const FunctionR1R3::Pointer&, const bool&, const int&) const = &ImmersedBoundaryLoadUtility::SetupImmersedPointForce<0>;
 
     ModelPart::ConditionsContainerType(ImmersedBoundaryLoadUtility::*pointer_to_SetupImmersedPointForceWithBin)(
         ModelPart&, const FunctionR1R3::Pointer&, const double&, const double&, const int&,
-        const FunctionR1R3::Pointer&, const bool&) const = &ImmersedBoundaryLoadUtility::SetupImmersedPointForce<1>;
+        const FunctionR1R3::Pointer&, const bool&, const int&) const = &ImmersedBoundaryLoadUtility::SetupImmersedPointForce<1>;
+
+    void(ImmersedBoundaryLoadUtility::*pointer_to_Clean)(
+        ModelPart&, ModelPart::ConditionsContainerType&, const int&) const = &ImmersedBoundaryLoadUtility::Clean;
 
     class_<ImmersedBoundaryLoadUtility, ImmersedBoundaryLoadUtility::Pointer, boost::noncopyable>
     ("ImmersedBoundaryLoadUtility", init<>())
     .def("InitializeBinning", &ImmersedBoundaryLoadUtility::InitializeBinning)
     .def("SetupImmersedPointForce", pointer_to_SetupImmersedPointForce)
     .def("SetupImmersedPointForceWithBin", pointer_to_SetupImmersedPointForceWithBin)
-    .def("Clean", &ImmersedBoundaryLoadUtility::Clean)
+    .def("Clean", pointer_to_Clean)
     ;
 
 }

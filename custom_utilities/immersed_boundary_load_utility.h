@@ -34,6 +34,7 @@
 #include "finite_cell_application/custom_algebra/function/function.h"
 #include "finite_cell_application/custom_utilities/immersed_boundary_utility.h"
 #include "custom_conditions/immersed_point_force.h"
+#include "finite_cell_application.h"
 
 
 namespace Kratos
@@ -111,7 +112,8 @@ public:
             const double& tmin, const double& tmax, // the segment where the load is acting
             const int& integration_order,           // integration order
             const FunctionR1R3::Pointer& pLoadFunction,  // the distributed load function
-            const bool& export_point
+            const bool& export_point,
+            const int& echo_level
     ) const
     {
         // sampling the points on the interval
@@ -132,7 +134,7 @@ public:
         }
 
         // setup the immersed point force
-        return SetupImmersedPointForce<TSearchType>(r_model_part, Points, Forces, export_point);
+        return SetupImmersedPointForce<TSearchType>(r_model_part, Points, Forces, export_point, echo_level);
     }
 
 
@@ -141,7 +143,8 @@ public:
     ModelPart::ConditionsContainerType SetupImmersedPointForce(ModelPart& r_model_part,
             const std::vector<PointType>& rPoints,
             const std::vector<array_1d<double, 3> >& rForces,
-            const bool& export_point) const
+            const bool& export_point,
+            const int& echo_level) const
     {
         // find the maximum condition id
         std::size_t lastCondId = 0;
@@ -194,7 +197,7 @@ public:
                 std::cout << "WARNING: can't find the containing element for point " << rPoints[i] << std::endl;
             else
             {
-                if(pElem->Is(ACTIVE) || (pElem->GetValue(IS_INACTIVE) == false))
+                if(pElem->Is(ACTIVE) || (pElem->GetValue(IS_INACTIVE) == false) || (pElem->GetValue(CUT_STATUS) <= 0))
                 {
                     if(!export_point)
                     {
@@ -216,7 +219,8 @@ public:
                     pNewCond->Set(ACTIVE, true);
 
                     ImmersedConditions.push_back(pNewCond);
-//                    std::cout << "Point force is added in element " << pElem->Id() << std::endl;
+                    if(echo_level > 1)
+                        std::cout << "Point force is added in element " << pElem->Id() << std::endl;
                 }
             }
         }
@@ -225,30 +229,11 @@ public:
                 it != ImmersedConditions.ptr_end(); ++it)
             r_model_part.Conditions().push_back(*it);
 
-//        std::cout << "Setup point forces completed, "
-//              << ImmersedConditions.size() << " point force conditions was added to model_part" << std::endl;
+        if(echo_level > 0)
+            std::cout << "Setup point forces completed, "
+                  << ImmersedConditions.size() << " point force conditions was added to model_part" << std::endl;
 
         return ImmersedConditions;
-    }
-
-
-    /// Clean the set of conditions from the model_part (for the most used case, that is the linking conditions)
-    void Clean(ModelPart& r_model_part, ModelPart::ConditionsContainerType& rConditions)
-    {
-        // r_model_part.Conditions().erase(rConditions.begin(), rConditions.end());
-        unsigned int cnt = 0, first_id = 0, last_id = 0;
-        for(typename ModelPart::ConditionsContainerType::ptr_iterator it = rConditions.ptr_begin();
-                it != rConditions.ptr_end(); ++it)
-        {
-            if(cnt == 0)
-                first_id = (*it)->Id();
-            last_id = (*it)->Id();
-
-            r_model_part.RemoveCondition(*it);
-
-            ++cnt;
-        }
-        std::cout << cnt << " conditions: " << first_id << "->" << last_id << " is removed from model_part" << std::endl;
     }
 
 
