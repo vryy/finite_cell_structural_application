@@ -12,6 +12,7 @@
 
 // Project includes 
 #include "custom_conditions/immersed_point_force.h"
+#include "finite_cell_structural_application/finite_cell_structural_application.h"
 
 namespace Kratos
 {
@@ -37,23 +38,51 @@ ImmersedPointForce::ImmersedPointForce( IndexType NewId,
 
 ImmersedPointForce::ImmersedPointForce( IndexType NewId,
                                     GeometryType::Pointer pGeometry,
+                                    const double& rWeight,  
                                     const array_1d<double, 3>& rForce,  
                                     Element::Pointer pMasterElement,
                                     Point<3>& rMasterLocalPoint )
 : Condition( NewId, pGeometry )
-, mPointForce(rForce), mMasterLocalPoint(rMasterLocalPoint), mpMasterElement(pMasterElement)
+, mWeight(rWeight), mMasterLocalPoint(rMasterLocalPoint), mpMasterElement(pMasterElement)
 {
+    double norm_force = norm_2(rForce);
+    if(norm_force == 0.0)
+    {
+        mPointForceDirection[0] = 1.0/sqrt(3.0);
+        mPointForceDirection[1] = 1.0/sqrt(3.0);
+        mPointForceDirection[2] = 1.0/sqrt(3.0);
+        mPointForceMagnitude = 0.0;
+    }
+    else
+    {
+        noalias(mPointForceDirection) = rForce/norm_force;
+        mPointForceMagnitude = norm_force;
+    }
 }
 
 ImmersedPointForce::ImmersedPointForce( IndexType NewId,
                                     GeometryType::Pointer pGeometry,
                                     PropertiesType::Pointer pProperties,
+                                    const double& rWeight,  
                                     const array_1d<double, 3>& rForce,  
                                     Element::Pointer pMasterElement,
                                     Point<3>& rMasterLocalPoint )
 : Condition( NewId, pGeometry, pProperties )
-, mPointForce(rForce), mMasterLocalPoint(rMasterLocalPoint), mpMasterElement(pMasterElement)
+, mWeight(rWeight), mMasterLocalPoint(rMasterLocalPoint), mpMasterElement(pMasterElement)
 {
+    double norm_force = norm_2(rForce);
+    if(norm_force == 0.0)
+    {
+        mPointForceDirection[0] = 1.0/sqrt(3.0);
+        mPointForceDirection[1] = 1.0/sqrt(3.0);
+        mPointForceDirection[2] = 1.0/sqrt(3.0);
+        mPointForceMagnitude = 0.0;
+    }
+    else
+    {
+        noalias(mPointForceDirection) = rForce/norm_force;
+        mPointForceMagnitude = norm_force;
+    }
 }
 
 /**
@@ -161,13 +190,24 @@ void ImmersedPointForce::CalculateAll( MatrixType& rLeftHandSideMatrix,
     if( !CalculateStiffnessMatrixFlag && !CalculateResidualVectorFlag )
         return;
 
+    double PointForceMagnitude;
+    if( this->Has(FORCE_MAGNITUDE) )
+    {
+        PointForceMagnitude = this->GetValue(FORCE_MAGNITUDE);
+    }
+    else
+        PointForceMagnitude = mPointForceMagnitude;
+//KRATOS_WATCH(PointForceMagnitude)
+//KRATOS_WATCH(mPointForceMagnitude)
+//KRATOS_WATCH(mPointForceDirection)
     Vector ShapeFunctionValuesOnMaster;
     ShapeFunctionValuesOnMaster = mpMasterElement->GetGeometry().ShapeFunctionsValues(ShapeFunctionValuesOnMaster, mMasterLocalPoint);
 
     for( unsigned int node = 0; node < MasterNN; ++node )
     {
         for( unsigned int dim = 0; dim < Dim; ++dim )
-            rRightHandSideVector[Dim*node + dim] += mPointForce[dim] * ShapeFunctionValuesOnMaster[node];
+            rRightHandSideVector[Dim*node + dim] += PointForceMagnitude * mPointForceDirection[dim]
+                                                    * ShapeFunctionValuesOnMaster[node] * mWeight;
     }
 //KRATOS_WATCH(mpMasterElement->Id())
 //KRATOS_WATCH(rRightHandSideVector)

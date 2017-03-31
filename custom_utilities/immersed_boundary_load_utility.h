@@ -34,6 +34,7 @@
 #include "finite_cell_application/custom_algebra/function/function.h"
 #include "finite_cell_application/custom_utilities/immersed_boundary_utility.h"
 #include "custom_conditions/immersed_point_force.h"
+#include "custom_utilities/finite_cell_auxilliary_utility.h"
 #include "finite_cell_application.h"
 
 
@@ -83,8 +84,6 @@ public:
 
     typedef typename NodeType::CoordinatesArrayType CoordinatesArrayType;
 
-    typedef Function<double, PointType> FunctionR1R3;
-
     ///@}
     ///@name Life Cycle
     ///@{
@@ -106,12 +105,13 @@ public:
     ///@{
 
 
+    /// Create and add the immersed point force condition to the model_part, providing the curve and the load function
     template<int TSearchType>
     ModelPart::ConditionsContainerType SetupImmersedPointForce(ModelPart& r_model_part,
-            const FunctionR1R3::Pointer& pCurve,    // the parametric curve, there the distributed load is applied
-            const double& tmin, const double& tmax, // the segment where the load is acting
-            const int& integration_order,           // integration order
-            const FunctionR1R3::Pointer& pLoadFunction,  // the distributed load function
+            const FunctionR1R3::Pointer& pCurve,        // the parametric curve, there the distributed load is applied
+            const double& tmin, const double& tmax,     // the segment where the load is acting
+            const int& integration_order,               // integration order
+            const FunctionR1R3::Pointer& pLoadFunction, // the distributed load function
             const bool& export_point,
             const int& echo_level
     ) const
@@ -130,53 +130,195 @@ public:
         for(std::size_t point = 0; point < Points.size(); ++point)
         {
 //            KRATOS_WATCH(pLoadFunction->GetValue(Coordinates[point]))
-            Forces[point] = Dlength[point] * Weights[point] * pLoadFunction->GetValue(Coordinates[point]);
+            Weights[point] *= Dlength[point];
+            Forces[point] = pLoadFunction->GetValue(Coordinates[point]);
         }
 
         // setup the immersed point force
-        return SetupImmersedPointForce<TSearchType>(r_model_part, Points, Forces, export_point, echo_level);
+        return SetupImmersedPointForce<TSearchType>(r_model_part, r_model_part.Elements(), Points, Weights, Forces, export_point, echo_level);
     }
 
 
-    /// Create and add the immersed point force condition to the model_part, providing the list of points and corresponding weights
+    /// Create and add the immersed point force condition to the model_part, providing the surface and the load function
     template<int TSearchType>
     ModelPart::ConditionsContainerType SetupImmersedPointForce(ModelPart& r_model_part,
-            const std::vector<PointType>& rPoints,
-            const std::vector<array_1d<double, 3> >& rForces,
+            const FunctionR2R3::Pointer& pSurface,      // the parametric surface, there the distributed load is applied
+            const double& t1min, const double& t1max,   // the segment where the load is acting in 1st-direction
+            const double& t2min, const double& t2max,   // the segment where the load is acting in 2nd-direction
+            const int& integration_order,               // integration order
+            const FunctionR2R3::Pointer& pLoadFunction, // the distributed load function
             const bool& export_point,
-            const int& echo_level) const
+            const int& echo_level
+    ) const
+    {
+        // sampling the points on the interval
+        std::vector<FunctionR2R3::InputType> Coordinates;
+        std::vector<PointType> Points;
+        std::vector<double> Darea;
+        std::vector<double> Weights;
+
+        ImmersedBoundaryUtility::SamplingSurface(*pSurface, t1min, t1max, t2min, t2max, integration_order,
+                Coordinates, Points, Darea, Weights);
+
+        // compute the force array
+        std::vector<array_1d<double, 3> > Forces(Points.size());
+        for(std::size_t point = 0; point < Points.size(); ++point)
+        {
+//            KRATOS_WATCH(pLoadFunction->GetValue(Coordinates[point]))
+            Weights[point] *= Darea[point];
+            Forces[point] = pLoadFunction->GetValue(Coordinates[point]);
+        }
+
+        // setup the immersed point force
+        return SetupImmersedPointForce<TSearchType>(r_model_part, r_model_part.Elements(), Points, Weights, Forces, export_point, echo_level);
+    }
+
+
+    /// Create and add the immersed point force condition to the model_part, providing an entity (i.e element/condition)
+    template<class TEntityType, int TSearchType>
+    ModelPart::ConditionsContainerType SetupImmersedPointForce(ModelPart& r_model_part,
+            typename TEntityType::Pointer& pEntity,
+            const int& integration_order,               // integration order
+            const FunctionR3R3::Pointer& pLoadFunction, // the distributed load function
+            const bool& export_point,
+            const int& echo_level
+    ) const
+    {
+        return SetupImmersedPointForce<TEntityType, TSearchType>(r_model_part, r_model_part.Elements(), pEntity, integration_order, pLoadFunction, export_point, echo_level);
+    }
+
+
+    /// Create and add the immersed point force condition to the model_part, providing an entity (i.e element/condition)
+    template<class TEntityType, int TSearchType>
+    ModelPart::ConditionsContainerType SetupImmersedPointForce(ModelPart& r_model_part,
+            ModelPart::ElementsContainerType& pMasterElements,
+            typename TEntityType::Pointer& pEntity,
+            const int& integration_order,               // integration order
+            const FunctionR3R3::Pointer& pLoadFunction, // the distributed load function
+            const bool& export_point,
+            const int& echo_level
+    ) const
     {
         // find the maximum condition id
-        std::size_t lastCondId = 0;
-        for(typename ModelPart::ConditionsContainerType::ptr_iterator it = r_model_part.Conditions().ptr_begin();
-                it != r_model_part.Conditions().ptr_end(); ++it)
-        {
-            if((*it)->Id() > lastCondId)
-                lastCondId = (*it)->Id();
-        }
+        std::size_t lastCondId = FiniteCellAuxilliaryUtility::GetLastConditionId(r_model_part);
 
         // find the maximum node Id
-        std::size_t lastNodeId = 0;
-        for(typename ModelPart::NodesContainerType::ptr_iterator it = r_model_part.Nodes().ptr_begin();
-                it != r_model_part.Nodes().ptr_end(); ++it)
-        {
-            if((*it)->Id() > lastNodeId)
-                lastNodeId = (*it)->Id();
-        }
+        std::size_t lastNodeId = FiniteCellAuxilliaryUtility::GetLastNodeId(r_model_part);
 
         // find the maximum properties Id
-        std::size_t lastPropId = 0;
-        for(typename ModelPart::PropertiesContainerType::ptr_iterator it = r_model_part.rProperties().ptr_begin();
-                it != r_model_part.rProperties().ptr_end(); ++it)
-        {
-            if((*it)->Id() > lastPropId)
-                lastPropId = (*it)->Id();
-        }
+        std::size_t lastPropId = FiniteCellAuxilliaryUtility::GetLastPropertiesId(r_model_part);
 
         // create new properties
         Properties::Pointer pProperties = Properties::Pointer(new Properties(++lastPropId));
         r_model_part.AddProperties(pProperties);
 
+        // setup the immersed point force
+        return SetupImmersedPointForce<TEntityType, TSearchType>(r_model_part, pMasterElements, pEntity, lastNodeId, lastCondId, pProperties, integration_order, pLoadFunction, export_point, echo_level);
+    }
+
+
+    /// Create and add the immersed point force condition to the model_part, providing an entity (i.e element/condition)
+    template<class TEntityType, int TSearchType>
+    ModelPart::ConditionsContainerType SetupImmersedPointForce(ModelPart& r_model_part,
+            ModelPart::ElementsContainerType& pMasterElements,
+            typename TEntityType::Pointer& pEntity,
+            std::size_t& lastNodeId,
+            std::size_t& lastCondId,
+            Properties::Pointer pProperties,
+            const int& integration_order,               // integration order
+            const FunctionR3R3::Pointer& pLoadFunction, // the distributed load function
+            const bool& export_point,
+            const int& echo_level
+    ) const
+    {
+        // get the integration point on the geometry
+        GeometryData::IntegrationMethod ThisIntegrationMethod
+            = Function<double, double>::GetIntegrationMethod(integration_order);
+
+        const GeometryType::IntegrationPointsArrayType& integration_points
+            = pEntity->GetGeometry().IntegrationPoints( ThisIntegrationMethod );
+
+        std::vector<double> DetJ;
+        Function<double, double>::ComputeDetJ(DetJ, pEntity->GetGeometry(), integration_points);
+
+        std::vector<PointType> Points(integration_points.size());
+        std::vector<double> Weights(integration_points.size());
+        std::vector<array_1d<double, 3> > Forces(integration_points.size());
+
+        for(std::size_t point = 0; point < integration_points.size(); ++point)
+        {
+            pEntity->GetGeometry().GlobalCoordinates(Points[point], integration_points[point]);
+            Weights[point] = DetJ[point] * integration_points[point].Weight();
+            Forces[point] = pLoadFunction->GetValue(Points[point]);
+            if(echo_level > 3)
+            {
+                KRATOS_WATCH(Points[point])
+                KRATOS_WATCH(pLoadFunction->GetValue(Points[point]))
+                KRATOS_WATCH(DetJ[point])
+                KRATOS_WATCH(integration_points[point])
+            }
+        }
+
+        // setup the immersed point force
+        return SetupImmersedPointForce<TSearchType>(r_model_part, pMasterElements, lastNodeId, lastCondId, pProperties, Points, Weights, Forces, export_point, echo_level);
+    }
+
+
+    /// Create and add the immersed point force condition to the model_part, providing the list of points and corresponding weights
+    /// r_model_part    the model_part to add the conditions
+    /// pMasterElements the pool of master elements to search
+    /// rPoints         list of points to create the immersed load
+    /// rForces         immersed load value at point
+    /// export_point    export the point for post-processing/debugging
+    /// echo_level      printing level
+    template<int TSearchType>
+    ModelPart::ConditionsContainerType SetupImmersedPointForce(ModelPart& r_model_part,
+            ModelPart::ElementsContainerType& pMasterElements,
+            const std::vector<PointType>& rPoints,
+            const std::vector<double>& rWeights,
+            const std::vector<array_1d<double, 3> >& rForces,
+            const bool& export_point,
+            const int& echo_level) const
+    {
+        // find the maximum condition id
+        std::size_t lastCondId = FiniteCellAuxilliaryUtility::GetLastConditionId(r_model_part);
+
+        // find the maximum node Id
+        std::size_t lastNodeId = FiniteCellAuxilliaryUtility::GetLastNodeId(r_model_part);
+
+        // find the maximum properties Id
+        std::size_t lastPropId = FiniteCellAuxilliaryUtility::GetLastPropertiesId(r_model_part);
+
+        // create new properties
+        Properties::Pointer pProperties = Properties::Pointer(new Properties(++lastPropId));
+        r_model_part.AddProperties(pProperties);
+
+        return SetupImmersedPointForce<TSearchType>(r_model_part, pMasterElements, lastNodeId, lastCondId, pProperties, rPoints, rWeights, rForces, export_point, echo_level);
+    }
+
+
+    /// Create and add the immersed point force condition to the model_part, providing the list of points and corresponding weights
+    /// r_model_part    the model_part to add the conditions
+    /// pMasterElements the pool of master elements to search
+    /// lastNodeId      this information is used to assigned the node id incrementally
+    /// lastCondId      this information is used to assigned the condition id incrementally
+    /// pProperties     the properties used to setup the new condition
+    /// rPoints         list of points to create the immersed load
+    /// rForces         immersed load value at point
+    /// export_point    export the point for post-processing/debugging
+    /// echo_level      printing level
+    template<int TSearchType>
+    ModelPart::ConditionsContainerType SetupImmersedPointForce(ModelPart& r_model_part,
+            ModelPart::ElementsContainerType& pMasterElements,
+            std::size_t& lastNodeId,
+            std::size_t& lastCondId,
+            Properties::Pointer pProperties,
+            const std::vector<PointType>& rPoints,
+            const std::vector<double>& rWeights,
+            const std::vector<array_1d<double, 3> >& rForces,
+            const bool& export_point,
+            const int& echo_level) const
+    {
         // array to contain the new point force conditions
         ModelPart::ConditionsContainerType ImmersedConditions;
 
@@ -189,9 +331,9 @@ public:
 
             bool found;
             if(TSearchType == 0)
-                found = ImmersedBoundaryUtility::SearchPartner(rPoints[i], r_model_part.Elements(), pElem, LocalPoint);
+                found = ImmersedBoundaryUtility::SearchPartner(rPoints[i], pMasterElements, pElem, LocalPoint);
             else if(TSearchType == 1)
-                found = this->SearchPartnerWithBin(rPoints[i], r_model_part.Elements(), pElem, LocalPoint);
+                found = this->SearchPartnerWithBin(rPoints[i], pMasterElements, pElem, LocalPoint);
 
             if(!found)
                 std::cout << "WARNING: can't find the containing element for point " << rPoints[i] << std::endl;
@@ -212,9 +354,9 @@ public:
                         pTempGeometry = GeometryType::Pointer( new Point3D<NodeType>(pNewNode) );
                     }
                     Condition::Pointer pNewCond = Condition::Pointer(
-                            new ImmersedPointForce(++lastCondId, pTempGeometry, rForces[i], pElem, LocalPoint) );
+                            new ImmersedPointForce(++lastCondId, pTempGeometry, rWeights[i], rForces[i], pElem, LocalPoint) );
 //                    Condition::Pointer pNewCond = Condition::Pointer(
-//                            new ImmersedPointForce(++lastCondId, pTempGeometry, pProperties, rForces[i], pElem, LocalPoint) );
+//                            new ImmersedPointForce(++lastCondId, pTempGeometry, pProperties, rWeights[i], rForces[i], pElem, LocalPoint) );
 
                     pNewCond->Set(ACTIVE, true);
 

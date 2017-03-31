@@ -36,6 +36,8 @@ namespace Python
 
         FiniteCellStructuralApplication_AddCustomUtilitiesToPython();
 
+        KRATOS_REGISTER_IN_PYTHON_VARIABLE( FORCE_MAGNITUDE )
+
     }
 
 } // namespace Python.

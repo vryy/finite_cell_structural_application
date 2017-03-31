@@ -42,12 +42,14 @@ class ImmersedPointForce : public Condition
         ImmersedPointForce( IndexType NewId, GeometryType::Pointer pGeometry, PropertiesType::Pointer pProperties);
         ImmersedPointForce( IndexType NewId,
                         GeometryType::Pointer pGeometry,
+                        const double& rWeight,
                         const array_1d<double, 3>& rForce,
                         Element::Pointer pMasterElement,
                         Point<3>& rMasterLocalPoint );
         ImmersedPointForce( IndexType NewId,
                         GeometryType::Pointer pGeometry,
                         PropertiesType::Pointer pProperties,
+                        const double& rWeight,
                         const array_1d<double, 3>& rForce,
                         Element::Pointer pMasterElement,
                         Point<3>& rMasterLocalPoint );
@@ -84,6 +86,9 @@ class ImmersedPointForce : public Condition
                          ProcessInfo& CurrentProcessInfo);
 
         void Initialize();
+
+        void SetMagnitude(const double& P);
+
         /**
          * Turn back information as a string.
          * (DEACTIVATED)
@@ -125,7 +130,9 @@ class ImmersedPointForce : public Condition
                            bool CalculateStiffnessMatrixFlag,
                            bool CalculateResidualVectorFlag);
 
-        array_1d<double, 3> mPointForce;
+        array_1d<double, 3> mPointForceDirection;
+        double mPointForceMagnitude;
+        double mWeight; // Weight * DetJ
         Point<3> mMasterLocalPoint;
         Element::Pointer mpMasterElement;
 

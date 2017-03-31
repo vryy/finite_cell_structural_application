@@ -34,6 +34,8 @@ namespace Kratos
     ///@name Kratos Globals
     ///@{
 
+    KRATOS_DEFINE_VARIABLE( double, FORCE_MAGNITUDE )
+
     ///@}
     ///@name Type Definitions
     ///@{

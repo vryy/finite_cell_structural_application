@@ -21,7 +21,8 @@
 
 namespace Kratos
 {
-    
+    KRATOS_CREATE_VARIABLE( double, FORCE_MAGNITUDE )
+
     KratosFiniteCellStructuralApplication::KratosFiniteCellStructuralApplication()
     :
       mKinematicLinearFiniteCell2D3N( 0, Element::GeometryType::Pointer( new FiniteCellGeometry< Triangle2D3 <Node<3> > >( Element::GeometryType::PointsArrayType( 3, Node<3>() ) ) ) )
@@ -56,6 +57,8 @@ namespace Kratos
         // calling base class register to register Kratos components
         KratosApplication::Register();
         std::cout << "Initializing KratosFiniteCellStructuralApplication... " << std::endl;
+
+        KRATOS_REGISTER_VARIABLE( FORCE_MAGNITUDE )
 
         KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell2D3N", mKinematicLinearFiniteCell2D3N )
         KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell2D6N", mKinematicLinearFiniteCell2D6N )
