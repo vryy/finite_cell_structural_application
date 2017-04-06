@@ -331,13 +331,11 @@ public:
 
             bool found;
             if(TSearchType == 0)
-                found = ImmersedBoundaryUtility::SearchPartner(rPoints[i], pMasterElements, pElem, LocalPoint);
+                found = ImmersedBoundaryUtility::SearchPartner(rPoints[i], pMasterElements, pElem, LocalPoint, echo_level);
             else if(TSearchType == 1)
-                found = this->SearchPartnerWithBin(rPoints[i], pMasterElements, pElem, LocalPoint);
+                found = this->SearchPartnerWithBin(rPoints[i], pMasterElements, pElem, LocalPoint, echo_level);
 
-            if(!found)
-                std::cout << "WARNING: can't find the containing element for point " << rPoints[i] << std::endl;
-            else
+            if(found)
             {
                 if(pElem->Is(ACTIVE) || (pElem->GetValue(IS_INACTIVE) == false) || (pElem->GetValue(CUT_STATUS) <= 0))
                 {
@@ -353,15 +351,15 @@ public:
                         r_model_part.AddNode(pNewNode);
                         pTempGeometry = GeometryType::Pointer( new Point3D<NodeType>(pNewNode) );
                     }
-                    Condition::Pointer pNewCond = Condition::Pointer(
-                            new ImmersedPointForce(++lastCondId, pTempGeometry, rWeights[i], rForces[i], pElem, LocalPoint) );
 //                    Condition::Pointer pNewCond = Condition::Pointer(
-//                            new ImmersedPointForce(++lastCondId, pTempGeometry, pProperties, rWeights[i], rForces[i], pElem, LocalPoint) );
+//                            new ImmersedPointForce(++lastCondId, pTempGeometry, rWeights[i], rForces[i], pElem, LocalPoint) );
+                    Condition::Pointer pNewCond = Condition::Pointer(
+                            new ImmersedPointForce(++lastCondId, pTempGeometry, pProperties, rWeights[i], rForces[i], pElem, LocalPoint) );
 
                     pNewCond->Set(ACTIVE, true);
 
                     ImmersedConditions.push_back(pNewCond);
-                    if(echo_level > 1)
+                    if(echo_level & _REPORT_CONDITION_CREATED == _REPORT_CONDITION_CREATED)
                         std::cout << "Point force is added in element " << pElem->Id() << std::endl;
                 }
             }
@@ -371,7 +369,7 @@ public:
                 it != ImmersedConditions.ptr_end(); ++it)
             r_model_part.Conditions().push_back(*it);
 
-        if(echo_level > 0)
+        if(echo_level & _REPORT_NUMBER_OF_CREATED_CONDITIONS == _REPORT_NUMBER_OF_CREATED_CONDITIONS)
             std::cout << "Setup point forces completed, "
                   << ImmersedConditions.size() << " point force conditions was added to model_part" << std::endl;
 

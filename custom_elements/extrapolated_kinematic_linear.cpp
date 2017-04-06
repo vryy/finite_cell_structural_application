@@ -367,14 +367,11 @@ namespace Kratos
         //reading integration points and local gradients
         const GeometryType::IntegrationPointsArrayType& integration_points = GetGeometry().IntegrationPoints( mThisIntegrationMethod );
 
-//        std::cout << "integration_points of element " << Id() << ":" << std::endl;
-//        for(std::size_t i = 0; i < integration_points.size(); ++i)
-//        {
-//            std::cout << "(" << integration_points[i].X() << ", "
-//                             << integration_points[i].Y() << ", "
-//                             << integration_points[i].Z() << "), "
-//                             << integration_points[i].Weight() << std::endl;
-//        }
+        ////// make a safety check
+        if(integration_points.size() == 0)
+        {
+            std::cout << "!!!!WARNING!!!!The integration_points at extrapolated element " << Id() << " is null. Something must be wrong." << std::endl;
+        }
 
         const GeometryType::ShapeFunctionsGradientsType& DN_De = GetGeometry().ShapeFunctionsLocalGradients( mThisIntegrationMethod );
 
@@ -403,16 +400,28 @@ namespace Kratos
         // the consitutive_law that this element relies on
         ConstitutiveLaw::Pointer pConstitutiveLaw = GetValue(CONSTITUTIVE_LAW);
 
-//        int parent_element_id, parent_integration_point_index;
-//        parent_element_id = pConstitutiveLaw->GetValue(PARENT_ELEMENT_ID, parent_element_id);
-//        parent_integration_point_index = pConstitutiveLaw->GetValue(INTEGRATION_POINT_INDEX, parent_integration_point_index);
-//        KRATOS_WATCH(parent_element_id)
-//        KRATOS_WATCH(parent_integration_point_index)
-
         // extract the required value at the master consitutive_law
         TanCe = pConstitutiveLaw->GetValue(ELASTIC_TANGENT, TanCe);
         TanC = pConstitutiveLaw->GetValue(ALGORITHMIC_TANGENT, TanC);
         array_1d<double, 3> PhysicalIntPoint = GetValue(INTEGRATION_POINT_LOCAL);
+
+
+         int parent_element_id, parent_integration_point_index;
+        parent_element_id = pConstitutiveLaw->GetValue(PARENT_ELEMENT_ID, parent_element_id);
+        parent_integration_point_index = pConstitutiveLaw->GetValue(INTEGRATION_POINT_INDEX, parent_integration_point_index);
+//        KRATOS_WATCH(parent_element_id)
+//        KRATOS_WATCH(parent_integration_point_index)
+
+//        std::cout << "integration_points of extrapolated kinematic_element " << Id()
+//                  << ", parent_element " << parent_element_id << ":" << std::endl;
+//        for(std::size_t i = 0; i < integration_points.size(); ++i)
+//        {
+//            std::cout << "(" << integration_points[i].X() << ", "
+//                             << integration_points[i].Y() << ", "
+//                             << integration_points[i].Z() << "), "
+//                             << integration_points[i].Weight() << std::endl;
+//        }
+
 
         // compute B operator at physical point
         Matrix DN_Dep;
@@ -510,6 +519,18 @@ namespace Kratos
         //clean the internal data of the geometry
         GetGeometry().Clean();
         #endif
+
+//        for(std::size_t i = 0; i < GetGeometry().size(); ++i)
+//        {
+//            if(GetGeometry()[i].Id() == 690)
+//            {
+//                std::cout << "extrapolated_kinematic_linear " << Id() << " contributes "
+//                          << subslice(rLeftHandSideMatrix, 3*i, 3*i+1, 3*i+2, 3*i, 3*i+1, 3*i+2)
+//                          << " to the stiffness matrix"
+//                          << std::endl;
+//            }
+//        }
+
 
         KRATOS_CATCH( "" )
     }
