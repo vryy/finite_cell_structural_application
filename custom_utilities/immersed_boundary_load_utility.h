@@ -359,7 +359,7 @@ public:
                     pNewCond->Set(ACTIVE, true);
 
                     ImmersedConditions.push_back(pNewCond);
-                    if(echo_level & _REPORT_CONDITION_CREATED == _REPORT_CONDITION_CREATED)
+                    if((echo_level & _REPORT_CONDITION_CREATED) == _REPORT_CONDITION_CREATED)
                         std::cout << "Point force is added in element " << pElem->Id() << std::endl;
                 }
             }
@@ -369,7 +369,7 @@ public:
                 it != ImmersedConditions.ptr_end(); ++it)
             r_model_part.Conditions().push_back(*it);
 
-        if(echo_level & _REPORT_NUMBER_OF_CREATED_CONDITIONS == _REPORT_NUMBER_OF_CREATED_CONDITIONS)
+        if((echo_level & _REPORT_NUMBER_OF_CREATED_CONDITIONS) == _REPORT_NUMBER_OF_CREATED_CONDITIONS)
             std::cout << "Setup point forces completed, "
                   << ImmersedConditions.size() << " point force conditions was added to model_part" << std::endl;
 
