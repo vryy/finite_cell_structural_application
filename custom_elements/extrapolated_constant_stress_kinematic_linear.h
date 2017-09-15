@@ -10,8 +10,8 @@ see finite_cell_structural_application/LICENSE.txt
 //
 
 
-#if !defined(KRATOS_EXTRAPOLATED_KINEMATIC_LINEAR_INCLUDED )
-#define  KRATOS_EXTRAPOLATED_KINEMATIC_LINEAR_INCLUDED
+#if !defined(KRATOS_EXTRAPOLATED_CONSTANT_STRESS_KINEMATIC_LINEAR_INCLUDED )
+#define  KRATOS_EXTRAPOLATED_CONSTANT_STRESS_KINEMATIC_LINEAR_INCLUDED
 
 
 
@@ -57,11 +57,11 @@ namespace Kratos
 /// Short class definition.
 /** Detail class definition.
 
-ExtrapolatedKinematicLinear is designed to be a general linear strutural element support for both 2D and 3D.
+Using for moment-fitted subcell scheme, constant stress extrapolation from physical point
 
  */
 
-class ExtrapolatedKinematicLinear : public Element
+class ExtrapolatedConstantStressKinematicLinear : public Element
 {
 
 public:
@@ -73,18 +73,18 @@ public:
 
     typedef ConstitutiveLawType::Pointer ConstitutiveLawPointerType;
 
-    KRATOS_CLASS_POINTER_DEFINITION( ExtrapolatedKinematicLinear );
+    KRATOS_CLASS_POINTER_DEFINITION( ExtrapolatedConstantStressKinematicLinear );
 
     ///@}
     ///@name Life Cycle
     ///@{
 
     /// Default constructor.
-    ExtrapolatedKinematicLinear( IndexType NewId, GeometryType::Pointer pGeometry );
-    ExtrapolatedKinematicLinear( IndexType NewId, GeometryType::Pointer pGeometry, PropertiesType::Pointer pProperties );
+    ExtrapolatedConstantStressKinematicLinear( IndexType NewId, GeometryType::Pointer pGeometry );
+    ExtrapolatedConstantStressKinematicLinear( IndexType NewId, GeometryType::Pointer pGeometry, PropertiesType::Pointer pProperties );
 
     /// Destructor.
-    virtual ~ExtrapolatedKinematicLinear();
+    virtual ~ExtrapolatedConstantStressKinematicLinear();
 
 
     ///@}
@@ -212,8 +212,6 @@ protected:
     Matrix mInitialDisp;
     IntegrationMethod mThisIntegrationMethod;
     double mTotalDomainInitialSize;
-    std::vector<Vector> mCurrentStrainVector;
-    std::vector<Vector> mOldStrainVector;
 
     ///@}
     ///@name Protected Operators
@@ -232,7 +230,7 @@ protected:
     friend class Serializer;
 
     // A private default constructor necessary for serialization
-    ExtrapolatedKinematicLinear() {}
+    ExtrapolatedConstantStressKinematicLinear() {}
 
     virtual void save( Serializer& rSerializer ) const
     {
@@ -350,15 +348,15 @@ private:
     ///@{
 
     /// Assignment operator.
-    //ExtrapolatedKinematicLinear& operator=(const ExtrapolatedKinematicLinear& rOther);
+    //ExtrapolatedConstantStressKinematicLinear& operator=(const ExtrapolatedConstantStressKinematicLinear& rOther);
 
     /// Copy constructor.
-    //ExtrapolatedKinematicLinear(const ExtrapolatedKinematicLinear& rOther);
+    //ExtrapolatedConstantStressKinematicLinear(const ExtrapolatedConstantStressKinematicLinear& rOther);
 
 
     ///@}
 
-}; // Class ExtrapolatedKinematicLinear
+}; // Class ExtrapolatedConstantStressKinematicLinear
 
 ///@}
 ///@name Type Definitions
@@ -372,11 +370,11 @@ private:
 
 /// input stream function
 /*  inline std::istream& operator >> (std::istream& rIStream,
-                   ExtrapolatedKinematicLinear& rThis);
+                   ExtrapolatedConstantStressKinematicLinear& rThis);
 */
 /// output stream function
 /*  inline std::ostream& operator << (std::ostream& rOStream,
-                   const ExtrapolatedKinematicLinear& rThis)
+                   const ExtrapolatedConstantStressKinematicLinear& rThis)
            {
                    rThis.PrintInfo(rOStream);
                    rOStream << std::endl;
@@ -388,6 +386,6 @@ private:
 
 }  // namespace Kratos.
 
-#endif // KRATOS_KINEMATIC_LINEAR2_INCLUDED defined 
+#endif // KRATOS_EXTRAPOLATED_CONSTANT_STRESS_KINEMATIC_LINEAR_INCLUDED defined 
 
 

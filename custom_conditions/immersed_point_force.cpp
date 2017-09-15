@@ -181,7 +181,9 @@ void ImmersedPointForce::CalculateAll( MatrixType& rLeftHandSideMatrix,
             rLeftHandSideMatrix.resize(MatSize, MatSize, false);
         noalias(rLeftHandSideMatrix) = ZeroMatrix(MatSize, MatSize); 
     }
-
+//KRATOS_WATCH(mpMasterElement->Id())
+//KRATOS_WATCH(mpMasterElement->GetValue(IS_INACTIVE))
+//KRATOS_WATCH(mpMasterElement->Is(ACTIVE))
     if( ( mpMasterElement->GetValue(IS_INACTIVE) || !mpMasterElement->Is(ACTIVE) ) )
     {
         return;
@@ -211,6 +213,11 @@ void ImmersedPointForce::CalculateAll( MatrixType& rLeftHandSideMatrix,
     }
 //KRATOS_WATCH(mpMasterElement->Id())
 //KRATOS_WATCH(rRightHandSideVector)
+//    if(mpMasterElement->Id() == 14149)
+//    {
+//        std::cout << "condition " << Id() << " contributes to element " << mpMasterElement->Id()
+//                  << " with rhs: " << rRightHandSideVector << std::endl;
+//    }
     KRATOS_CATCH("")
 }
 

@@ -28,6 +28,7 @@
 #include "custom_conditions/line_force_with_function.h"
 #include "custom_conditions/immersed_point_force.h"
 #include "custom_elements/extrapolated_kinematic_linear.h"
+#include "custom_elements/extrapolated_constant_stress_kinematic_linear.h"
 
 namespace Kratos
 {
@@ -36,6 +37,8 @@ namespace Kratos
     ///@{
 
     KRATOS_DEFINE_VARIABLE( double, FORCE_MAGNITUDE )
+    KRATOS_DEFINE_VARIABLE( double, PHYSICAL_STRESS_OFFSET_PARAMETER ) // beta
+    KRATOS_DEFINE_VARIABLE( double, STRESS_STABILIZATION )
 
     ///@}
     ///@name Type Definitions
@@ -209,6 +212,17 @@ namespace Kratos
         const ExtrapolatedKinematicLinear mExtrapolatedKinematicLinearFiniteCell3D8N;
         const ExtrapolatedKinematicLinear mExtrapolatedKinematicLinearFiniteCell3D20N;
         const ExtrapolatedKinematicLinear mExtrapolatedKinematicLinearFiniteCell3D27N;
+
+        const ExtrapolatedConstantStressKinematicLinear mExtrapolatedConstantStressKinematicLinearFiniteCell2D3N;
+        const ExtrapolatedConstantStressKinematicLinear mExtrapolatedConstantStressKinematicLinearFiniteCell2D6N;
+        const ExtrapolatedConstantStressKinematicLinear mExtrapolatedConstantStressKinematicLinearFiniteCell2D4N;
+        const ExtrapolatedConstantStressKinematicLinear mExtrapolatedConstantStressKinematicLinearFiniteCell2D8N;
+        const ExtrapolatedConstantStressKinematicLinear mExtrapolatedConstantStressKinematicLinearFiniteCell2D9N;
+        const ExtrapolatedConstantStressKinematicLinear mExtrapolatedConstantStressKinematicLinearFiniteCell3D4N;
+        const ExtrapolatedConstantStressKinematicLinear mExtrapolatedConstantStressKinematicLinearFiniteCell3D10N;
+        const ExtrapolatedConstantStressKinematicLinear mExtrapolatedConstantStressKinematicLinearFiniteCell3D8N;
+        const ExtrapolatedConstantStressKinematicLinear mExtrapolatedConstantStressKinematicLinearFiniteCell3D20N;
+        const ExtrapolatedConstantStressKinematicLinear mExtrapolatedConstantStressKinematicLinearFiniteCell3D27N;
 
         const LineForceWithFunction mLineForceWithFunction2D2N;
         const LineForceWithFunction mLineForceWithFunction2D3N;

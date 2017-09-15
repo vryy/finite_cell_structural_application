@@ -161,14 +161,20 @@ void LineForceWithFunction::CalculateRightHandSide( VectorType& rRightHandSideVe
     Vector Load( dim );
     PointType GlobalCoords;
 
-    typedef Function<PointType, Vector> FunctionR3RnType;
-
-    FunctionR3RnType::Pointer pLoadFuntion;
+    FunctionR3Rn::Pointer pLoadFuntion;
 
     #pragma omp critical
     {
         boost::python::object pyObject = GetProperties()[LOAD_FUNCTION];
-        pLoadFuntion = boost::python::extract<FunctionR3RnType::Pointer>(pyObject);
+        try
+        {
+            pLoadFuntion = boost::python::extract<FunctionR3Rn::Pointer>(pyObject);
+        }
+        catch (boost::python::error_already_set&)
+        {
+            std::cout << "Extracting load function has some problem" << std::endl;
+            PyErr_Print();
+        }
     }
 
     if(pLoadFuntion == NULL)

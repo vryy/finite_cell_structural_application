@@ -16,7 +16,7 @@ see finite_cell_structural_application/LICENSE.txt
 
 // Project includes
 // #include "includes/define.h"
-#include "extrapolated_kinematic_linear.h"
+#include "extrapolated_constant_stress_kinematic_linear.h"
 #include "utilities/math_utils.h"
 #include "structural_application/custom_utilities/sd_math_utils.h"
 #include "finite_cell_application/finite_cell_application.h"
@@ -29,7 +29,7 @@ see finite_cell_structural_application/LICENSE.txt
 
 namespace Kratos
 {
-    ExtrapolatedKinematicLinear::ExtrapolatedKinematicLinear( IndexType NewId, GeometryType::Pointer pGeometry )
+    ExtrapolatedConstantStressKinematicLinear::ExtrapolatedConstantStressKinematicLinear( IndexType NewId, GeometryType::Pointer pGeometry )
         : Element( NewId, pGeometry )
     {
         mIsInitialized = false;
@@ -44,7 +44,7 @@ namespace Kratos
      * Therefore it may includes comments that are obvious for the
      * experienced user.
      */
-    ExtrapolatedKinematicLinear::ExtrapolatedKinematicLinear( IndexType NewId,
+    ExtrapolatedConstantStressKinematicLinear::ExtrapolatedConstantStressKinematicLinear( IndexType NewId,
             GeometryType::Pointer pGeometry,  PropertiesType::Pointer pProperties )
         : Element( NewId, pGeometry, pProperties )
     {
@@ -52,17 +52,17 @@ namespace Kratos
         mThisIntegrationMethod = GetGeometry().GetDefaultIntegrationMethod();//default method
     }
 
-    Element::Pointer ExtrapolatedKinematicLinear::Create( IndexType NewId, NodesArrayType const& ThisNodes,  PropertiesType::Pointer pProperties ) const
+    Element::Pointer ExtrapolatedConstantStressKinematicLinear::Create( IndexType NewId, NodesArrayType const& ThisNodes,  PropertiesType::Pointer pProperties ) const
     {
-        return Element::Pointer( new ExtrapolatedKinematicLinear( NewId, GetGeometry().Create( ThisNodes ), pProperties ) );
+        return Element::Pointer( new ExtrapolatedConstantStressKinematicLinear( NewId, GetGeometry().Create( ThisNodes ), pProperties ) );
     }
     
-    Element::Pointer ExtrapolatedKinematicLinear::Create( IndexType NewId, GeometryType::Pointer pGeom, PropertiesType::Pointer pProperties ) const
+    Element::Pointer ExtrapolatedConstantStressKinematicLinear::Create( IndexType NewId, GeometryType::Pointer pGeom, PropertiesType::Pointer pProperties ) const
     {
-        return Element::Pointer( new ExtrapolatedKinematicLinear( NewId, pGeom, pProperties ) );
+        return Element::Pointer( new ExtrapolatedConstantStressKinematicLinear( NewId, pGeom, pProperties ) );
     }
 
-    ExtrapolatedKinematicLinear::~ExtrapolatedKinematicLinear()
+    ExtrapolatedConstantStressKinematicLinear::~ExtrapolatedConstantStressKinematicLinear()
     {
     }
 
@@ -70,7 +70,7 @@ namespace Kratos
      * Initialization of the element, called at the begin of each simulation.
      * Membervariables and the Material law are initialized here
      */
-    void ExtrapolatedKinematicLinear::Initialize()
+    void ExtrapolatedConstantStressKinematicLinear::Initialize()
     {
         KRATOS_TRY//EXCEPTION HANDLING (see corresponing KRATOS_CATCH("") )
 
@@ -102,7 +102,7 @@ namespace Kratos
                 mThisIntegrationMethod = GeometryData::GI_GAUSS_5;
             }
             else
-                KRATOS_THROW_ERROR(std::logic_error, "ExtrapolatedKinematicLinear element does not support for integration rule", this->GetValue(INTEGRATION_ORDER))
+                KRATOS_THROW_ERROR(std::logic_error, "ExtrapolatedConstantStressKinematicLinear element does not support for integration rule", this->GetValue(INTEGRATION_ORDER))
         }
         else if(GetProperties().Has( INTEGRATION_ORDER ))
         {
@@ -127,7 +127,7 @@ namespace Kratos
                 mThisIntegrationMethod = GeometryData::GI_GAUSS_5;
             }
             else
-                KRATOS_THROW_ERROR(std::logic_error, "ExtrapolatedKinematicLinear element does not support for integration points", GetProperties()[INTEGRATION_ORDER])
+                KRATOS_THROW_ERROR(std::logic_error, "ExtrapolatedConstantStressKinematicLinear element does not support for integration points", GetProperties()[INTEGRATION_ORDER])
         }
         else
             mThisIntegrationMethod = GetGeometry().GetDefaultIntegrationMethod(); // default method
@@ -192,16 +192,6 @@ namespace Kratos
 //        std::cout << "Element " << Id() << " mInitialDisp is initialized to " << mInitialDisp << std::endl;
         #endif
 
-        mCurrentStrainVector.resize(integration_points.size());
-        mOldStrainVector.resize(integration_points.size());
-        for ( unsigned int PointNumber = 0; PointNumber < integration_points.size(); ++PointNumber )
-        {
-            mCurrentStrainVector[PointNumber].resize(strain_size);
-            noalias(mCurrentStrainVector[PointNumber]) = ZeroVector(strain_size);
-            mOldStrainVector[PointNumber].resize(strain_size);
-            noalias(mOldStrainVector[PointNumber]) = ZeroVector(strain_size);
-        }
-
         InitializeMaterial();
 
         mIsInitialized = true;
@@ -215,7 +205,7 @@ namespace Kratos
      * @param output Vector to store the values on the qudrature points, output of the method
      * @param rCurrentProcessInfo
      */
-    void ExtrapolatedKinematicLinear::CalculateOnIntegrationPoints( const Variable<double>& rVariable, std::vector<double>& Output, const ProcessInfo& rCurrentProcessInfo )
+    void ExtrapolatedConstantStressKinematicLinear::CalculateOnIntegrationPoints( const Variable<double>& rVariable, std::vector<double>& Output, const ProcessInfo& rCurrentProcessInfo )
     {
         GetValueOnIntegrationPoints( rVariable, Output, rCurrentProcessInfo );
     }
@@ -226,7 +216,7 @@ namespace Kratos
      * @param output Vector to store the values on the qudrature points, output of the method
      * @param rCurrentProcessInfo
      */
-    void ExtrapolatedKinematicLinear::CalculateOnIntegrationPoints( const Variable<array_1d<double, 3> >& rVariable, std::vector<array_1d<double, 3> >& Output, const ProcessInfo& rCurrentProcessInfo )
+    void ExtrapolatedConstantStressKinematicLinear::CalculateOnIntegrationPoints( const Variable<array_1d<double, 3> >& rVariable, std::vector<array_1d<double, 3> >& Output, const ProcessInfo& rCurrentProcessInfo )
     {
         GetValueOnIntegrationPoints( rVariable, Output, rCurrentProcessInfo );
     }
@@ -237,7 +227,7 @@ namespace Kratos
      * @param output Vector to store the values on the qudrature points, output of the method
      * @param rCurrentProcessInfo
      */
-    void ExtrapolatedKinematicLinear::CalculateOnIntegrationPoints( const Variable<Vector>& rVariable,
+    void ExtrapolatedConstantStressKinematicLinear::CalculateOnIntegrationPoints( const Variable<Vector>& rVariable,
             std::vector<Vector>& Output, const ProcessInfo& rCurrentProcessInfo )
     {
         GetValueOnIntegrationPoints( rVariable, Output, rCurrentProcessInfo );
@@ -249,7 +239,7 @@ namespace Kratos
      * @param output Vector to store the values on the qudrature points, output of the method
      * @param rCurrentProcessInfo
      */
-    void ExtrapolatedKinematicLinear::CalculateOnIntegrationPoints( const Variable<Matrix>& rVariable,
+    void ExtrapolatedConstantStressKinematicLinear::CalculateOnIntegrationPoints( const Variable<Matrix>& rVariable,
             std::vector<Matrix>& Output, const ProcessInfo& rCurrentProcessInfo )
     {
     }
@@ -257,11 +247,11 @@ namespace Kratos
     /**
      * Initialization of the Material law at each integration point
      */
-    void ExtrapolatedKinematicLinear::InitializeMaterial()
+    void ExtrapolatedConstantStressKinematicLinear::InitializeMaterial()
     {
     }
 
-    void ExtrapolatedKinematicLinear::ResetConstitutiveLaw()
+    void ExtrapolatedConstantStressKinematicLinear::ResetConstitutiveLaw()
     {
     }
 
@@ -274,7 +264,7 @@ namespace Kratos
      * @param CalculateStiffnessMatrixFlag true: algorithmic tangent has to be computed
      * @param CalculateResidualVectorFlag true: load vector has to be computed
      */
-    void ExtrapolatedKinematicLinear::CalculateAll(MatrixType& rLeftHandSideMatrix,
+    void ExtrapolatedConstantStressKinematicLinear::CalculateAll(MatrixType& rLeftHandSideMatrix,
                                        VectorType& rRightHandSideVector,
                                        ProcessInfo& rCurrentProcessInfo,
                                        bool CalculateStiffnessMatrixFlag,
@@ -296,9 +286,8 @@ namespace Kratos
         Matrix TanC( strain_size, strain_size );
         Matrix TanCe( strain_size, strain_size );
         Vector StrainVector( strain_size );
-        Vector StressVector( strain_size );
         Vector PhysicalStrainVector( strain_size );
-        Vector PhysicalStressVector( strain_size );
+        Vector StressVector( strain_size );
         Matrix DN_DX( number_of_nodes, dim );
         Matrix CurrentDisp( number_of_nodes, dim );
         Matrix InvJ0(dim, dim);
@@ -426,10 +415,10 @@ namespace Kratos
         noalias( DN_DXp ) = prod( DN_Dep, InvJp );
         CalculateBoperator( Bp, DN_DXp );
 
-        double beta = 1.0;
-        if(GetProperties().Has(PHYSICAL_STRESS_OFFSET_PARAMETER))
+        double alpha = 0.0;
+        if(GetProperties().Has(STRESS_STABILIZATION))
         {
-            beta = GetProperties()[PHYSICAL_STRESS_OFFSET_PARAMETER];
+            alpha = GetProperties()[STRESS_STABILIZATION];
         }
 
         /////////////////////////////////////////////////////////////////////////
@@ -446,12 +435,12 @@ namespace Kratos
             CalculateStrain( B, CurrentDisp, StrainVector );
 
             // update stress
-            PhysicalStressVector = pConstitutiveLaw->GetValue(STRESSES, PhysicalStressVector);
-            PhysicalStrainVector = pConstitutiveLaw->GetValue(STRAIN, PhysicalStrainVector);
-//            noalias(StressVector) = PhysicalStressVector + prod(TanCe, StrainVector - PhysicalStrainVector);
-            noalias(StressVector) = prod(TanCe, StrainVector) + beta * (PhysicalStressVector - prod(TanCe, PhysicalStrainVector));
-//            KRATOS_WATCH(PhysicalStrainVector)
-//            KRATOS_WATCH(PhysicalStressVector)
+            StressVector = pConstitutiveLaw->GetValue(STRESSES, StressVector);
+            if(alpha > 0.0)
+            {
+                PhysicalStrainVector = pConstitutiveLaw->GetValue(STRAIN, PhysicalStrainVector);
+                noalias(StressVector) += alpha * prod(TanCe, StrainVector - PhysicalStrainVector);
+            }
 
             //calculating weights for integration on the reference configuration
             double IntToReferenceWeight = integration_points[PointNumber].Weight();
@@ -462,10 +451,12 @@ namespace Kratos
             if ( CalculateStiffnessMatrixFlag == true ) //calculation of the matrix is required
             {
                 //calculate stiffness matrix
-                noalias( rLeftHandSideMatrix ) += ( IntToReferenceWeight * DetJ0 ) * (
-                               prod( trans( B ), Matrix( prod( TanCe, B ) ) )
-                      + beta * prod( trans( B ), Matrix( prod( TanC, Bp ) ) )
-                      - beta * prod( trans( B ), Matrix( prod( TanCe, Bp ) ) )
+                noalias( rLeftHandSideMatrix ) += ( IntToReferenceWeight * DetJ0 ) *
+                                prod( trans( B ), Matrix( prod( TanC, Bp ) ) );
+                if(alpha > 0.0)
+                    noalias( rLeftHandSideMatrix ) += alpha * ( IntToReferenceWeight * DetJ0 ) * (
+                            prod( trans( B ), Matrix( prod( TanCe, B ) ) )
+                          - prod( trans( B ), Matrix( prod( TanCe, Bp ) ) )
                     );
             }
 
@@ -555,7 +546,7 @@ namespace Kratos
      * @param rRightHandSideVector (inner and outer) load vector, size (number_of_nodes*dim)
      * @param rCurrentProcessInfo
      */
-    void ExtrapolatedKinematicLinear::CalculateRightHandSide(
+    void ExtrapolatedConstantStressKinematicLinear::CalculateRightHandSide(
         VectorType& rRightHandSideVector,
         ProcessInfo& rCurrentProcessInfo
     )
@@ -575,7 +566,7 @@ namespace Kratos
      * @param rRightHandSideVector (inner and outer) load vector, size (number_of_nodes*dim)
      * @param rCurrentProcessInfo
      */
-    void ExtrapolatedKinematicLinear::CalculateLocalSystem( MatrixType& rLeftHandSideMatrix,
+    void ExtrapolatedConstantStressKinematicLinear::CalculateLocalSystem( MatrixType& rLeftHandSideMatrix,
             VectorType& rRightHandSideVector, ProcessInfo& rCurrentProcessInfo )
     {
         //calculation flags
@@ -589,11 +580,11 @@ namespace Kratos
      * THIS method is called from the scheme at the start of each solution step
      * @param rCurrentProcessInfo
      */
-    void ExtrapolatedKinematicLinear::InitializeSolutionStep( ProcessInfo& CurrentProcessInfo )
+    void ExtrapolatedConstantStressKinematicLinear::InitializeSolutionStep( ProcessInfo& CurrentProcessInfo )
     {
     }
 
-    void ExtrapolatedKinematicLinear::InitializeNonLinearIteration(ProcessInfo& CurrentProcessInfo)
+    void ExtrapolatedConstantStressKinematicLinear::InitializeNonLinearIteration(ProcessInfo& CurrentProcessInfo)
     {
         //reset all resistant forces at node
         for ( unsigned int i = 0; i < GetGeometry().size(); ++i )
@@ -604,7 +595,7 @@ namespace Kratos
         }
     }
     
-    void ExtrapolatedKinematicLinear::FinalizeNonLinearIteration(ProcessInfo& CurrentProcessInfo)
+    void ExtrapolatedConstantStressKinematicLinear::FinalizeNonLinearIteration(ProcessInfo& CurrentProcessInfo)
     {
     }
     
@@ -613,18 +604,16 @@ namespace Kratos
      * start and end point variables can be transferred n --> n+1
      * @param rCurrentProcessInfo
      */
-    void ExtrapolatedKinematicLinear::FinalizeSolutionStep( ProcessInfo& CurrentProcessInfo )
+    void ExtrapolatedConstantStressKinematicLinear::FinalizeSolutionStep( ProcessInfo& CurrentProcessInfo )
     {
-        for(std::size_t i = 0; i < mOldStrainVector.size(); ++i)
-            noalias(mOldStrainVector[i]) = mCurrentStrainVector[i];
     }
 
-    void ExtrapolatedKinematicLinear::MassMatrix( MatrixType& rMassMatrix, ProcessInfo& rCurrentProcessInfo )
+    void ExtrapolatedConstantStressKinematicLinear::MassMatrix( MatrixType& rMassMatrix, ProcessInfo& rCurrentProcessInfo )
     {
         KRATOS_THROW_ERROR(std::logic_error, "Deprecated method", __FUNCTION__)
     }
 
-    void ExtrapolatedKinematicLinear::CalculateMassMatrix( MatrixType& rMassMatrix, ProcessInfo& rCurrentProcessInfo )
+    void ExtrapolatedConstantStressKinematicLinear::CalculateMassMatrix( MatrixType& rMassMatrix, ProcessInfo& rCurrentProcessInfo )
     {
         KRATOS_TRY
 
@@ -666,12 +655,12 @@ namespace Kratos
         KRATOS_CATCH( "" )
     }
 
-    void ExtrapolatedKinematicLinear::DampMatrix( MatrixType& rDampMatrix, ProcessInfo& rCurrentProcessInfo )
+    void ExtrapolatedConstantStressKinematicLinear::DampMatrix( MatrixType& rDampMatrix, ProcessInfo& rCurrentProcessInfo )
     {
         KRATOS_THROW_ERROR(std::logic_error, "Deprecated method", __FUNCTION__)
     }
 
-    void ExtrapolatedKinematicLinear::CalculateDampingMatrix( MatrixType& rDampMatrix, ProcessInfo& rCurrentProcessInfo )
+    void ExtrapolatedConstantStressKinematicLinear::CalculateDampingMatrix( MatrixType& rDampMatrix, ProcessInfo& rCurrentProcessInfo )
     {
         KRATOS_TRY
         unsigned int number_of_nodes = GetGeometry().size();
@@ -713,7 +702,7 @@ namespace Kratos
 
     //************************************************************************************
     //************************************************************************************
-    void ExtrapolatedKinematicLinear::GetValuesVector( Vector& values, int Step )
+    void ExtrapolatedConstantStressKinematicLinear::GetValuesVector( Vector& values, int Step )
     {
         const unsigned int number_of_nodes = GetGeometry().size();
         const unsigned int dim = GetGeometry().WorkingSpaceDimension();
@@ -735,7 +724,7 @@ namespace Kratos
 
     //************************************************************************************
     //************************************************************************************
-    void ExtrapolatedKinematicLinear::GetFirstDerivativesVector( Vector& values, int Step )
+    void ExtrapolatedConstantStressKinematicLinear::GetFirstDerivativesVector( Vector& values, int Step )
     {
         const unsigned int number_of_nodes = GetGeometry().size();
         const unsigned int dim = GetGeometry().WorkingSpaceDimension();
@@ -756,7 +745,7 @@ namespace Kratos
 
     //************************************************************************************
     //************************************************************************************
-    void ExtrapolatedKinematicLinear::GetSecondDerivativesVector( Vector& values, int Step )
+    void ExtrapolatedConstantStressKinematicLinear::GetSecondDerivativesVector( Vector& values, int Step )
     {
         const unsigned int number_of_nodes = GetGeometry().size();
         const unsigned int dim = GetGeometry().WorkingSpaceDimension();
@@ -778,7 +767,7 @@ namespace Kratos
     /**
      * returns the used integration method
      */
-    ExtrapolatedKinematicLinear::IntegrationMethod ExtrapolatedKinematicLinear::GetIntegrationMethod() const
+    ExtrapolatedConstantStressKinematicLinear::IntegrationMethod ExtrapolatedConstantStressKinematicLinear::GetIntegrationMethod() const
     {
         return mThisIntegrationMethod;
     }
@@ -789,7 +778,7 @@ namespace Kratos
      * @param rResult Vector of the EquationIds
      * @param rCurrentProcessInfo
      */
-    void ExtrapolatedKinematicLinear::EquationIdVector( EquationIdVectorType& rResult,
+    void ExtrapolatedConstantStressKinematicLinear::EquationIdVector( EquationIdVectorType& rResult,
             ProcessInfo& CurrentProcessInfo )
     {
         unsigned int dim = ( GetGeometry().WorkingSpaceDimension() );
@@ -815,7 +804,7 @@ namespace Kratos
      *                           of this element
      * @param rCurrentProcessInfo
      */
-    void ExtrapolatedKinematicLinear::GetDofList( DofsVectorType& ElementalDofList, ProcessInfo&
+    void ExtrapolatedConstantStressKinematicLinear::GetDofList( DofsVectorType& ElementalDofList, ProcessInfo&
             CurrentProcessInfo )
     {
         unsigned int dim = GetGeometry().WorkingSpaceDimension();
@@ -838,7 +827,7 @@ namespace Kratos
      * @param Weight current integration weight
      * @param detJ current Determinant of the Jacobian
      */
-    inline void ExtrapolatedKinematicLinear::AddBodyForcesToRHS( Vector& R, const Vector& N_DISP, double Weight, double detJ )
+    inline void ExtrapolatedConstantStressKinematicLinear::AddBodyForcesToRHS( Vector& R, const Vector& N_DISP, double Weight, double detJ )
     {
         KRATOS_TRY
 
@@ -869,7 +858,7 @@ namespace Kratos
         KRATOS_CATCH( "" )
     }
 
-    inline void ExtrapolatedKinematicLinear::CalculateAndAdd_ExtForceContribution(
+    inline void ExtrapolatedConstantStressKinematicLinear::CalculateAndAdd_ExtForceContribution(
             const Vector& N,
             const ProcessInfo& CurrentProcessInfo,
             const Vector& BodyForce,
@@ -901,7 +890,7 @@ namespace Kratos
      * @param Weight current integration weight
      * @param detJ current Determinant of the Jacobian
      */
-//    void ExtrapolatedKinematicLinear::AddInternalForcesToRHS( Vector& R, const Matrix& B_Operator, Vector& StressVector, double Weight, double detJ )
+//    void ExtrapolatedConstantStressKinematicLinear::AddInternalForcesToRHS( Vector& R, const Matrix& B_Operator, Vector& StressVector, double Weight, double detJ )
 //    {
 //        KRATOS_TRY
 
@@ -923,7 +912,7 @@ namespace Kratos
 //        KRATOS_CATCH( "" )
 //    }
 
-    void ExtrapolatedKinematicLinear::AddInternalForcesToRHS( Vector& R, const Matrix& B_Operator, Vector& StressVector, double Weight, double detJ )
+    void ExtrapolatedConstantStressKinematicLinear::AddInternalForcesToRHS( Vector& R, const Matrix& B_Operator, Vector& StressVector, double Weight, double detJ )
     {
         KRATOS_TRY
 
@@ -958,7 +947,7 @@ namespace Kratos
      * @param Weight current integration weight
      * @param detJ current Determinant of the Jacobian
      */
-    void ExtrapolatedKinematicLinear::CalculateStiffnesMatrix( Matrix& K, const Matrix& tan_C, const Matrix& B_Operator, double Weight, double detJ )
+    void ExtrapolatedConstantStressKinematicLinear::CalculateStiffnesMatrix( Matrix& K, const Matrix& tan_C, const Matrix& B_Operator, double Weight, double detJ )
     {
         KRATOS_TRY
 
@@ -997,7 +986,7 @@ namespace Kratos
      * @param PointNumber number of the current integration point
      * @param CurrentProcessInfo
      */
-    void ExtrapolatedKinematicLinear::CalculateStressAndTangentialStiffness( Vector& StressVector, Matrix& tanC_U,
+    void ExtrapolatedConstantStressKinematicLinear::CalculateStressAndTangentialStiffness( Vector& StressVector, Matrix& tanC_U,
             Vector& StrainVector, const Matrix& B_Operator, int PointNumber,
             const ProcessInfo& CurrentProcessInfo )
     {
@@ -1006,7 +995,7 @@ namespace Kratos
     /**
      * Computes the strain vector
      */
-    void ExtrapolatedKinematicLinear::CalculateStrain( const Matrix& B, const Matrix& Displacements, Vector& StrainVector )
+    void ExtrapolatedConstantStressKinematicLinear::CalculateStrain( const Matrix& B, const Matrix& Displacements, Vector& StrainVector )
     {
         KRATOS_TRY
         unsigned int Dim = GetGeometry().WorkingSpaceDimension();
@@ -1028,7 +1017,7 @@ namespace Kratos
      * @param B_Operator current B-operator
      * @param DN_DX shape function values at the current integration point
      */
-    void ExtrapolatedKinematicLinear::CalculateBoperator( Matrix& B_Operator, const Matrix& DN_DX )
+    void ExtrapolatedConstantStressKinematicLinear::CalculateBoperator( Matrix& B_Operator, const Matrix& DN_DX )
     {
         KRATOS_TRY
 
@@ -1068,7 +1057,7 @@ namespace Kratos
         KRATOS_CATCH( "" )
     }
 
-    void ExtrapolatedKinematicLinear::GetValueOnIntegrationPoints( const Variable<Matrix>& rVariable, std::vector<Matrix>& rValues, const ProcessInfo& rCurrentProcessInfo )
+    void ExtrapolatedConstantStressKinematicLinear::GetValueOnIntegrationPoints( const Variable<Matrix>& rVariable, std::vector<Matrix>& rValues, const ProcessInfo& rCurrentProcessInfo )
     {
         if ( rVariable == PK2_STRESS_TENSOR || rVariable == GREEN_LAGRANGE_STRAIN_TENSOR )
         {
@@ -1089,7 +1078,7 @@ namespace Kratos
      * @param rValues Vector to store the values on the qudrature points, output of the method
      * @param rCurrentProcessInfo
      */
-    void ExtrapolatedKinematicLinear::GetValueOnIntegrationPoints( const Variable<Vector>& rVariable, std::vector<Vector>& rValues, const ProcessInfo& rCurrentProcessInfo )
+    void ExtrapolatedConstantStressKinematicLinear::GetValueOnIntegrationPoints( const Variable<Vector>& rVariable, std::vector<Vector>& rValues, const ProcessInfo& rCurrentProcessInfo )
     {
         if( rVariable == PHYSICAL_INTEGRATION_POINT_THREED_STRESSES )
         {
@@ -1110,7 +1099,7 @@ namespace Kratos
      * @param rValues Vector to store the values on the qudrature points, output of the method
      * @param rCurrentProcessInfo
      */
-    void ExtrapolatedKinematicLinear::GetValueOnIntegrationPoints( const Variable<array_1d<double, 3> >& rVariable, std::vector<array_1d<double, 3> >& rValues, const ProcessInfo& rCurrentProcessInfo)
+    void ExtrapolatedConstantStressKinematicLinear::GetValueOnIntegrationPoints( const Variable<array_1d<double, 3> >& rVariable, std::vector<array_1d<double, 3> >& rValues, const ProcessInfo& rCurrentProcessInfo)
     {
         if( rVariable == DISPLACEMENT )
         {
@@ -1212,7 +1201,7 @@ namespace Kratos
      * @param rValues Vector to store the values on the qudrature points, output of the method
      * @param rCurrentProcessInfo
      */
-    void ExtrapolatedKinematicLinear::GetValueOnIntegrationPoints( const Variable<double>& rVariable, std::vector<double>& rValues, const ProcessInfo& rCurrentProcessInfo )
+    void ExtrapolatedConstantStressKinematicLinear::GetValueOnIntegrationPoints( const Variable<double>& rVariable, std::vector<double>& rValues, const ProcessInfo& rCurrentProcessInfo )
     {
         if( rVariable == JACOBIAN_0 )
         {
@@ -1261,15 +1250,15 @@ namespace Kratos
         }
     }
 
-    void ExtrapolatedKinematicLinear::GetValueOnIntegrationPoints( const Variable<int>& rVariable, std::vector<int>& rValues, const ProcessInfo& rCurrentProcessInfo )
+    void ExtrapolatedConstantStressKinematicLinear::GetValueOnIntegrationPoints( const Variable<int>& rVariable, std::vector<int>& rValues, const ProcessInfo& rCurrentProcessInfo )
     {
     }
 
-    void ExtrapolatedKinematicLinear::GetValueOnIntegrationPoints( const Variable<std::string>& rVariable, std::vector<std::string>& rValues, const ProcessInfo& rCurrentProcessInfo )
+    void ExtrapolatedConstantStressKinematicLinear::GetValueOnIntegrationPoints( const Variable<std::string>& rVariable, std::vector<std::string>& rValues, const ProcessInfo& rCurrentProcessInfo )
     {
     }
 
-    void ExtrapolatedKinematicLinear::GetValueOnIntegrationPoints( const Variable<ConstitutiveLaw::Pointer>& rVariable, std::vector<ConstitutiveLaw::Pointer>& rValues, const ProcessInfo& rCurrentProcessInfo )
+    void ExtrapolatedConstantStressKinematicLinear::GetValueOnIntegrationPoints( const Variable<ConstitutiveLaw::Pointer>& rVariable, std::vector<ConstitutiveLaw::Pointer>& rValues, const ProcessInfo& rCurrentProcessInfo )
     {
     }
 
@@ -1279,7 +1268,7 @@ namespace Kratos
      * @param rValues Vector of the values on the quadrature points
      * @param rCurrentProcessInfo
      */
-    void ExtrapolatedKinematicLinear::SetValueOnIntegrationPoints( const Variable<Matrix>& rVariable, std::vector<Matrix>& rValues, const ProcessInfo& rCurrentProcessInfo )
+    void ExtrapolatedConstantStressKinematicLinear::SetValueOnIntegrationPoints( const Variable<Matrix>& rVariable, std::vector<Matrix>& rValues, const ProcessInfo& rCurrentProcessInfo )
     {
     }
 
@@ -1289,7 +1278,7 @@ namespace Kratos
      * @param rValues Vector of the values on the quadrature points
      * @param rCurrentProcessInfo
      */
-    void ExtrapolatedKinematicLinear::SetValueOnIntegrationPoints( const Variable<Vector>& rVariable, std::vector<Vector>& rValues, const ProcessInfo& rCurrentProcessInfo )
+    void ExtrapolatedConstantStressKinematicLinear::SetValueOnIntegrationPoints( const Variable<Vector>& rVariable, std::vector<Vector>& rValues, const ProcessInfo& rCurrentProcessInfo )
     {
     }
 
@@ -1299,7 +1288,7 @@ namespace Kratos
      * @param rValue value on the quadrature points
      * @param rCurrentProcessInfo
      */
-    void ExtrapolatedKinematicLinear::SetValueOnIntegrationPoints( const Variable<double>& rVariable,
+    void ExtrapolatedConstantStressKinematicLinear::SetValueOnIntegrationPoints( const Variable<double>& rVariable,
             std::vector<double>& rValues, const ProcessInfo& rCurrentProcessInfo )
     {
     }
@@ -1309,16 +1298,16 @@ namespace Kratos
      * @param rValue value on the quadrature points
      * @param rCurrentProcessInfo
      */
-    void ExtrapolatedKinematicLinear::SetValueOnIntegrationPoints( const Variable<int>& rVariable,
+    void ExtrapolatedConstantStressKinematicLinear::SetValueOnIntegrationPoints( const Variable<int>& rVariable,
             std::vector<int>& rValues, const ProcessInfo& rCurrentProcessInfo )
     {
     }
 
-    void ExtrapolatedKinematicLinear::SetValueOnIntegrationPoints( const Kratos::Variable< ConstitutiveLaw::Pointer >& rVariable, std::vector< ConstitutiveLaw::Pointer >& rValues, const Kratos::ProcessInfo& rCurrentProcessInfo )
+    void ExtrapolatedConstantStressKinematicLinear::SetValueOnIntegrationPoints( const Kratos::Variable< ConstitutiveLaw::Pointer >& rVariable, std::vector< ConstitutiveLaw::Pointer >& rValues, const Kratos::ProcessInfo& rCurrentProcessInfo )
     {
     }
 
-    int ExtrapolatedKinematicLinear::Check( const Kratos::ProcessInfo& rCurrentProcessInfo )
+    int ExtrapolatedConstantStressKinematicLinear::Check( const Kratos::ProcessInfo& rCurrentProcessInfo )
     {
         KRATOS_TRY
 
