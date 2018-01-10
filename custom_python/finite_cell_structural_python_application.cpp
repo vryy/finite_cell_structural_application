@@ -20,6 +20,7 @@
 #include "includes/define.h"
 #include "finite_cell_structural_application.h"
 #include "custom_python/add_custom_utilities_to_python.h"
+#include "custom_python/add_custom_conditions_to_python.h"
 
 namespace Kratos
 {
@@ -35,6 +36,7 @@ namespace Python
         ("KratosFiniteCellStructuralApplication");
 
         FiniteCellStructuralApplication_AddCustomUtilitiesToPython();
+        FiniteCellStructuralApplication_AddCustomConditionsToPython();
 
         KRATOS_REGISTER_IN_PYTHON_VARIABLE( FORCE_MAGNITUDE )
         KRATOS_REGISTER_IN_PYTHON_VARIABLE( PHYSICAL_STRESS_OFFSET_PARAMETER )
