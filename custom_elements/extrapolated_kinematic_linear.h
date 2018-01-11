@@ -57,8 +57,8 @@ namespace Kratos
 /// Short class definition.
 /** Detail class definition.
 
-ExtrapolatedKinematicLinear is designed to be a general linear strutural element support for both 2D and 3D.
-
+stress at Gauss point = Ce*strain at Gauss point + beta*(stress at physical point - Ce*strain at physical point)
+for linear elastic: it is always: stress at Gauss point = Ce*strain at Gauss point
  */
 
 class ExtrapolatedKinematicLinear : public Element

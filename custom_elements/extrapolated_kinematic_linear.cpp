@@ -431,6 +431,7 @@ namespace Kratos
         {
             beta = GetProperties()[PHYSICAL_STRESS_OFFSET_PARAMETER];
         }
+//        KRATOS_WATCH(beta)
 
         /////////////////////////////////////////////////////////////////////////
         //// Integration in space over quadrature points

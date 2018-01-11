@@ -58,7 +58,9 @@ namespace Kratos
 /** Detail class definition.
 
 Using for moment-fitted subcell scheme, constant stress extrapolation from physical point
-
+stress at Gauss point = stress at physical point + alpha*Ce(strain at Gauss point - strain at physical point)
+alpha = 0: stress at Gauss point = stress at physical point (constant stress over sub-cell)
+alpha = 1: for linear elastic, it is always: stress at Gauss point = Ce*strain at Gauss point
  */
 
 class ExtrapolatedConstantStressKinematicLinear : public Element
