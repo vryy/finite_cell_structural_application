@@ -65,67 +65,6 @@ Condition::Pointer GhostPenaltyElasticCondition::Create(IndexType NewId,
     return Condition::Pointer( new GhostPenaltyElasticCondition(NewId, pGeometry, pSlaveElement, pMasterElement, pProperties) );
 }
 
-void GhostPenaltyElasticCondition::Initialize()
-{
-    KRATOS_TRY
-
-    // integration rule
-    if(this->Has( INTEGRATION_ORDER ))
-    {
-        if(this->GetValue(INTEGRATION_ORDER) == 1)
-        {
-            mThisIntegrationMethod = GeometryData::GI_GAUSS_1;
-        }
-        else if(this->GetValue(INTEGRATION_ORDER) == 2)
-        {
-            mThisIntegrationMethod = GeometryData::GI_GAUSS_2;
-        }
-        else if(this->GetValue(INTEGRATION_ORDER) == 3)
-        {
-            mThisIntegrationMethod = GeometryData::GI_GAUSS_3;
-        }
-        else if(this->GetValue(INTEGRATION_ORDER) == 4)
-        {
-            mThisIntegrationMethod = GeometryData::GI_GAUSS_4;
-        }
-        else if(this->GetValue(INTEGRATION_ORDER) == 5)
-        {
-            mThisIntegrationMethod = GeometryData::GI_GAUSS_5;
-        }
-        else
-            KRATOS_THROW_ERROR(std::logic_error, "KinematicLinear element does not support for integration rule", this->GetValue(INTEGRATION_ORDER))
-    }
-    else if(GetProperties().Has( INTEGRATION_ORDER ))
-    {
-        if(GetProperties()[INTEGRATION_ORDER] == 1)
-        {
-            mThisIntegrationMethod = GeometryData::GI_GAUSS_1;
-        }
-        else if(GetProperties()[INTEGRATION_ORDER] == 2)
-        {
-            mThisIntegrationMethod = GeometryData::GI_GAUSS_2;
-        }
-        else if(GetProperties()[INTEGRATION_ORDER] == 3)
-        {
-            mThisIntegrationMethod = GeometryData::GI_GAUSS_3;
-        }
-        else if(GetProperties()[INTEGRATION_ORDER] == 4)
-        {
-            mThisIntegrationMethod = GeometryData::GI_GAUSS_4;
-        }
-        else if(GetProperties()[INTEGRATION_ORDER] == 5)
-        {
-            mThisIntegrationMethod = GeometryData::GI_GAUSS_5;
-        }
-        else
-            KRATOS_THROW_ERROR(std::logic_error, "KinematicLinear element does not support for integration points", GetProperties()[INTEGRATION_ORDER])
-    }
-    else
-        mThisIntegrationMethod = GetGeometry().GetDefaultIntegrationMethod(); // default method
-
-    KRATOS_CATCH("")
-}
-
 //************************************************************************************
 //************************************************************************************
 //************************************************************************************
@@ -197,14 +136,17 @@ void GhostPenaltyElasticCondition::CalculateAll( MatrixType& rLeftHandSideMatrix
         noalias( rRightHandSideVector ) = ZeroVector( mat_size ); //resetting RHS
     }
 
-    // reading integration points and local gradients
+    // reading integration points and local gradients on the edge/face
     const GeometryType::IntegrationPointsArrayType& integration_points = GetGeometry().IntegrationPoints( mThisIntegrationMethod );
 
-    // compute the shape function gradient on the edge on the normal direction
+    // compute the shape function gradient on the edge of the first element on the normal direction
+    // the edge is assumed to follow the forward direction of the first element
     Matrix dN1dn(GetGeometry().size(), integration_points.size());
     GhostPenaltyUtility::ComputeShapeFunctionNormalGradient(dN1dn, pSlave()->GetGeometry(), GetGeometry(), integration_points);
     KRATOS_WATCH(dN1dn)
 
+    // compute the shape function gradient on the edge of the second element on the normal direction
+    // the edge is assumed to follow the reversed direction of the second element
     Matrix dN2dn(GetGeometry().size(), integration_points.size());
     GhostPenaltyUtility::ComputeShapeFunctionNormalGradient(dN2dn, pMaster()->GetGeometry(), GetGeometry(), integration_points);
     KRATOS_WATCH(dN2dn)
@@ -218,17 +160,22 @@ void GhostPenaltyElasticCondition::CalculateAll( MatrixType& rLeftHandSideMatrix
     J0 = GetGeometry().Jacobian( J0, mThisIntegrationMethod, DeltaPosition );
     double DetJ;
 
-    // compute the length of the geometry
-    double Length = 0.0;
+    // compute the length/area of the geometry
+    double DomainSize = 0.0;
     for (std::size_t PointNumber = 0; PointNumber < integration_points.size(); ++PointNumber)
     {
         DetJ = MathUtils<double>::Det(Matrix(prod(trans(J0[PointNumber]), J0[PointNumber])));
-        Length += DetJ * integration_points[PointNumber].Weight();
+        DomainSize += DetJ * integration_points[PointNumber].Weight();
     }
-    KRATOS_WATCH(Length)
+    KRATOS_WATCH(DomainSize)
 
-    const double& Penalty = this->GetValue(INITIAL_PENALTY);
-    double Aux = Penalty * pow(Length, 2);
+    // compute the penalty coefficients
+    const double& Penalty = GetProperties()[INITIAL_PENALTY];
+    double Aux;
+    if (Dim == 2)
+        Aux = Penalty * pow(DomainSize, 2);
+    else if (Dim == 3)
+        Aux = Penalty * DomainSize;
 
     if ( CalculateResidualVectorFlag == true )
     {

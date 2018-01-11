@@ -13,6 +13,7 @@
 #include "includes/condition.h"
 #include "custom_python/add_custom_conditions_to_python.h"
 #include "custom_conditions/ghost_penalty_elastic_condition.h"
+#include "custom_conditions/ghost_penalty_stress_condition.h"
 
 
 namespace Kratos
@@ -28,6 +29,11 @@ void FiniteCellStructuralApplication_AddCustomConditionsToPython()
 
     class_< GhostPenaltyElasticCondition, GhostPenaltyElasticCondition::Pointer, bases< GhostPenaltyCondition > >
     ("GhostPenaltyElasticCondition", init<>() )
+    .def(self_ns::str(self))
+    ;
+
+    class_< GhostPenaltyStressCondition, GhostPenaltyStressCondition::Pointer, bases< GhostPenaltyCondition > >
+    ("GhostPenaltyStressCondition", init<>() )
     .def(self_ns::str(self))
     ;
 

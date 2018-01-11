@@ -1,12 +1,12 @@
 //
 //   Project Name:        Kratos
 //   Last Modified by:    $Author: hbui $
-//   Date:                $Date: 7 Jan 2018 $
+//   Date:                $Date: 10 Jan 2018 $
 //   Revision:            $Revision: 1.0 $
 //
 //
-#if !defined(KRATOS_GHOST_PENALTY_ELASTIC_CONDITION_H_INCLUDED )
-#define  KRATOS_GHOST_PENALTY_ELASTIC_CONDITION_H_INCLUDED
+#if !defined(KRATOS_GHOST_PENALTY_STRESS_CONDITION_H_INCLUDED )
+#define  KRATOS_GHOST_PENALTY_STRESS_CONDITION_H_INCLUDED
 
 
 // External includes
@@ -26,30 +26,33 @@ namespace Kratos
 
 /**
  * Ghost penalty implementation for linear elasticity
- * This class add a weak variational term to enforce the continuity of the gradient of displacement along the boundary
+ * This class add a weak variational term to enforce the continuity of the stress along the boundary
+ * The term is [|d\epsilon|]*C*[|\epsilon|] = [|d\epsilon|]*[|\sigma|]
  */
-class GhostPenaltyElasticCondition : public GhostPenaltyCondition
+class GhostPenaltyStressCondition : public GhostPenaltyCondition
 {
     public:
-        // Counted pointer of GhostPenaltyElasticCondition
-        KRATOS_CLASS_POINTER_DEFINITION(GhostPenaltyElasticCondition);
+        // Counted pointer of GhostPenaltyStressCondition
+        KRATOS_CLASS_POINTER_DEFINITION(GhostPenaltyStressCondition);
+
+        typedef GeometryType::IntegrationPointType IntegrationPointType;
 
         /**
          * Default constructor.
          */
-        GhostPenaltyElasticCondition();
+        GhostPenaltyStressCondition();
 
-        GhostPenaltyElasticCondition( IndexType NewId, GeometryType::Pointer pGeometry);
+        GhostPenaltyStressCondition( IndexType NewId, GeometryType::Pointer pGeometry);
 
-        GhostPenaltyElasticCondition( IndexType NewId, GeometryType::Pointer pGeometry, PropertiesType::Pointer pProperties);
+        GhostPenaltyStressCondition( IndexType NewId, GeometryType::Pointer pGeometry, PropertiesType::Pointer pProperties);
 
-        GhostPenaltyElasticCondition( IndexType NewId, GeometryType::Pointer pGeometry,
+        GhostPenaltyStressCondition( IndexType NewId, GeometryType::Pointer pGeometry,
             Element::Pointer pSlaveElement, Element::Pointer pMasterElement, PropertiesType::Pointer pProperties );
 
         /**
          * Destructor.
          */
-        virtual ~GhostPenaltyElasticCondition();
+        virtual ~GhostPenaltyStressCondition();
 
         virtual Condition::Pointer Create(IndexType NewId,
             GeometryType::Pointer pGeometry,
@@ -60,6 +63,8 @@ class GhostPenaltyElasticCondition : public GhostPenaltyCondition
         /**
          * Operations.
          */
+
+        virtual void Initialize();
 
         /**
          * Calculates the local system contributions for this contact element
@@ -97,6 +102,10 @@ class GhostPenaltyElasticCondition : public GhostPenaltyCondition
 
     private:
 
+        bool mIsInitialized;
+        std::vector<ConstitutiveLaw::Pointer> mSlaveConstitutiveLaws;
+        std::vector<ConstitutiveLaw::Pointer> mMasterConstitutiveLaws;
+
         friend class Serializer;
 
         virtual void save ( Serializer& rSerializer ) const
@@ -115,10 +124,14 @@ class GhostPenaltyElasticCondition : public GhostPenaltyCondition
                            bool CalculateStiffnessMatrixFlag,
                            bool CalculateResidualVectorFlag);
 
-}; // Class GhostPenaltyElasticCondition
+        void CalculateBoperator( Matrix& B_Operator, const Matrix& DN_DX ) const;
+
+        void CalculateStrain( const Matrix& B, const Matrix& Displacements, Vector& StrainVector ) const;
+
+}; // Class GhostPenaltyStressCondition
 
 }  // namespace Kratos.
 
 
-#endif // KRATOS_GHOST_PENALTY_ELASTIC_CONDITION_H_INCLUDED defined
+#endif // KRATOS_GHOST_PENALTY_STRESS_CONDITION_H_INCLUDED defined
 

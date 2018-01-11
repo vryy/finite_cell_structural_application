@@ -16,6 +16,7 @@ set( KRATOS_FINITE_CELL_APPLICATION_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/custom_conditions/line_force_with_function.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/custom_conditions/immersed_point_force.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/custom_conditions/ghost_penalty_elastic_condition.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/custom_conditions/ghost_penalty_stress_condition.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/finite_cell_structural_application.cpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/custom_python/add_custom_conditions_to_python.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/custom_python/add_custom_utilities_to_python.cpp
