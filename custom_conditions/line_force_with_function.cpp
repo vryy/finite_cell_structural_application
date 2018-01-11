@@ -57,6 +57,15 @@ Condition::Pointer LineForceWithFunction::Create( IndexType NewId,
 
 //***********************************************************************************
 //***********************************************************************************
+Condition::Pointer LineForceWithFunction::Create( IndexType NewId,
+                                        GeometryType::Pointer pGeom,
+                                        PropertiesType::Pointer pProperties ) const
+{
+    return Condition::Pointer( new LineForceWithFunction( NewId, pGeom, pProperties ) );
+}
+
+//***********************************************************************************
+//***********************************************************************************
 // Destructor
 LineForceWithFunction::~LineForceWithFunction()
 {
@@ -146,6 +155,11 @@ void LineForceWithFunction::CalculateRightHandSide( VectorType& rRightHandSideVe
     else
         ThisIntegrationMethod = GetGeometry().GetDefaultIntegrationMethod(); // default method
 
+    #ifdef ENABLE_BEZIER_GEOMETRY
+    //initialize the geometry
+    GetGeometry().Initialize(ThisIntegrationMethod);
+    #endif
+
     //reading integration points and local gradients
     const GeometryType::IntegrationPointsArrayType& integration_points =
         GetGeometry().IntegrationPoints(ThisIntegrationMethod);
@@ -157,8 +171,13 @@ void LineForceWithFunction::CalculateRightHandSide( VectorType& rRightHandSideVe
     // Ncontainer is the array of shape function values at each integration points
     const Matrix& Ncontainer = GetGeometry().ShapeFunctionsValues(ThisIntegrationMethod);
 
+//    for ( unsigned int PointNumber = 0; PointNumber < integration_points.size(); ++PointNumber )
+//        KRATOS_WATCH(integration_points[PointNumber])
+//    KRATOS_WATCH(Ncontainer)
+
     //loop over integration points
     Vector Load( dim );
+    Vector t( dim );
     PointType GlobalCoords;
 
     FunctionR3Rn::Pointer pLoadFuntion;
@@ -187,13 +206,15 @@ void LineForceWithFunction::CalculateRightHandSide( VectorType& rRightHandSideVe
             noalias(GlobalCoords) += Ncontainer(PointNumber, i) * GetGeometry()[i].GetInitialPosition();
 
         noalias( Load ) = pLoadFuntion->GetValue(GlobalCoords);
+//        KRATOS_WATCH(GlobalCoords)
 //        KRATOS_WATCH(Load)
 
         double IntegrationWeight = integration_points[PointNumber].Weight();
+//        KRATOS_WATCH(IntegrationWeight)
 
         if(dim == 2) IntegrationWeight *= GetProperties()[THICKNESS];
 
-        Vector t = ZeroVector( dim );//tangential vector
+        noalias( t ) = ZeroVector( dim );//tangential vector
         for ( unsigned int n = 0; n < GetGeometry().size(); ++n )
         {
             t[0] += GetGeometry().GetPoint( n ).X0() * DN_DeContainer[PointNumber]( n, 0 );
@@ -204,6 +225,7 @@ void LineForceWithFunction::CalculateRightHandSide( VectorType& rRightHandSideVe
 
         // calculating length
         double dL = norm_2(t);
+//        KRATOS_WATCH(t)
 //        KRATOS_WATCH(dL)
 
         // RIGHT HAND SIDE VECTOR
@@ -212,6 +234,13 @@ void LineForceWithFunction::CalculateRightHandSide( VectorType& rRightHandSideVe
                 rRightHandSideVector( prim * dim + i ) +=
                     Ncontainer( PointNumber, prim ) * Load( i ) * IntegrationWeight * dL;
     }
+
+    #ifdef ENABLE_BEZIER_GEOMETRY
+    //clean the internal data of the geometry
+    GetGeometry().Clean();
+    #endif
+
+//    KRATOS_WATCH(rRightHandSideVector)
 
     KRATOS_CATCH( "" )
 }
