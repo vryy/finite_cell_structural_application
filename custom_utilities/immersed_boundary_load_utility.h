@@ -356,6 +356,7 @@ public:
                     Condition::Pointer pNewCond = Condition::Pointer(
                             new ImmersedPointForce(++lastCondId, pTempGeometry, pProperties, rWeights[i], rForces[i], pElem, LocalPoint) );
 
+                    pNewCond->SetValue(IS_INACTIVE, false);
                     pNewCond->Set(ACTIVE, true);
 
                     ImmersedConditions.push_back(pNewCond);
