@@ -16,6 +16,8 @@
 #include "finite_cell_application/custom_utilities/ghost_penalty_utility.h"
 #include "structural_application/structural_application.h"
 
+#define DEBUG_GHOST_PENALTY_STRESS
+
 namespace Kratos
 {
 
@@ -88,15 +90,15 @@ void GhostPenaltyStressCondition::Initialize()
         mSlaveConstitutiveLaws.resize( integration_points.size() );
 
         #ifdef ENABLE_BEZIER_GEOMETRY
-        pSlave()->GetGeometry().Initialize(mThisIntegrationMethod);
+        pSlave()->GetGeometry().Initialize( integration_points );
         #endif
 
         for ( unsigned int i = 0; i < mSlaveConstitutiveLaws.size(); ++i )
         {
             // REMARKS!!! It is noted that the constitutive law on the interface may be different to the constitutive law of the bulk, if their Properties are different.
             mSlaveConstitutiveLaws[i] = GetProperties()[CONSTITUTIVE_LAW]->Clone();
-            mSlaveConstitutiveLaws[i]->SetValue( PARENT_ELEMENT_ID, pSlave()->Id(), *(ProcessInfo*)0);
-            mSlaveConstitutiveLaws[i]->SetValue( INTEGRATION_POINT_INDEX, i, *(ProcessInfo*)0);
+            mSlaveConstitutiveLaws[i]->SetValue( PARENT_ELEMENT_ID, pSlave()->Id(), *(ProcessInfo*)0 );
+            mSlaveConstitutiveLaws[i]->SetValue( INTEGRATION_POINT_INDEX, i, *(ProcessInfo*)0 );
             mSlaveConstitutiveLaws[i]->InitializeMaterial( GetProperties(), pSlave()->GetGeometry(), row( pSlave()->GetGeometry().ShapeFunctionsValues( mThisIntegrationMethod ), i ) );
 
             //check constitutive law
@@ -113,15 +115,15 @@ void GhostPenaltyStressCondition::Initialize()
         mMasterConstitutiveLaws.resize( integration_points.size() );
 
         #ifdef ENABLE_BEZIER_GEOMETRY
-        pMaster()->GetGeometry().Initialize(mThisIntegrationMethod);
+        pMaster()->GetGeometry().Initialize( integration_points );
         #endif
 
         for ( unsigned int i = 0; i < mMasterConstitutiveLaws.size(); ++i )
         {
             // REMARKS!!! It is noted that the constitutive law on the interface may be different to the constitutive law of the bulk, if their Properties are different.
             mMasterConstitutiveLaws[i] = GetProperties()[CONSTITUTIVE_LAW]->Clone();
-            mMasterConstitutiveLaws[i]->SetValue( PARENT_ELEMENT_ID, pMaster()->Id(), *(ProcessInfo*)0);
-            mMasterConstitutiveLaws[i]->SetValue( INTEGRATION_POINT_INDEX, i, *(ProcessInfo*)0);
+            mMasterConstitutiveLaws[i]->SetValue( PARENT_ELEMENT_ID, pMaster()->Id(), *(ProcessInfo*)0 );
+            mMasterConstitutiveLaws[i]->SetValue( INTEGRATION_POINT_INDEX, i, *(ProcessInfo*)0 );
             mMasterConstitutiveLaws[i]->InitializeMaterial( GetProperties(), pMaster()->GetGeometry(), row( pMaster()->GetGeometry().ShapeFunctionsValues( mThisIntegrationMethod ), i ) );
 
             //check constitutive law
@@ -227,61 +229,81 @@ void GhostPenaltyStressCondition::CalculateAll( MatrixType& rLeftHandSideMatrix,
         double DomainSize = 0.0;
         for (std::size_t PointNumber = 0; PointNumber < integration_points.size(); ++PointNumber)
         {
-            DetJ = MathUtils<double>::Det(Matrix(prod(trans(J0[PointNumber]), J0[PointNumber])));
+            DetJ = sqrt(MathUtils<double>::Det(Matrix(prod(trans(J0[PointNumber]), J0[PointNumber]))));
             DomainSize += DetJ * integration_points[PointNumber].Weight();
         }
 //        KRATOS_WATCH(DomainSize)
 
         // compute the penalty coefficients
         const double& Penalty = GetProperties()[INITIAL_PENALTY];
-        double Aux;
+        double Gamma = 1.0;
         if (Dim == 2)
-            Aux = Penalty * pow(DomainSize, 2);
+            Gamma = Penalty * pow(DomainSize, 2);
         else if (Dim == 3)
-            Aux = Penalty * DomainSize;
+            Gamma = Penalty * DomainSize;
+        KRATOS_WATCH(Gamma)
+        const double& Thickness = GetProperties()[THICKNESS];
 
         Matrix B1_Operator( strain_size, pSlave()->GetGeometry().size()*Dim );
         Matrix TanC_1( strain_size, strain_size );
         Vector StrainVector_1( strain_size );
         Vector StressVector_1( strain_size );
-        Matrix CurrentDisp_1( pSlave()->GetGeometry().size(), Dim );
+        Matrix CurrentDisp_1( pSlave()->GetGeometry().size(), 3 );
         Vector Nvalues_1( pSlave()->GetGeometry().size() );
         Matrix DN1_DX( pSlave()->GetGeometry().size(), Dim );
         IntegrationPointType integration_point_1;
-        Vector RightHandSideVector_1( pSlave()->GetGeometry().size()*Dim );
-        Matrix LeftHandSideMatrix_1( pSlave()->GetGeometry().size()*Dim, pSlave()->GetGeometry().size()*Dim );
-
-        noalias( RightHandSideVector_1 ) = ZeroVector( pSlave()->GetGeometry().size()*Dim );
-        noalias( LeftHandSideMatrix_1 ) = ZeroMatrix( pSlave()->GetGeometry().size()*Dim, pSlave()->GetGeometry().size()*Dim );
+        Vector RHS_1( pSlave()->GetGeometry().size()*Dim );
 
         Matrix B2_Operator( strain_size, pMaster()->GetGeometry().size()*Dim );
         Matrix TanC_2( strain_size, strain_size );
         Vector StrainVector_2( strain_size );
         Vector StressVector_2( strain_size );
-        Matrix CurrentDisp_2( pMaster()->GetGeometry().size(), Dim );
+        Matrix CurrentDisp_2( pMaster()->GetGeometry().size(), 3 );
         Vector Nvalues_2( pMaster()->GetGeometry().size() );
         Matrix DN2_DX( pMaster()->GetGeometry().size(), Dim );
         IntegrationPointType integration_point_2;
-        Vector RightHandSideVector_2( pMaster()->GetGeometry().size()*Dim );
-        Matrix LeftHandSideMatrix_2( pMaster()->GetGeometry().size()*Dim, pMaster()->GetGeometry().size()*Dim );
+        Vector RHS_2( pMaster()->GetGeometry().size()*Dim );
 
-        noalias( RightHandSideVector_2 ) = ZeroVector( pMaster()->GetGeometry().size()*Dim );
-        noalias( LeftHandSideMatrix_2 ) = ZeroMatrix( pMaster()->GetGeometry().size()*Dim, pMaster()->GetGeometry().size()*Dim );
+        noalias( RHS_1 ) = ZeroVector( pSlave()->GetGeometry().size()*Dim );
+        noalias( RHS_2 ) = ZeroVector( pMaster()->GetGeometry().size()*Dim );
+
+        Matrix LHS_11( pSlave()->GetGeometry().size()*Dim, pSlave()->GetGeometry().size()*Dim );
+        Matrix LHS_12( pSlave()->GetGeometry().size()*Dim, pMaster()->GetGeometry().size()*Dim );
+        Matrix LHS_21( pMaster()->GetGeometry().size()*Dim, pSlave()->GetGeometry().size()*Dim );
+        Matrix LHS_22( pMaster()->GetGeometry().size()*Dim, pMaster()->GetGeometry().size()*Dim );
+
+        noalias( LHS_11 ) = ZeroMatrix( pSlave()->GetGeometry().size()*Dim, pSlave()->GetGeometry().size()*Dim );
+        noalias( LHS_12 ) = ZeroMatrix( pSlave()->GetGeometry().size()*Dim, pMaster()->GetGeometry().size()*Dim );
+        noalias( LHS_21 ) = ZeroMatrix( pMaster()->GetGeometry().size()*Dim, pSlave()->GetGeometry().size()*Dim );
+        noalias( LHS_22 ) = ZeroMatrix( pMaster()->GetGeometry().size()*Dim, pMaster()->GetGeometry().size()*Dim );
 
         // extract current displacements
         for (unsigned int node = 0; node < pSlave()->GetGeometry().size(); ++node)
-            noalias(row(CurrentDisp_1, node)) =
-                pSlave()->GetGeometry()[node].GetSolutionStepValue(DISPLACEMENT);
+            noalias(row(CurrentDisp_1, node)) = pSlave()->GetGeometry()[node].GetSolutionStepValue(DISPLACEMENT);
 
         for (unsigned int node = 0; node < pMaster()->GetGeometry().size(); ++node)
-            noalias(row(CurrentDisp_2, node)) =
-                pMaster()->GetGeometry()[node].GetSolutionStepValue(DISPLACEMENT);
+            noalias(row(CurrentDisp_2, node)) = pMaster()->GetGeometry()[node].GetSolutionStepValue(DISPLACEMENT);
 
         int side_1 = GhostPenaltyUtility::FindSide(pSlave()->GetGeometry(), GetGeometry());
         int side_2 = GhostPenaltyUtility::FindSide(pMaster()->GetGeometry(), GetGeometry());
-//        KRATOS_WATCH(side_1)
-//        KRATOS_WATCH(side_2)
         // Remark: I don't want to check size because when setting up the ghost penalty, the size is automatically correct.
+
+        #ifdef DEBUG_GHOST_PENALTY_STRESS
+        std::cout << "edge geometry:";
+        for (int i = 0; i < GetGeometry().size(); ++i)
+            std::cout << " " << GetGeometry()[i].Id();
+        std::cout << std::endl;
+        std::cout << "slave geometry:";
+        for (int i = 0; i < pSlave()->GetGeometry().size(); ++i)
+            std::cout << " " << pSlave()->GetGeometry()[i].Id();
+        std::cout << std::endl;
+        std::cout << "master geometry:";
+        for (int i = 0; i < pMaster()->GetGeometry().size(); ++i)
+            std::cout << " " << pMaster()->GetGeometry()[i].Id();
+        std::cout << std::endl;
+        KRATOS_WATCH(side_1)
+        KRATOS_WATCH(side_2)
+        #endif
 
         std::map<std::size_t, std::size_t> map_edge_node_index_to_element_node_index_1;
         GhostPenalty_Helper::BuildMapEdgeNodeIndexToElementNodeIndex(map_edge_node_index_to_element_node_index_1,
@@ -291,12 +313,30 @@ void GhostPenaltyStressCondition::CalculateAll( MatrixType& rLeftHandSideMatrix,
         GhostPenalty_Helper::BuildMapEdgeNodeIndexToElementNodeIndex(map_edge_node_index_to_element_node_index_2,
                 GetGeometry(), pMaster()->GetGeometry(), GhostPenaltyUtility::Faces(pMaster()->GetGeometry(), side_2));
 
+        #ifdef DEBUG_GHOST_PENALTY_STRESS
+        std::cout << "map_edge_node_index_to_element_node_index_1:";
+        for(std::map<std::size_t, std::size_t>::iterator it = map_edge_node_index_to_element_node_index_1.begin();
+                it != map_edge_node_index_to_element_node_index_1.end(); ++it)
+            std::cout << ", " << it->first << ": " << it->second;
+        std::cout << std::endl;
+        std::cout << "map_edge_node_index_to_element_node_index_2:";
+        for(std::map<std::size_t, std::size_t>::iterator it = map_edge_node_index_to_element_node_index_2.begin();
+                it != map_edge_node_index_to_element_node_index_2.end(); ++it)
+            std::cout << ", " << it->first << ": " << it->second;
+        std::cout << std::endl;
+        #endif
+
         // quadrature loop
         for (std::size_t PointNumber = 0; PointNumber < integration_points.size(); ++PointNumber)
         {
             // compute the integration points of the edge on the slave and the master
             noalias( integration_point_1 ) = GhostPenaltyUtility::ComputeIntegrationPoint(pSlave()->GetGeometry(), side_1, integration_points[PointNumber]);
             noalias( integration_point_2 ) = GhostPenaltyUtility::ComputeIntegrationPoint(pMaster()->GetGeometry(), side_2, integration_points[PointNumber]);
+
+            #ifdef DEBUG_GHOST_PENALTY_STRESS
+            KRATOS_WATCH(integration_point_1)
+            KRATOS_WATCH(integration_point_2)
+            #endif
 
             /* compute the jump term */
 
@@ -315,6 +355,10 @@ void GhostPenaltyStressCondition::CalculateAll( MatrixType& rLeftHandSideMatrix,
             // compute the strain
             CalculateStrain(B1_Operator, CurrentDisp_1, StrainVector_1);
             CalculateStrain(B2_Operator, CurrentDisp_2, StrainVector_2);
+
+            // compute determinant
+            DetJ = sqrt(MathUtils<double>::Det(Matrix(prod(trans(J0[PointNumber]), J0[PointNumber]))));
+//            KRATOS_WATCH(DetJ)
 
             // compute the stress
             mSlaveConstitutiveLaws[PointNumber]->CalculateMaterialResponse(
@@ -345,16 +389,24 @@ void GhostPenaltyStressCondition::CalculateAll( MatrixType& rLeftHandSideMatrix,
                 true
             );
 
+            double Aux = Gamma * integration_points[PointNumber].Weight() * DetJ * Thickness;
+
             if ( CalculateResidualVectorFlag == true )
             {
-                noalias( RightHandSideVector_1 ) += prod( trans(B1_Operator), StressVector_1 );
-                noalias( RightHandSideVector_2 ) += prod( trans(B2_Operator), StressVector_2 );
+                noalias( RHS_1 ) -= Aux * prod( trans(B1_Operator), StressVector_1 - StressVector_2 );
+                noalias( RHS_2 ) += Aux * prod( trans(B2_Operator), StressVector_1 - StressVector_2 );
+                #ifdef DEBUG_GHOST_PENALTY_STRESS
+                KRATOS_WATCH(StressVector_1 - StressVector_2)
+                #endif
             }
 
             if ( CalculateStiffnessMatrixFlag == true )
             {
-                noalias( LeftHandSideMatrix_1 ) += prod( trans( B1_Operator ), Matrix( prod( TanC_1, B1_Operator ) ) );
-                noalias( LeftHandSideMatrix_2 ) += prod( trans( B2_Operator ), Matrix( prod( TanC_2, B2_Operator ) ) );
+                noalias( LHS_11 ) += Aux * prod( trans( B1_Operator ), Matrix( prod( TanC_1, B1_Operator ) ) );
+                noalias( LHS_12 ) -= Aux * prod( trans( B1_Operator ), Matrix( prod( TanC_2, B2_Operator ) ) );
+                noalias( LHS_21 ) -= Aux * prod( trans( B2_Operator ), Matrix( prod( TanC_1, B1_Operator ) ) );
+                noalias( LHS_22 ) += Aux * prod( trans( B2_Operator ), Matrix( prod( TanC_2, B2_Operator ) ) );
+//                KRATOS_WATCH(LHS_11)
             }
         }
 
@@ -367,23 +419,33 @@ void GhostPenaltyStressCondition::CalculateAll( MatrixType& rLeftHandSideMatrix,
                 const std::size_t& edge_node_index = it->first;
                 const std::size_t& element_node_index = it->second;
 
-                for (std::size_t dim = 0; dim < Dim; ++dim)
-                {
-                    rRightHandSideVector( edge_node_index*Dim + dim ) += RightHandSideVector_1( element_node_index*Dim + dim );
-                }
-            }
+                subrange( rRightHandSideVector, edge_node_index*Dim, (edge_node_index+1)*Dim )
+                    += subrange( RHS_1, element_node_index*Dim, (element_node_index+1)*Dim );
 
+                #ifdef DEBUG_GHOST_PENALTY_STRESS
+                std::cout << element_node_index << " adds to " << edge_node_index
+                          << " with " << subrange( RHS_1, element_node_index*Dim, (element_node_index+1)*Dim )
+                          << std::endl;
+                #endif
+            }
+            //////////////////////////////////////
             for (std::map<std::size_t, std::size_t>::iterator it = map_edge_node_index_to_element_node_index_2.begin();
                     it != map_edge_node_index_to_element_node_index_2.end(); ++it)
             {
                 const std::size_t& edge_node_index = it->first;
                 const std::size_t& element_node_index = it->second;
 
-                for (std::size_t dim = 0; dim < Dim; ++dim)
-                {
-                    rRightHandSideVector( edge_node_index*Dim + dim ) -= RightHandSideVector_2( element_node_index*Dim + dim );
-                }
+                subrange( rRightHandSideVector, edge_node_index*Dim, (edge_node_index+1)*Dim )
+                    += subrange( RHS_2, element_node_index*Dim, (element_node_index+1)*Dim );
+
+                #ifdef DEBUG_GHOST_PENALTY_STRESS
+                std::cout << element_node_index << " adds to " << edge_node_index
+                          << " with " << subrange( RHS_2, element_node_index*Dim, (element_node_index+1)*Dim )
+                          << std::endl;
+                #endif
             }
+            //////////////////////////////////////
+            KRATOS_WATCH(rRightHandSideVector)
         }
 
         if ( CalculateStiffnessMatrixFlag == true )
@@ -394,21 +456,27 @@ void GhostPenaltyStressCondition::CalculateAll( MatrixType& rLeftHandSideMatrix,
                 const std::size_t& edge_node_index1 = it1->first;
                 const std::size_t& element_node_index1 = it1->second;
 
-                for (std::size_t dim1 = 0; dim1 < Dim; ++dim1)
+                //////////////////////////////////////
+                for (std::map<std::size_t, std::size_t>::iterator it2 = map_edge_node_index_to_element_node_index_1.begin();
+                    it2 != map_edge_node_index_to_element_node_index_1.end(); ++it2)
                 {
-                    for (std::map<std::size_t, std::size_t>::iterator it2 = map_edge_node_index_to_element_node_index_1.begin();
-                            it2 != map_edge_node_index_to_element_node_index_1.end(); ++it2)
-                    {
-                        const std::size_t& edge_node_index2 = it2->first;
-                        const std::size_t& element_node_index2 = it2->second;
+                    const std::size_t& edge_node_index2 = it2->first;
+                    const std::size_t& element_node_index2 = it2->second;
 
-                        for (std::size_t dim2 = 0; dim2 < Dim; ++dim2)
-                        {
-                            rLeftHandSideMatrix( edge_node_index1*Dim + dim1, edge_node_index2*Dim + dim2 )
-                                -= LeftHandSideMatrix_1( element_node_index1*Dim + dim1, element_node_index2*Dim + dim2 );
-                        }
-                    }
+                    subrange( rLeftHandSideMatrix, edge_node_index1*Dim, (edge_node_index1+1)*Dim, edge_node_index2*Dim, (edge_node_index2+1)*Dim )
+                        += subrange( LHS_11, element_node_index1*Dim, (element_node_index1+1)*Dim, element_node_index2*Dim, (element_node_index2+1)*Dim );
                 }
+                //////////////////////////////////////
+                for (std::map<std::size_t, std::size_t>::iterator it2 = map_edge_node_index_to_element_node_index_2.begin();
+                    it2 != map_edge_node_index_to_element_node_index_2.end(); ++it2)
+                {
+                    const std::size_t& edge_node_index2 = it2->first;
+                    const std::size_t& element_node_index2 = it2->second;
+
+                    subrange( rLeftHandSideMatrix, edge_node_index1*Dim, (edge_node_index1+1)*Dim, edge_node_index2*Dim, (edge_node_index2+1)*Dim )
+                        += subrange( LHS_12, element_node_index1*Dim, (element_node_index1+1)*Dim, element_node_index2*Dim, (element_node_index2+1)*Dim );
+                }
+                //////////////////////////////////////
             }
 
             for (std::map<std::size_t, std::size_t>::iterator it1 = map_edge_node_index_to_element_node_index_2.begin();
@@ -417,22 +485,29 @@ void GhostPenaltyStressCondition::CalculateAll( MatrixType& rLeftHandSideMatrix,
                 const std::size_t& edge_node_index1 = it1->first;
                 const std::size_t& element_node_index1 = it1->second;
 
-                for (std::size_t dim1 = 0; dim1 < Dim; ++dim1)
+                //////////////////////////////////////
+                for (std::map<std::size_t, std::size_t>::iterator it2 = map_edge_node_index_to_element_node_index_1.begin();
+                    it2 != map_edge_node_index_to_element_node_index_1.end(); ++it2)
                 {
-                    for (std::map<std::size_t, std::size_t>::iterator it2 = map_edge_node_index_to_element_node_index_2.begin();
-                            it2 != map_edge_node_index_to_element_node_index_2.end(); ++it2)
-                    {
-                        const std::size_t& edge_node_index2 = it2->first;
-                        const std::size_t& element_node_index2 = it2->second;
+                    const std::size_t& edge_node_index2 = it2->first;
+                    const std::size_t& element_node_index2 = it2->second;
 
-                        for (std::size_t dim2 = 0; dim2 < Dim; ++dim2)
-                        {
-                            rLeftHandSideMatrix( edge_node_index1*Dim + dim1, edge_node_index2*Dim + dim2 )
-                                += LeftHandSideMatrix_2( element_node_index1*Dim + dim1, element_node_index2*Dim + dim2 );
-                        }
-                    }
+                    subrange( rLeftHandSideMatrix, edge_node_index1*Dim, (edge_node_index1+1)*Dim, edge_node_index2*Dim, (edge_node_index2+1)*Dim )
+                        += subrange( LHS_21, element_node_index1*Dim, (element_node_index1+1)*Dim, element_node_index2*Dim, (element_node_index2+1)*Dim );
                 }
+                //////////////////////////////////////
+                for (std::map<std::size_t, std::size_t>::iterator it2 = map_edge_node_index_to_element_node_index_2.begin();
+                    it2 != map_edge_node_index_to_element_node_index_2.end(); ++it2)
+                {
+                    const std::size_t& edge_node_index2 = it2->first;
+                    const std::size_t& element_node_index2 = it2->second;
+
+                    subrange( rLeftHandSideMatrix, edge_node_index1*Dim, (edge_node_index1+1)*Dim, edge_node_index2*Dim, (edge_node_index2+1)*Dim )
+                        += subrange( LHS_22, element_node_index1*Dim, (element_node_index1+1)*Dim, element_node_index2*Dim, (element_node_index2+1)*Dim );
+                }
+                //////////////////////////////////////
             }
+            KRATOS_WATCH(rLeftHandSideMatrix)
         }
 
         #ifdef ENABLE_BEZIER_GEOMETRY
@@ -501,14 +576,14 @@ void GhostPenaltyStressCondition::CalculateBoperator( Matrix& B_Operator, const 
     KRATOS_TRY
 
     const unsigned int number_of_nodes = DN_DX.size1();
-    unsigned int dim = DN_DX.size2();
-    unsigned int strain_size = dim * (dim + 1) / 2;
+    unsigned int Dim = GetGeometry().WorkingSpaceDimension();
+    unsigned int strain_size = Dim * (Dim + 1) / 2;
 
-    if ( B_Operator.size1() != strain_size || B_Operator.size2() != number_of_nodes * dim )
-        B_Operator.resize( strain_size, number_of_nodes * dim, false );
-    noalias( B_Operator ) = ZeroMatrix( strain_size, number_of_nodes * dim );
+    if ( B_Operator.size1() != strain_size || B_Operator.size2() != number_of_nodes * Dim )
+        B_Operator.resize( strain_size, number_of_nodes * Dim, false );
+    noalias( B_Operator ) = ZeroMatrix( strain_size, number_of_nodes * Dim );
 
-    if ( dim == 2 )
+    if ( Dim == 2 )
     {
         for ( unsigned int i = 0; i < number_of_nodes; ++i )
         {
@@ -518,7 +593,7 @@ void GhostPenaltyStressCondition::CalculateBoperator( Matrix& B_Operator, const 
             B_Operator( 2, i*2 + 1 ) = DN_DX( i, 0 );
         }
     }
-    else if ( dim == 3 )
+    else if ( Dim == 3 )
     {
         for ( unsigned int i = 0; i < number_of_nodes; ++i )
         {
@@ -544,11 +619,12 @@ void GhostPenaltyStressCondition::CalculateStrain( const Matrix& B,
 {
     KRATOS_TRY
 
-    unsigned int Dim = Displacements.size2();
-    unsigned int strain_size = StrainVector.size();
+    unsigned int Dim = GetGeometry().WorkingSpaceDimension();
+    unsigned int strain_size = Dim * (Dim + 1) / 2;
+    unsigned int number_of_nodes = Displacements.size1();
     noalias( StrainVector ) = ZeroVector( strain_size );
 
-    for ( unsigned int node = 0; node < Displacements.size1(); ++node )
+    for ( unsigned int node = 0; node < number_of_nodes; ++node )
     {
         for ( unsigned int item = 0; item < strain_size; ++item )
             for ( unsigned int dim = 0; dim < Dim; ++dim )
@@ -559,4 +635,6 @@ void GhostPenaltyStressCondition::CalculateStrain( const Matrix& B,
 }
 
 } // Namespace Kratos
+
+#undef DEBUG_GHOST_PENALTY_STRESS
 

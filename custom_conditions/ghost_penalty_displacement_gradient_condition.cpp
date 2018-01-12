@@ -164,7 +164,7 @@ void GhostPenaltyDisplacementGradientCondition::CalculateAll( MatrixType& rLeftH
     double DomainSize = 0.0;
     for (std::size_t PointNumber = 0; PointNumber < integration_points.size(); ++PointNumber)
     {
-        DetJ = MathUtils<double>::Det(Matrix(prod(trans(J0[PointNumber]), J0[PointNumber])));
+        DetJ = sqrt(MathUtils<double>::Det(Matrix(prod(trans(J0[PointNumber]), J0[PointNumber]))));
         DomainSize += DetJ * integration_points[PointNumber].Weight();
     }
     KRATOS_WATCH(DomainSize)
@@ -204,7 +204,7 @@ void GhostPenaltyDisplacementGradientCondition::CalculateAll( MatrixType& rLeftH
             KRATOS_WATCH(jump)
 
             // compute determinant
-            DetJ = MathUtils<double>::Det(Matrix(prod(trans(J0[PointNumber]), J0[PointNumber])));
+            DetJ = sqrt(MathUtils<double>::Det(Matrix(prod(trans(J0[PointNumber]), J0[PointNumber]))));
 //            KRATOS_WATCH(DetJ)
 
             Aux = Gamma * integration_points[PointNumber].Weight() * DetJ;
@@ -245,7 +245,7 @@ void GhostPenaltyDisplacementGradientCondition::CalculateAll( MatrixType& rLeftH
             KRATOS_WATCH(djump)
 
             // compute determinant
-            DetJ = MathUtils<double>::Det(Matrix(prod(trans(J0[PointNumber]), J0[PointNumber])));
+            DetJ = sqrt(MathUtils<double>::Det(Matrix(prod(trans(J0[PointNumber]), J0[PointNumber]))));
 
             Aux = Gamma * integration_points[PointNumber].Weight() * DetJ;
 

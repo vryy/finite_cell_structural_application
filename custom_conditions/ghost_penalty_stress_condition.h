@@ -27,7 +27,7 @@ namespace Kratos
 /**
  * Ghost penalty implementation for linear elasticity
  * This class add a weak variational term to enforce the continuity of the stress along the boundary
- * The term is [|d\epsilon|]*C*[|\epsilon|] = [|d\epsilon|]*[|\sigma|]
+ * The term is \int_edge gamma*[|d\epsilon|]*[|\sigma|]
  */
 class GhostPenaltyStressCondition : public GhostPenaltyCondition
 {
