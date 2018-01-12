@@ -10,7 +10,7 @@
 // External includes
 
 // Project includes
-#include "custom_conditions/ghost_penalty_elastic_condition.h"
+#include "custom_conditions/ghost_penalty_displacement_gradient_condition.h"
 #include "includes/ublas_interface.h"
 #include "utilities/math_utils.h"
 #include "finite_cell_application/custom_utilities/ghost_penalty_utility.h"
@@ -21,24 +21,24 @@ namespace Kratos
 
 //************************************************************************************
 //************************************************************************************
-GhostPenaltyElasticCondition::GhostPenaltyElasticCondition()
+GhostPenaltyDisplacementGradientCondition::GhostPenaltyDisplacementGradientCondition()
 {
 }
 
-GhostPenaltyElasticCondition::GhostPenaltyElasticCondition( IndexType NewId,
+GhostPenaltyDisplacementGradientCondition::GhostPenaltyDisplacementGradientCondition( IndexType NewId,
                               GeometryType::Pointer pGeometry)
 : GhostPenaltyCondition( NewId, pGeometry )
 {
 }
 
-GhostPenaltyElasticCondition::GhostPenaltyElasticCondition( IndexType NewId,
+GhostPenaltyDisplacementGradientCondition::GhostPenaltyDisplacementGradientCondition( IndexType NewId,
                               GeometryType::Pointer pGeometry,
                               PropertiesType::Pointer pProperties)
 : GhostPenaltyCondition( NewId, pGeometry, pProperties )
 {
 }
 
-GhostPenaltyElasticCondition::GhostPenaltyElasticCondition( IndexType NewId, GeometryType::Pointer pGeometry,
+GhostPenaltyDisplacementGradientCondition::GhostPenaltyDisplacementGradientCondition( IndexType NewId, GeometryType::Pointer pGeometry,
             Element::Pointer pSlaveElement, Element::Pointer pMasterElement, PropertiesType::Pointer pProperties )
 : GhostPenaltyCondition(NewId, pGeometry, pSlaveElement, pMasterElement, pProperties)
 {
@@ -47,7 +47,7 @@ GhostPenaltyElasticCondition::GhostPenaltyElasticCondition( IndexType NewId, Geo
 /**
  * Destructor. Never to be called manually
  */
-GhostPenaltyElasticCondition::~GhostPenaltyElasticCondition()
+GhostPenaltyDisplacementGradientCondition::~GhostPenaltyDisplacementGradientCondition()
 {
 }
 
@@ -56,13 +56,13 @@ GhostPenaltyElasticCondition::~GhostPenaltyElasticCondition()
 //**** Operations ****************************************
 //********************************************************
 
-Condition::Pointer GhostPenaltyElasticCondition::Create(IndexType NewId,
+Condition::Pointer GhostPenaltyDisplacementGradientCondition::Create(IndexType NewId,
             GeometryType::Pointer pGeometry,
             Element::Pointer pSlaveElement,
             Element::Pointer pMasterElement,
             PropertiesType::Pointer pProperties)
 {
-    return Condition::Pointer( new GhostPenaltyElasticCondition(NewId, pGeometry, pSlaveElement, pMasterElement, pProperties) );
+    return Condition::Pointer( new GhostPenaltyDisplacementGradientCondition(NewId, pGeometry, pSlaveElement, pMasterElement, pProperties) );
 }
 
 //************************************************************************************
@@ -72,7 +72,7 @@ Condition::Pointer GhostPenaltyElasticCondition::Create(IndexType NewId,
 /**
  * calculates only the RHS vector (certainly to be removed due to contact algorithm)
  */
-void GhostPenaltyElasticCondition::CalculateRightHandSide( VectorType& rRightHandSideVector,
+void GhostPenaltyDisplacementGradientCondition::CalculateRightHandSide( VectorType& rRightHandSideVector,
         ProcessInfo& rCurrentProcessInfo)
 {
     //calculation flags
@@ -90,7 +90,7 @@ void GhostPenaltyElasticCondition::CalculateRightHandSide( VectorType& rRightHan
 /**
  * calculates this contact element's local contributions
  */
-void GhostPenaltyElasticCondition::CalculateLocalSystem( MatrixType& rLeftHandSideMatrix,
+void GhostPenaltyDisplacementGradientCondition::CalculateLocalSystem( MatrixType& rLeftHandSideMatrix,
                                           VectorType& rRightHandSideVector,
                                           ProcessInfo& rCurrentProcessInfo)
 {
@@ -106,7 +106,7 @@ void GhostPenaltyElasticCondition::CalculateLocalSystem( MatrixType& rLeftHandSi
 /**
  * This function calculates all system contributions due to the ghost penalty problem
  */
-void GhostPenaltyElasticCondition::CalculateAll( MatrixType& rLeftHandSideMatrix,
+void GhostPenaltyDisplacementGradientCondition::CalculateAll( MatrixType& rLeftHandSideMatrix,
                                   VectorType& rRightHandSideVector,
                                   ProcessInfo& rCurrentProcessInfo,
                                   bool CalculateStiffnessMatrixFlag,
@@ -171,11 +171,11 @@ void GhostPenaltyElasticCondition::CalculateAll( MatrixType& rLeftHandSideMatrix
 
     // compute the penalty coefficients
     const double& Penalty = GetProperties()[INITIAL_PENALTY];
-    double Aux;
+    double Gamma, Aux;
     if (Dim == 2)
-        Aux = Penalty * pow(DomainSize, 2);
+        Gamma = Penalty * pow(DomainSize, 2);
     else if (Dim == 3)
-        Aux = Penalty * DomainSize;
+        Gamma = Penalty * DomainSize;
 
     if ( CalculateResidualVectorFlag == true )
     {
@@ -207,12 +207,14 @@ void GhostPenaltyElasticCondition::CalculateAll( MatrixType& rLeftHandSideMatrix
             DetJ = MathUtils<double>::Det(Matrix(prod(trans(J0[PointNumber]), J0[PointNumber])));
 //            KRATOS_WATCH(DetJ)
 
+            Aux = Gamma * integration_points[PointNumber].Weight() * DetJ;
+
             // compute the right hand side vector
             for (std::size_t prim = 0; prim < GetGeometry().size(); ++prim)
             {
                 for (std::size_t dim = 0; dim < Dim; ++dim)
                 {
-                    rRightHandSideVector(prim*Dim + dim) += Aux * dN1dn(prim, PointNumber) * jump(dim) * integration_points[PointNumber].Weight() * DetJ;
+                    rRightHandSideVector(prim*Dim + dim) += Aux * dN1dn(prim, PointNumber) * jump(dim);
                 }
             }
 
@@ -220,7 +222,7 @@ void GhostPenaltyElasticCondition::CalculateAll( MatrixType& rLeftHandSideMatrix
             {
                 for (std::size_t dim = 0; dim < Dim; ++dim)
                 {
-                    rRightHandSideVector(prim*Dim + dim) -= Aux * dN2dn(prim, PointNumber) * jump(dim) * integration_points[PointNumber].Weight() * DetJ;
+                    rRightHandSideVector(prim*Dim + dim) -= Aux * dN2dn(prim, PointNumber) * jump(dim);
                 }
             }
         }
@@ -245,13 +247,15 @@ void GhostPenaltyElasticCondition::CalculateAll( MatrixType& rLeftHandSideMatrix
             // compute determinant
             DetJ = MathUtils<double>::Det(Matrix(prod(trans(J0[PointNumber]), J0[PointNumber])));
 
+            Aux = Gamma * integration_points[PointNumber].Weight() * DetJ;
+
             for (std::size_t prim = 0; prim < GetGeometry().size(); ++prim)
             {
                 for (std::size_t dim = 0; dim < Dim; ++dim)
                 {
                     for (std::size_t sec = 0; sec < GetGeometry().size(); ++sec)
                     {
-                        rLeftHandSideMatrix(prim*Dim + dim, sec*Dim + dim) -= Aux * dN1dn(prim, PointNumber) * djump(sec) * integration_points[PointNumber].Weight() * DetJ;
+                        rLeftHandSideMatrix(prim*Dim + dim, sec*Dim + dim) -= Aux * dN1dn(prim, PointNumber) * djump(sec);
                     }
                 }
             }
@@ -263,7 +267,7 @@ void GhostPenaltyElasticCondition::CalculateAll( MatrixType& rLeftHandSideMatrix
                 {
                     for (std::size_t sec = 0; sec < GetGeometry().size(); ++sec)
                     {
-                        rLeftHandSideMatrix(prim*Dim + dim, sec*Dim + dim) += Aux * dN2dn(prim, PointNumber) * djump(sec) * integration_points[PointNumber].Weight() * DetJ;
+                        rLeftHandSideMatrix(prim*Dim + dim, sec*Dim + dim) += Aux * dN2dn(prim, PointNumber) * djump(sec);
                     }
                 }
             }
@@ -282,7 +286,7 @@ void GhostPenaltyElasticCondition::CalculateAll( MatrixType& rLeftHandSideMatrix
 * All conditions are assumed to be defined in 2D/3D space with 2/3 DOFs per node.
 * All Equation IDs are given Master first, Slave second
 */
-void GhostPenaltyElasticCondition::EquationIdVector( EquationIdVectorType& rResult,
+void GhostPenaltyDisplacementGradientCondition::EquationIdVector( EquationIdVectorType& rResult,
                                       ProcessInfo& CurrentProcessInfo)
 {
     unsigned int dim = ( GetGeometry().WorkingSpaceDimension() );
@@ -310,7 +314,7 @@ void GhostPenaltyElasticCondition::EquationIdVector( EquationIdVectorType& rResu
  */
 //************************************************************************************
 //************************************************************************************
-void GhostPenaltyElasticCondition::GetDofList( DofsVectorType& ConditionalDofList, ProcessInfo& CurrentProcessInfo)
+void GhostPenaltyDisplacementGradientCondition::GetDofList( DofsVectorType& ConditionalDofList, ProcessInfo& CurrentProcessInfo)
 {
     unsigned int dim = GetGeometry().WorkingSpaceDimension();
 

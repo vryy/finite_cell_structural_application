@@ -12,7 +12,7 @@
 // Project includes
 #include "includes/condition.h"
 #include "custom_python/add_custom_conditions_to_python.h"
-#include "custom_conditions/ghost_penalty_elastic_condition.h"
+#include "custom_conditions/ghost_penalty_displacement_gradient_condition.h"
 #include "custom_conditions/ghost_penalty_stress_condition.h"
 
 
@@ -27,8 +27,8 @@ using namespace boost::python;
 void FiniteCellStructuralApplication_AddCustomConditionsToPython()
 {
 
-    class_< GhostPenaltyElasticCondition, GhostPenaltyElasticCondition::Pointer, bases< GhostPenaltyCondition > >
-    ("GhostPenaltyElasticCondition", init<>() )
+    class_< GhostPenaltyDisplacementGradientCondition, GhostPenaltyDisplacementGradientCondition::Pointer, bases< GhostPenaltyCondition > >
+    ("GhostPenaltyDisplacementGradientCondition", init<>() )
     .def(self_ns::str(self))
     ;
 

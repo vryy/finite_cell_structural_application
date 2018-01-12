@@ -5,8 +5,8 @@
 //   Revision:            $Revision: 1.0 $
 //
 //
-#if !defined(KRATOS_GHOST_PENALTY_ELASTIC_CONDITION_H_INCLUDED )
-#define  KRATOS_GHOST_PENALTY_ELASTIC_CONDITION_H_INCLUDED
+#if !defined(KRATOS_GHOST_PENALTY_DISPLACEMENT_GRADIENT_CONDITION_H_INCLUDED )
+#define  KRATOS_GHOST_PENALTY_DISPLACEMENT_GRADIENT_CONDITION_H_INCLUDED
 
 
 // External includes
@@ -28,28 +28,28 @@ namespace Kratos
  * Ghost penalty implementation for linear elasticity
  * This class add a weak variational term to enforce the continuity of the gradient of displacement along the boundary
  */
-class GhostPenaltyElasticCondition : public GhostPenaltyCondition
+class GhostPenaltyDisplacementGradientCondition : public GhostPenaltyCondition
 {
     public:
-        // Counted pointer of GhostPenaltyElasticCondition
-        KRATOS_CLASS_POINTER_DEFINITION(GhostPenaltyElasticCondition);
+        // Counted pointer of GhostPenaltyDisplacementGradientCondition
+        KRATOS_CLASS_POINTER_DEFINITION(GhostPenaltyDisplacementGradientCondition);
 
         /**
          * Default constructor.
          */
-        GhostPenaltyElasticCondition();
+        GhostPenaltyDisplacementGradientCondition();
 
-        GhostPenaltyElasticCondition( IndexType NewId, GeometryType::Pointer pGeometry);
+        GhostPenaltyDisplacementGradientCondition( IndexType NewId, GeometryType::Pointer pGeometry);
 
-        GhostPenaltyElasticCondition( IndexType NewId, GeometryType::Pointer pGeometry, PropertiesType::Pointer pProperties);
+        GhostPenaltyDisplacementGradientCondition( IndexType NewId, GeometryType::Pointer pGeometry, PropertiesType::Pointer pProperties);
 
-        GhostPenaltyElasticCondition( IndexType NewId, GeometryType::Pointer pGeometry,
+        GhostPenaltyDisplacementGradientCondition( IndexType NewId, GeometryType::Pointer pGeometry,
             Element::Pointer pSlaveElement, Element::Pointer pMasterElement, PropertiesType::Pointer pProperties );
 
         /**
          * Destructor.
          */
-        virtual ~GhostPenaltyElasticCondition();
+        virtual ~GhostPenaltyDisplacementGradientCondition();
 
         virtual Condition::Pointer Create(IndexType NewId,
             GeometryType::Pointer pGeometry,
@@ -115,10 +115,10 @@ class GhostPenaltyElasticCondition : public GhostPenaltyCondition
                            bool CalculateStiffnessMatrixFlag,
                            bool CalculateResidualVectorFlag);
 
-}; // Class GhostPenaltyElasticCondition
+}; // Class GhostPenaltyDisplacementGradientCondition
 
 }  // namespace Kratos.
 
 
-#endif // KRATOS_GHOST_PENALTY_ELASTIC_CONDITION_H_INCLUDED defined
+#endif // KRATOS_GHOST_PENALTY_DISPLACEMENT_GRADIENT_CONDITION_H_INCLUDED defined
 
