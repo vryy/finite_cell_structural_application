@@ -21,6 +21,7 @@
 
 // Project includes
 #include "includes/define.h"
+#include "includes/ublas_interface.h"
 #include "includes/variables.h"
 #include "includes/kratos_application.h"
 #include "structural_application/custom_elements/kinematic_linear.h"

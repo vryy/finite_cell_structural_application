@@ -110,6 +110,7 @@ public:
     ModelPart::ConditionsContainerType SetupImmersedPointForce(ModelPart& r_model_part,
             const FunctionR1R3::Pointer& pCurve,        // the parametric curve, there the distributed load is applied
             const double& tmin, const double& tmax,     // the segment where the load is acting
+            Properties::Pointer pProperties,
             const int& integration_order,               // integration order
             const FunctionR1R3::Pointer& pLoadFunction, // the distributed load function
             const bool& export_point,
@@ -135,7 +136,7 @@ public:
         }
 
         // setup the immersed point force
-        return SetupImmersedPointForce<TSearchType>(r_model_part, r_model_part.Elements(), Points, Weights, Forces, export_point, echo_level);
+        return SetupImmersedPointForce<TSearchType>(r_model_part, r_model_part.Elements(), pProperties, Points, Weights, Forces, export_point, echo_level);
     }
 
 
@@ -145,6 +146,7 @@ public:
             const FunctionR2R3::Pointer& pSurface,      // the parametric surface, there the distributed load is applied
             const double& t1min, const double& t1max,   // the segment where the load is acting in 1st-direction
             const double& t2min, const double& t2max,   // the segment where the load is acting in 2nd-direction
+            Properties::Pointer pProperties,
             const int& integration_order,               // integration order
             const FunctionR2R3::Pointer& pLoadFunction, // the distributed load function
             const bool& export_point,
@@ -170,7 +172,7 @@ public:
         }
 
         // setup the immersed point force
-        return SetupImmersedPointForce<TSearchType>(r_model_part, r_model_part.Elements(), Points, Weights, Forces, export_point, echo_level);
+        return SetupImmersedPointForce<TSearchType>(r_model_part, r_model_part.Elements(), pProperties, Points, Weights, Forces, export_point, echo_level);
     }
 
 
@@ -178,13 +180,14 @@ public:
     template<class TEntityType, int TSearchType>
     ModelPart::ConditionsContainerType SetupImmersedPointForce(ModelPart& r_model_part,
             typename TEntityType::Pointer& pEntity,
+            Properties::Pointer pProperties,
             const int& integration_order,               // integration order
             const FunctionR3R3::Pointer& pLoadFunction, // the distributed load function
             const bool& export_point,
             const int& echo_level
     ) const
     {
-        return SetupImmersedPointForce<TEntityType, TSearchType>(r_model_part, r_model_part.Elements(), pEntity, integration_order, pLoadFunction, export_point, echo_level);
+        return SetupImmersedPointForce<TEntityType, TSearchType>(r_model_part, r_model_part.Elements(), pEntity, pProperties, integration_order, pLoadFunction, export_point, echo_level);
     }
 
 
@@ -193,6 +196,7 @@ public:
     ModelPart::ConditionsContainerType SetupImmersedPointForce(ModelPart& r_model_part,
             ModelPart::ElementsContainerType& pMasterElements,
             typename TEntityType::Pointer& pEntity,
+            Properties::Pointer pProperties,
             const int& integration_order,               // integration order
             const FunctionR3R3::Pointer& pLoadFunction, // the distributed load function
             const bool& export_point,
@@ -207,10 +211,6 @@ public:
 
         // find the maximum properties Id
         std::size_t lastPropId = FiniteCellAuxilliaryUtility::GetLastPropertiesId(r_model_part);
-
-        // create new properties
-        Properties::Pointer pProperties = Properties::Pointer(new Properties(++lastPropId));
-        r_model_part.AddProperties(pProperties);
 
         // setup the immersed point force
         return SetupImmersedPointForce<TEntityType, TSearchType>(r_model_part, pMasterElements, pEntity, lastNodeId, lastCondId, pProperties, integration_order, pLoadFunction, export_point, echo_level);
@@ -274,6 +274,7 @@ public:
     template<int TSearchType>
     ModelPart::ConditionsContainerType SetupImmersedPointForce(ModelPart& r_model_part,
             ModelPart::ElementsContainerType& pMasterElements,
+            Properties::Pointer pProperties,
             const std::vector<PointType>& rPoints,
             const std::vector<double>& rWeights,
             const std::vector<array_1d<double, 3> >& rForces,
@@ -288,10 +289,6 @@ public:
 
         // find the maximum properties Id
         std::size_t lastPropId = FiniteCellAuxilliaryUtility::GetLastPropertiesId(r_model_part);
-
-        // create new properties
-        Properties::Pointer pProperties = Properties::Pointer(new Properties(++lastPropId));
-        r_model_part.AddProperties(pProperties);
 
         return SetupImmersedPointForce<TSearchType>(r_model_part, pMasterElements, lastNodeId, lastCondId, pProperties, rPoints, rWeights, rForces, export_point, echo_level);
     }

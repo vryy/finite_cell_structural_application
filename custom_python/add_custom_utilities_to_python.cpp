@@ -62,41 +62,41 @@ void FiniteCellStructuralApplication_AddCustomUtilitiesToPython()
 {
 
     ModelPart::ConditionsContainerType(ImmersedBoundaryLoadUtility::*pointer_to_SetupImmersedPointForceCurve)(
-        ModelPart&, const FunctionR1R3::Pointer&, const double&, const double&, const int&,
+        ModelPart&, const FunctionR1R3::Pointer&, const double&, const double&, Properties::Pointer, const int&,
         const FunctionR1R3::Pointer&, const bool&, const int&) const = &ImmersedBoundaryLoadUtility::SetupImmersedPointForce<0>;
 
     ModelPart::ConditionsContainerType(ImmersedBoundaryLoadUtility::*pointer_to_SetupImmersedPointForceCurveWithBin)(
-        ModelPart&, const FunctionR1R3::Pointer&, const double&, const double&, const int&,
+        ModelPart&, const FunctionR1R3::Pointer&, const double&, const double&, Properties::Pointer, const int&,
         const FunctionR1R3::Pointer&, const bool&, const int&) const = &ImmersedBoundaryLoadUtility::SetupImmersedPointForce<1>;
 
     ////////////////////////////////////////////////////
 
     ModelPart::ConditionsContainerType(ImmersedBoundaryLoadUtility::*pointer_to_SetupImmersedPointForceSurface)(
-        ModelPart&, const FunctionR2R3::Pointer&, const double&, const double&, const double&, const double&, const int&,
+        ModelPart&, const FunctionR2R3::Pointer&, const double&, const double&, const double&, const double&, Properties::Pointer, const int&,
         const FunctionR2R3::Pointer&, const bool&, const int&) const = &ImmersedBoundaryLoadUtility::SetupImmersedPointForce<0>;
 
     ModelPart::ConditionsContainerType(ImmersedBoundaryLoadUtility::*pointer_to_SetupImmersedPointForceSurfaceWithBin)(
-        ModelPart&, const FunctionR2R3::Pointer&, const double&, const double&, const double&, const double&, const int&,
+        ModelPart&, const FunctionR2R3::Pointer&, const double&, const double&, const double&, const double&, Properties::Pointer, const int&,
         const FunctionR2R3::Pointer&, const bool&, const int&) const = &ImmersedBoundaryLoadUtility::SetupImmersedPointForce<1>;
 
     ////////////////////////////////////////////////////
 
     ModelPart::ConditionsContainerType(ImmersedBoundaryLoadUtility::*pointer_to_SetupImmersedPointForceElement)(
-        ModelPart&, ModelPart::ElementsContainerType&, Element::Pointer&, const int&, const FunctionR3R3::Pointer&, const bool&, const int&) const
+        ModelPart&, ModelPart::ElementsContainerType&, Element::Pointer&, Properties::Pointer, const int&, const FunctionR3R3::Pointer&, const bool&, const int&) const
         = &ImmersedBoundaryLoadUtility::SetupImmersedPointForce<Element, 0>;
 
     ModelPart::ConditionsContainerType(ImmersedBoundaryLoadUtility::*pointer_to_SetupImmersedPointForceElementWithBin)(
-        ModelPart&, ModelPart::ElementsContainerType&, Element::Pointer&, const int&, const FunctionR3R3::Pointer&, const bool&, const int&) const
+        ModelPart&, ModelPart::ElementsContainerType&, Element::Pointer&, Properties::Pointer, const int&, const FunctionR3R3::Pointer&, const bool&, const int&) const
         = &ImmersedBoundaryLoadUtility::SetupImmersedPointForce<Element, 1>;
 
     ////////////////////////////////////////////////////
 
     ModelPart::ConditionsContainerType(ImmersedBoundaryLoadUtility::*pointer_to_SetupImmersedPointForceCondition)(
-        ModelPart&, Condition::Pointer&, const int&, const FunctionR3R3::Pointer&, const bool&, const int&) const
+        ModelPart&, Condition::Pointer&, Properties::Pointer, const int&, const FunctionR3R3::Pointer&, const bool&, const int&) const
         = &ImmersedBoundaryLoadUtility::SetupImmersedPointForce<Condition, 0>;
 
     ModelPart::ConditionsContainerType(ImmersedBoundaryLoadUtility::*pointer_to_SetupImmersedPointForceConditionWithBin)(
-        ModelPart&, Condition::Pointer&, const int&, const FunctionR3R3::Pointer&, const bool&, const int&) const
+        ModelPart&, Condition::Pointer&, Properties::Pointer, const int&, const FunctionR3R3::Pointer&, const bool&, const int&) const
         = &ImmersedBoundaryLoadUtility::SetupImmersedPointForce<Condition, 1>;
 
     ////////////////////////////////////////////////////
