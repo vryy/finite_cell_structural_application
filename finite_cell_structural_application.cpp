@@ -44,6 +44,8 @@ namespace Kratos
     KRATOS_CREATE_VARIABLE( double, FORCE_MAGNITUDE )
     KRATOS_CREATE_VARIABLE( double, PHYSICAL_STRESS_OFFSET_PARAMETER )
     KRATOS_CREATE_VARIABLE( double, STRESS_STABILIZATION )
+    KRATOS_CREATE_VARIABLE( int, GHOST_PENALTY_STABILIZATION_ORDER )
+    KRATOS_CREATE_VARIABLE( double, GHOST_PENALTY_STABILIZATION_FACTOR )
 
     KratosFiniteCellStructuralApplication::KratosFiniteCellStructuralApplication()
     :
@@ -98,6 +100,8 @@ namespace Kratos
         KRATOS_REGISTER_VARIABLE( FORCE_MAGNITUDE )
         KRATOS_REGISTER_VARIABLE( PHYSICAL_STRESS_OFFSET_PARAMETER )
         KRATOS_REGISTER_VARIABLE( STRESS_STABILIZATION )
+        KRATOS_REGISTER_VARIABLE( GHOST_PENALTY_STABILIZATION_ORDER )
+        KRATOS_REGISTER_VARIABLE( GHOST_PENALTY_STABILIZATION_FACTOR )
 
         KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell2D3N", mKinematicLinearFiniteCell2D3N )
         KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell2D6N", mKinematicLinearFiniteCell2D6N )
@@ -109,6 +113,17 @@ namespace Kratos
         KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell3D8N", mKinematicLinearFiniteCell3D8N )
         KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell3D20N", mKinematicLinearFiniteCell3D20N )
         KRATOS_REGISTER_ELEMENT( "KinematicLinearFiniteCell3D27N", mKinematicLinearFiniteCell3D27N )
+
+        KRATOS_REGISTER_ELEMENT( "TotalLagrangianFiniteCell2D3N", mTotalLagrangianFiniteCell2D3N )
+        KRATOS_REGISTER_ELEMENT( "TotalLagrangianFiniteCell2D6N", mTotalLagrangianFiniteCell2D6N )
+        KRATOS_REGISTER_ELEMENT( "TotalLagrangianFiniteCell2D4N", mTotalLagrangianFiniteCell2D4N )
+        KRATOS_REGISTER_ELEMENT( "TotalLagrangianFiniteCell2D8N", mTotalLagrangianFiniteCell2D8N )
+        KRATOS_REGISTER_ELEMENT( "TotalLagrangianFiniteCell2D9N", mTotalLagrangianFiniteCell2D9N )
+        KRATOS_REGISTER_ELEMENT( "TotalLagrangianFiniteCell3D4N", mTotalLagrangianFiniteCell3D4N )
+        KRATOS_REGISTER_ELEMENT( "TotalLagrangianFiniteCell3D10N", mTotalLagrangianFiniteCell3D10N )
+        KRATOS_REGISTER_ELEMENT( "TotalLagrangianFiniteCell3D8N", mTotalLagrangianFiniteCell3D8N )
+        KRATOS_REGISTER_ELEMENT( "TotalLagrangianFiniteCell3D20N", mTotalLagrangianFiniteCell3D20N )
+        KRATOS_REGISTER_ELEMENT( "TotalLagrangianFiniteCell3D27N", mTotalLagrangianFiniteCell3D27N )
 
         KRATOS_REGISTER_ELEMENT( "UnsaturatedSoilsElement2PhaseSmallStrainFiniteCell3D4N", mUnsaturatedSoilsElement2PhaseSmallStrainFiniteCell3D4N )
         KRATOS_REGISTER_ELEMENT( "UnsaturatedSoilsElement2PhaseSmallStrainFiniteCell3D10N", mUnsaturatedSoilsElement2PhaseSmallStrainFiniteCell3D10N )

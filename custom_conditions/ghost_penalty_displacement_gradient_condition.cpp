@@ -15,6 +15,7 @@
 #include "utilities/math_utils.h"
 #include "finite_cell_application/custom_utilities/ghost_penalty_utility.h"
 #include "structural_application/structural_application.h"
+#include "finite_cell_structural_application/finite_cell_structural_application.h"
 
 namespace Kratos
 {
@@ -143,13 +144,13 @@ void GhostPenaltyDisplacementGradientCondition::CalculateAll( MatrixType& rLeftH
     // the edge is assumed to follow the forward direction of the first element
     Matrix dN1dn(GetGeometry().size(), integration_points.size());
     GhostPenaltyUtility::ComputeShapeFunctionNormalGradient(dN1dn, pSlave()->GetGeometry(), GetGeometry(), integration_points);
-    KRATOS_WATCH(dN1dn)
+//    KRATOS_WATCH(dN1dn)
 
     // compute the shape function gradient on the edge of the second element on the normal direction
     // the edge is assumed to follow the reversed direction of the second element
     Matrix dN2dn(GetGeometry().size(), integration_points.size());
     GhostPenaltyUtility::ComputeShapeFunctionNormalGradient(dN2dn, pMaster()->GetGeometry(), GetGeometry(), integration_points);
-    KRATOS_WATCH(dN2dn)
+//    KRATOS_WATCH(dN2dn)
 
     //initializing the Jacobian in the reference configuration
     Matrix DeltaPosition(GetGeometry().size(), 3);
@@ -167,15 +168,17 @@ void GhostPenaltyDisplacementGradientCondition::CalculateAll( MatrixType& rLeftH
         DetJ = sqrt(MathUtils<double>::Det(Matrix(prod(trans(J0[PointNumber]), J0[PointNumber]))));
         DomainSize += DetJ * integration_points[PointNumber].Weight();
     }
-    KRATOS_WATCH(DomainSize)
+//    KRATOS_WATCH(DomainSize)
 
     // compute the penalty coefficients
-    const double& Penalty = GetProperties()[INITIAL_PENALTY];
+    const double& Penalty = GetProperties()[GHOST_PENALTY_STABILIZATION_FACTOR];
     double Gamma, Aux;
     if (Dim == 2)
         Gamma = Penalty * pow(DomainSize, 2);
     else if (Dim == 3)
         Gamma = Penalty * DomainSize;
+
+    const int& stabilization_order = GetProperties()[GHOST_PENALTY_STABILIZATION_ORDER];
 
     if ( CalculateResidualVectorFlag == true )
     {
@@ -201,7 +204,7 @@ void GhostPenaltyDisplacementGradientCondition::CalculateAll( MatrixType& rLeftH
                 if (Dim == 3)
                     jump(2) -= dN2dn(prim, PointNumber) * GetGeometry()[prim].GetSolutionStepValue(DISPLACEMENT_Z);
             }
-            KRATOS_WATCH(jump)
+//            KRATOS_WATCH(jump)
 
             // compute determinant
             DetJ = sqrt(MathUtils<double>::Det(Matrix(prod(trans(J0[PointNumber]), J0[PointNumber]))));
@@ -210,24 +213,30 @@ void GhostPenaltyDisplacementGradientCondition::CalculateAll( MatrixType& rLeftH
             Aux = Gamma * integration_points[PointNumber].Weight() * DetJ;
 
             // compute the right hand side vector
-            for (std::size_t prim = 0; prim < GetGeometry().size(); ++prim)
+            if (stabilization_order > 0)
             {
-                for (std::size_t dim = 0; dim < Dim; ++dim)
+                for (std::size_t prim = 0; prim < GetGeometry().size(); ++prim)
                 {
-                    rRightHandSideVector(prim*Dim + dim) += Aux * dN1dn(prim, PointNumber) * jump(dim);
+                    for (std::size_t dim = 0; dim < Dim; ++dim)
+                    {
+                        rRightHandSideVector(prim*Dim + dim) += Aux * dN1dn(prim, PointNumber) * jump(dim);
+                    }
                 }
             }
 
-            for (std::size_t prim = 0; prim < GetGeometry().size(); ++prim)
+            if (stabilization_order > 1)
             {
-                for (std::size_t dim = 0; dim < Dim; ++dim)
+                for (std::size_t prim = 0; prim < GetGeometry().size(); ++prim)
                 {
-                    rRightHandSideVector(prim*Dim + dim) -= Aux * dN2dn(prim, PointNumber) * jump(dim);
+                    for (std::size_t dim = 0; dim < Dim; ++dim)
+                    {
+                        rRightHandSideVector(prim*Dim + dim) -= Aux * dN2dn(prim, PointNumber) * jump(dim);
+                    }
                 }
             }
         }
 
-        KRATOS_WATCH(rRightHandSideVector)
+//        KRATOS_WATCH(rRightHandSideVector)
     }
 
     if ( CalculateStiffnessMatrixFlag == true )
@@ -242,38 +251,44 @@ void GhostPenaltyDisplacementGradientCondition::CalculateAll( MatrixType& rLeftH
             {
                 djump(prim) = dN1dn(prim, PointNumber) - dN2dn(prim, PointNumber);
             }
-            KRATOS_WATCH(djump)
+//            KRATOS_WATCH(djump)
 
             // compute determinant
             DetJ = sqrt(MathUtils<double>::Det(Matrix(prod(trans(J0[PointNumber]), J0[PointNumber]))));
 
             Aux = Gamma * integration_points[PointNumber].Weight() * DetJ;
 
-            for (std::size_t prim = 0; prim < GetGeometry().size(); ++prim)
+            // compute the left hand side matrix
+            if (stabilization_order > 0)
             {
-                for (std::size_t dim = 0; dim < Dim; ++dim)
+                for (std::size_t prim = 0; prim < GetGeometry().size(); ++prim)
                 {
-                    for (std::size_t sec = 0; sec < GetGeometry().size(); ++sec)
+                    for (std::size_t dim = 0; dim < Dim; ++dim)
                     {
-                        rLeftHandSideMatrix(prim*Dim + dim, sec*Dim + dim) -= Aux * dN1dn(prim, PointNumber) * djump(sec);
+                        for (std::size_t sec = 0; sec < GetGeometry().size(); ++sec)
+                        {
+                            rLeftHandSideMatrix(prim*Dim + dim, sec*Dim + dim) -= Aux * dN1dn(prim, PointNumber) * djump(sec);
+                        }
                     }
                 }
             }
 
-            // compute the left hand side matrix
-            for (std::size_t prim = 0; prim < GetGeometry().size(); ++prim)
+            if (stabilization_order > 1)
             {
-                for (std::size_t dim = 0; dim < Dim; ++dim)
+                for (std::size_t prim = 0; prim < GetGeometry().size(); ++prim)
                 {
-                    for (std::size_t sec = 0; sec < GetGeometry().size(); ++sec)
+                    for (std::size_t dim = 0; dim < Dim; ++dim)
                     {
-                        rLeftHandSideMatrix(prim*Dim + dim, sec*Dim + dim) += Aux * dN2dn(prim, PointNumber) * djump(sec);
+                        for (std::size_t sec = 0; sec < GetGeometry().size(); ++sec)
+                        {
+                            rLeftHandSideMatrix(prim*Dim + dim, sec*Dim + dim) += Aux * dN2dn(prim, PointNumber) * djump(sec);
+                        }
                     }
                 }
             }
         }
 
-        KRATOS_WATCH(rLeftHandSideMatrix)
+//        KRATOS_WATCH(rLeftHandSideMatrix)
     }
 
     KRATOS_CATCH("")

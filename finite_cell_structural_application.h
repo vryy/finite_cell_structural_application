@@ -25,6 +25,7 @@
 #include "includes/variables.h"
 #include "includes/kratos_application.h"
 #include "structural_application/custom_elements/kinematic_linear.h"
+#include "structural_application/custom_elements/total_lagrangian.h"
 #include "structural_application/custom_elements/unsaturated_soils_element_2phase_small_strain.h"
 #include "custom_conditions/line_force_with_function.h"
 #include "custom_conditions/immersed_point_force.h"
@@ -40,6 +41,8 @@ namespace Kratos
     KRATOS_DEFINE_VARIABLE( double, FORCE_MAGNITUDE )
     KRATOS_DEFINE_VARIABLE( double, PHYSICAL_STRESS_OFFSET_PARAMETER ) // beta
     KRATOS_DEFINE_VARIABLE( double, STRESS_STABILIZATION )
+    KRATOS_DEFINE_VARIABLE( int, GHOST_PENALTY_STABILIZATION_ORDER)
+    KRATOS_DEFINE_VARIABLE( double, GHOST_PENALTY_STABILIZATION_FACTOR)
 
     ///@}
     ///@name Type Definitions
@@ -196,6 +199,17 @@ namespace Kratos
         const KinematicLinear mKinematicLinearFiniteCell3D8N;
         const KinematicLinear mKinematicLinearFiniteCell3D20N;
         const KinematicLinear mKinematicLinearFiniteCell3D27N;
+
+        const TotalLagrangian mTotalLagrangianFiniteCell2D3N;
+        const TotalLagrangian mTotalLagrangianFiniteCell2D6N;
+        const TotalLagrangian mTotalLagrangianFiniteCell2D4N;
+        const TotalLagrangian mTotalLagrangianFiniteCell2D8N;
+        const TotalLagrangian mTotalLagrangianFiniteCell2D9N;
+        const TotalLagrangian mTotalLagrangianFiniteCell3D4N;
+        const TotalLagrangian mTotalLagrangianFiniteCell3D10N;
+        const TotalLagrangian mTotalLagrangianFiniteCell3D8N;
+        const TotalLagrangian mTotalLagrangianFiniteCell3D20N;
+        const TotalLagrangian mTotalLagrangianFiniteCell3D27N;
 
         const UnsaturatedSoilsElement_2phase_SmallStrain mUnsaturatedSoilsElement2PhaseSmallStrainFiniteCell3D4N;
         const UnsaturatedSoilsElement_2phase_SmallStrain mUnsaturatedSoilsElement2PhaseSmallStrainFiniteCell3D10N;

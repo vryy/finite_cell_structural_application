@@ -15,6 +15,7 @@
 #include "utilities/math_utils.h"
 #include "finite_cell_application/custom_utilities/ghost_penalty_utility.h"
 #include "structural_application/structural_application.h"
+#include "finite_cell_structural_application/finite_cell_structural_application.h"
 
 #define DEBUG_GHOST_PENALTY_STRESS
 
@@ -236,7 +237,7 @@ void GhostPenaltyStressCondition::CalculateAll( MatrixType& rLeftHandSideMatrix,
 //        KRATOS_WATCH(DomainSize)
 
         // compute the penalty coefficients
-        const double& Penalty = GetProperties()[INITIAL_PENALTY];
+        const double& Penalty = GetProperties()[GHOST_PENALTY_STABILIZATION_FACTOR];
         double Gamma = 1.0;
         if (Dim == 2)
             Gamma = Penalty * pow(DomainSize, 2);
