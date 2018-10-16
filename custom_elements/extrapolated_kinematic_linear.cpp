@@ -1103,6 +1103,22 @@ namespace Kratos
 
             return;
         }
+
+        if( rVariable == THREED_STRESSES )
+        {
+            ConstitutiveLaw::Pointer pConstitutiveLaw = GetValue(CONSTITUTIVE_LAW);
+
+            const GeometryType::IntegrationPointsArrayType& integration_points =
+                    GetGeometry().IntegrationPoints( mThisIntegrationMethod );
+
+             if ( rValues.size() != integration_points.size() )
+                rValues.resize( integration_points.size() );
+
+            for (std::size_t i = 0; i < integration_points.size(); ++i)
+                rValues[i] = pConstitutiveLaw->GetValue(THREED_STRESSES, rValues[i]);
+
+            return;
+        }
     }
 
     /**
@@ -1259,6 +1275,30 @@ namespace Kratos
                 rValues.resize( 1 );
 
             rValues[0] = GetValue(SUBCELL_DOMAIN_SIZE);
+        }
+        else if( rVariable == VON_MISES_STRESS )
+        {
+            ConstitutiveLaw::Pointer pConstitutiveLaw = GetValue(CONSTITUTIVE_LAW);
+
+            const GeometryType::IntegrationPointsArrayType& integration_points =
+                    GetGeometry().IntegrationPoints( mThisIntegrationMethod );
+
+             if ( rValues.size() != integration_points.size() )
+                rValues.resize( integration_points.size() );
+
+            Vector stresses(6);
+            for (std::size_t i = 0; i < integration_points.size(); ++i)
+            {
+                stresses = pConstitutiveLaw->GetValue(THREED_STRESSES, stresses);
+                double p = (stresses[0] + stresses[1] + stresses[2]) / 3;
+                double sxx = stresses[0] - p;
+                double syy = stresses[1] - p;
+                double szz = stresses[2] - p;
+                double sxy = stresses[3];
+                double syz = stresses[4];
+                double sxz = stresses[5];
+                rValues[i] = sqrt( 3.0 * ( 0.5*(sxx*sxx + syy*syy + szz*szz) + sxy*sxy + syz*syz + sxz*sxz ) );
+            }
         }
     }
 
