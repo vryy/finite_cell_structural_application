@@ -13,6 +13,7 @@
 #include "includes/element.h"
 #include "finite_cell_application/custom_algebra/function/function.h"
 #include "custom_python/add_custom_utilities_to_python.h"
+#include "finite_cell_application/custom_utilities/immersed_boundary_utility.h"
 #include "custom_utilities/immersed_boundary_load_utility.h"
 
 
@@ -101,9 +102,9 @@ void FiniteCellStructuralApplication_AddCustomUtilitiesToPython()
 
     ////////////////////////////////////////////////////
 
-    class_<ImmersedBoundaryLoadUtility, ImmersedBoundaryLoadUtility::Pointer, boost::noncopyable>
+    class_<ImmersedBoundaryLoadUtility, ImmersedBoundaryLoadUtility::Pointer, bases<ImmersedBoundaryUtility>, boost::noncopyable>
     ("ImmersedBoundaryLoadUtility", init<>())
-    .def("InitializeBinning", &ImmersedBoundaryLoadUtility::InitializeBinning)
+//    .def("InitializeBinning", &ImmersedBoundaryLoadUtility::InitializeBinning)
     .def("SetupImmersedPointForce", pointer_to_SetupImmersedPointForceCurve)
     .def("SetupImmersedPointForceWithBin", pointer_to_SetupImmersedPointForceCurveWithBin)
     .def("SetupImmersedPointForce", pointer_to_SetupImmersedPointForceSurface)
