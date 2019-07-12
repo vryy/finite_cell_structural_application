@@ -10,14 +10,14 @@ include_directories( ${CMAKE_SOURCE_DIR}/applications/structural_application )
 #######################################################################
 
 ######### add compilation units here
-set( KRATOS_FINITE_CELL_APPLICATION_SOURCES
+set( KRATOS_FINITE_CELL_STRUCTURAL_APPLICATION_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/custom_elements/extrapolated_kinematic_linear.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/custom_elements/extrapolated_constant_stress_kinematic_linear.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/custom_conditions/line_force_with_function.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/custom_conditions/immersed_point_force.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/custom_conditions/ghost_penalty_displacement_gradient_condition.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/custom_conditions/ghost_penalty_stress_condition.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/finite_cell_structural_application.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/finite_cell_structural_application.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/custom_python/add_custom_conditions_to_python.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/custom_python/add_custom_utilities_to_python.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/custom_python/finite_cell_structural_python_application.cpp
@@ -25,10 +25,10 @@ set( KRATOS_FINITE_CELL_APPLICATION_SOURCES
 #######################################################################
 
 ## define library Kratos which defines the basic python interface
-add_library(KratosFiniteCellStructuralApplication SHARED ${KRATOS_FINITE_CELL_APPLICATION_SOURCES})
-target_link_libraries(KratosFiniteCellStructuralApplication KratosCore)
-target_link_libraries(KratosFiniteCellStructuralApplication KratosFiniteCellApplication)
+add_library(KratosFiniteCellStructuralApplication SHARED ${KRATOS_FINITE_CELL_STRUCTURAL_APPLICATION_SOURCES})
 target_link_libraries(KratosFiniteCellStructuralApplication KratosStructuralApplication)
+target_link_libraries(KratosFiniteCellStructuralApplication KratosFiniteCellApplication)
+target_link_libraries(KratosFiniteCellStructuralApplication KratosCore)
 set_target_properties(KratosFiniteCellStructuralApplication PROPERTIES PREFIX "")
 install(TARGETS KratosFiniteCellStructuralApplication DESTINATION libs )
 #######################################################################

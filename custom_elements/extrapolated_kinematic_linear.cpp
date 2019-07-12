@@ -56,7 +56,7 @@ namespace Kratos
     {
         return Element::Pointer( new ExtrapolatedKinematicLinear( NewId, GetGeometry().Create( ThisNodes ), pProperties ) );
     }
-    
+
     Element::Pointer ExtrapolatedKinematicLinear::Create( IndexType NewId, GeometryType::Pointer pGeom, PropertiesType::Pointer pProperties ) const
     {
         return Element::Pointer( new ExtrapolatedKinematicLinear( NewId, pGeom, pProperties ) );
@@ -477,7 +477,7 @@ namespace Kratos
 
                 //contribution of gravity (if there is)
                 AddBodyForcesToRHS( rRightHandSideVector, row( Ncontainer, PointNumber ), IntToReferenceWeight, DetJ0 );
-                
+
                 //contribution of internal forces
                 AddInternalForcesToRHS( rRightHandSideVector, B, StressVector, IntToReferenceWeight, DetJ0 );
             }
@@ -596,19 +596,12 @@ namespace Kratos
 
     void ExtrapolatedKinematicLinear::InitializeNonLinearIteration(ProcessInfo& CurrentProcessInfo)
     {
-        //reset all resistant forces at node
-        for ( unsigned int i = 0; i < GetGeometry().size(); ++i )
-        {
-            GetGeometry()[i].GetSolutionStepValue( REACTION_X ) = 0.0;
-            GetGeometry()[i].GetSolutionStepValue( REACTION_Y ) = 0.0;
-            GetGeometry()[i].GetSolutionStepValue( REACTION_Z ) = 0.0;
-        }
     }
-    
+
     void ExtrapolatedKinematicLinear::FinalizeNonLinearIteration(ProcessInfo& CurrentProcessInfo)
     {
     }
-    
+
     /**
      * THIS method is called from the scheme after each solution step, here the time step
      * start and end point variables can be transferred n --> n+1
@@ -908,7 +901,7 @@ namespace Kratos
 
 //        unsigned int dim = GetGeometry().WorkingSpaceDimension();
 //        unsigned int strain_size = dim * (dim + 1) / 2;
-// 
+//
 //        for ( unsigned int prim = 0; prim < GetGeometry().size(); ++prim )
 //        {
 //            for ( unsigned int i = 0; i < dim; ++i )
@@ -920,7 +913,7 @@ namespace Kratos
 //            }
 //        }
 //        //         noalias(R) -= detJ * Weight * prod(trans(B_Operator), StressVector);
-// 
+//
 //        KRATOS_CATCH( "" )
 //    }
 
@@ -931,7 +924,7 @@ namespace Kratos
         unsigned int dim = GetGeometry().WorkingSpaceDimension();
         unsigned int strain_size = dim * (dim + 1) / 2;
         Vector InternalForces(3);
-        
+
         for ( unsigned int prim = 0; prim < GetGeometry().size(); ++prim )
         {
             for ( unsigned int i = 0; i < dim; ++i )
@@ -941,15 +934,15 @@ namespace Kratos
                 {
                     InternalForces(i) += B_Operator( gamma, prim * dim + i ) * StressVector( gamma ) * detJ * Weight;
                 }
-                
+
                 R( prim * dim + i ) -= InternalForces(i);
             }
 //            GetGeometry()[prim].GetSolutionStepValue( REACTION ) += InternalForces;
         }
-        
+
         KRATOS_CATCH( "" )
     }
-    
+
     /**
      * Adds the Contribution of the current quadrature point to the load vector
      * @param K LHS Matrix

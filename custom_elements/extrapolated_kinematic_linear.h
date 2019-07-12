@@ -98,7 +98,7 @@ public:
     IntegrationMethod GetIntegrationMethod() const;
 
     virtual Element::Pointer Create( IndexType NewId, NodesArrayType const& ThisNodes,  PropertiesType::Pointer pProperties ) const;
-    
+
     virtual Element::Pointer Create( IndexType NewId, GeometryType::Pointer pGeom, PropertiesType::Pointer pProperties ) const;
 
     void Initialize();
@@ -224,7 +224,7 @@ protected:
     ///@{
 
     void InitializeMaterial();
-    
+
     ///@}
     ///@name Serialization
     ///@{
@@ -310,7 +310,7 @@ private:
     //CALCULATE FORCEVECTORS DISPLACEMENT
 
     void AddBodyForcesToRHS( Vector& R, const Vector& N_DISP, double Weight, double detJ );
-    
+
     void CalculateAndAdd_ExtForceContribution( const Vector& N, const ProcessInfo& CurrentProcessInfo,
                                                const Vector& BodyForce, VectorType& rRightHandSideVector,
                                                double weight, double detJ);
@@ -388,6 +388,6 @@ private:
 
 }  // namespace Kratos.
 
-#endif // KRATOS_KINEMATIC_LINEAR2_INCLUDED defined 
+#endif // KRATOS_KINEMATIC_LINEAR2_INCLUDED defined
 
 

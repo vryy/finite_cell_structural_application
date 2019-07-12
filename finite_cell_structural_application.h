@@ -68,13 +68,13 @@ namespace Kratos
     public:
         ///@name Type Definitions
         ///@{
-        
+
         /// Pointer definition of KratosMultiphaseApplication
         KRATOS_CLASS_POINTER_DEFINITION(KratosFiniteCellStructuralApplication);
 
         ///@}
         ///@name Life Cycle
-        ///@{ 
+        ///@{
 
         /// Default constructor.
         KratosFiniteCellStructuralApplication();
@@ -170,7 +170,7 @@ namespace Kratos
 
         ///@}
         ///@name Protected Inquiry
-        ///@{ 
+        ///@{
 
 
         ///@}

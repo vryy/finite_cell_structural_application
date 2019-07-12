@@ -5,7 +5,7 @@
 //   Date:                $Date: Feb 10, 2017$
 //   Revision:            $Revision: 1.0 $
 //
-// 
+//
 
 
 // System includes
@@ -48,7 +48,8 @@ namespace Kratos
     KRATOS_CREATE_VARIABLE( double, GHOST_PENALTY_STABILIZATION_FACTOR )
 
     KratosFiniteCellStructuralApplication::KratosFiniteCellStructuralApplication()
-    : mKinematicLinearFiniteCell2D3N( 0, Element::GeometryType::Pointer( new FiniteCellGeometry< Triangle2D3 <Node<3> > >( Element::GeometryType::PointsArrayType( 3, Node<3>() ) ) ) )
+    : KratosApplication()
+    , mKinematicLinearFiniteCell2D3N( 0, Element::GeometryType::Pointer( new FiniteCellGeometry< Triangle2D3 <Node<3> > >( Element::GeometryType::PointsArrayType( 3, Node<3>() ) ) ) )
     , mKinematicLinearFiniteCell2D6N( 0, Element::GeometryType::Pointer( new FiniteCellGeometry< Triangle2D6 <Node<3> > >( Element::GeometryType::PointsArrayType( 6, Node<3>() ) ) ) )
     , mKinematicLinearFiniteCell2D4N( 0, Element::GeometryType::Pointer( new FiniteCellGeometry< Quadrilateral2D4 <Node<3> > >( Element::GeometryType::PointsArrayType( 4, Node<3>() ) ) ) )
     , mKinematicLinearFiniteCell2D8N( 0, Element::GeometryType::Pointer( new FiniteCellGeometry< Quadrilateral2D8 <Node<3> > >( Element::GeometryType::PointsArrayType( 8, Node<3>() ) ) ) )
