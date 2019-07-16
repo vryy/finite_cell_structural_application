@@ -34,7 +34,7 @@
 #include "finite_cell_application/custom_algebra/function/function.h"
 #include "finite_cell_application/custom_utilities/immersed_boundary_utility.h"
 #include "custom_conditions/immersed_point_force.h"
-#include "custom_utilities/finite_cell_auxilliary_utility.h"
+#include "custom_utilities/finite_cell_auxiliary_utility.h"
 #include "finite_cell_application.h"
 
 
@@ -204,13 +204,13 @@ public:
     ) const
     {
         // find the maximum condition id
-        std::size_t lastCondId = FiniteCellAuxilliaryUtility::GetLastConditionId(r_model_part);
+        std::size_t lastCondId = FiniteCellAuxiliaryUtility::GetLastConditionId(r_model_part);
 
         // find the maximum node Id
-        std::size_t lastNodeId = FiniteCellAuxilliaryUtility::GetLastNodeId(r_model_part);
+        std::size_t lastNodeId = FiniteCellAuxiliaryUtility::GetLastNodeId(r_model_part);
 
         // find the maximum properties Id
-        std::size_t lastPropId = FiniteCellAuxilliaryUtility::GetLastPropertiesId(r_model_part);
+        std::size_t lastPropId = FiniteCellAuxiliaryUtility::GetLastPropertiesId(r_model_part);
 
         // setup the immersed point force
         return SetupImmersedPointForce<TEntityType, TSearchType>(r_model_part, pMasterElements, pEntity, lastNodeId, lastCondId, pProperties, integration_order, pLoadFunction, export_point, echo_level);
@@ -282,13 +282,13 @@ public:
             const int& echo_level) const
     {
         // find the maximum condition id
-        std::size_t lastCondId = FiniteCellAuxilliaryUtility::GetLastConditionId(r_model_part);
+        std::size_t lastCondId = FiniteCellAuxiliaryUtility::GetLastConditionId(r_model_part);
 
         // find the maximum node Id
-        std::size_t lastNodeId = FiniteCellAuxilliaryUtility::GetLastNodeId(r_model_part);
+        std::size_t lastNodeId = FiniteCellAuxiliaryUtility::GetLastNodeId(r_model_part);
 
         // find the maximum properties Id
-        std::size_t lastPropId = FiniteCellAuxilliaryUtility::GetLastPropertiesId(r_model_part);
+        std::size_t lastPropId = FiniteCellAuxiliaryUtility::GetLastPropertiesId(r_model_part);
 
         return SetupImmersedPointForce<TSearchType>(r_model_part, pMasterElements, lastNodeId, lastCondId, pProperties, rPoints, rWeights, rForces, export_point, echo_level);
     }
