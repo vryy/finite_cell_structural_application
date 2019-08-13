@@ -1,16 +1,16 @@
 // see finite_cell_structural_application/LICENSE.txt
-//   
-//   Project Name:        Kratos       
+//
+//   Project Name:        Kratos
 //   Last Modified by:    $Author: hbui $
 //   Date:                $Date: 24 Feb 2017$
 //   Revision:            $Revision: 1.0 $
 //
 //
-// System includes 
+// System includes
 
-// External includes 
+// External includes
 
-// Project includes 
+// Project includes
 #include "custom_conditions/immersed_point_force.h"
 #include "finite_cell_structural_application/finite_cell_structural_application.h"
 
@@ -23,13 +23,13 @@ ImmersedPointForce::ImmersedPointForce()
 {
 }
 
-ImmersedPointForce::ImmersedPointForce( IndexType NewId, 
+ImmersedPointForce::ImmersedPointForce( IndexType NewId,
                               GeometryType::Pointer pGeometry)
 : Condition( NewId, pGeometry )
 {
 }
 
-ImmersedPointForce::ImmersedPointForce( IndexType NewId, 
+ImmersedPointForce::ImmersedPointForce( IndexType NewId,
                               GeometryType::Pointer pGeometry,
                               PropertiesType::Pointer pProperties)
 : Condition( NewId, pGeometry, pProperties )
@@ -38,8 +38,8 @@ ImmersedPointForce::ImmersedPointForce( IndexType NewId,
 
 ImmersedPointForce::ImmersedPointForce( IndexType NewId,
                                     GeometryType::Pointer pGeometry,
-                                    const double& rWeight,  
-                                    const array_1d<double, 3>& rForce,  
+                                    const double& rWeight,
+                                    const array_1d<double, 3>& rForce,
                                     Element::Pointer pMasterElement,
                                     Point<3>& rMasterLocalPoint )
 : Condition( NewId, pGeometry )
@@ -63,8 +63,8 @@ ImmersedPointForce::ImmersedPointForce( IndexType NewId,
 ImmersedPointForce::ImmersedPointForce( IndexType NewId,
                                     GeometryType::Pointer pGeometry,
                                     PropertiesType::Pointer pProperties,
-                                    const double& rWeight,  
-                                    const array_1d<double, 3>& rForce,  
+                                    const double& rWeight,
+                                    const array_1d<double, 3>& rForce,
                                     Element::Pointer pMasterElement,
                                     Point<3>& rMasterLocalPoint )
 : Condition( NewId, pGeometry, pProperties )
@@ -109,7 +109,7 @@ Condition::Pointer ImmersedPointForce::Create(IndexType NewId, GeometryType::Poi
     return Condition::Pointer(new ImmersedPointForce(NewId, pGeom, pProperties));
 }
 
-void ImmersedPointForce::Initialize()
+void ImmersedPointForce::Initialize(const ProcessInfo& rCurrentProcessInfo)
 {
     KRATOS_TRY
     KRATOS_CATCH("")
@@ -120,16 +120,16 @@ void ImmersedPointForce::Initialize()
 /**
  * calculates only the RHS vector (certainly to be removed due to contact algorithm)
  */
-void ImmersedPointForce::CalculateRightHandSide( VectorType& rRightHandSideVector, 
+void ImmersedPointForce::CalculateRightHandSide( VectorType& rRightHandSideVector,
         ProcessInfo& rCurrentProcessInfo)
 {
     //calculation flags
     bool CalculateStiffnessMatrixFlag = false;
     bool CalculateResidualVectorFlag = true;
     MatrixType matrix = Matrix();
-    CalculateAll( matrix, rRightHandSideVector, 
+    CalculateAll( matrix, rRightHandSideVector,
                   rCurrentProcessInfo,
-                  CalculateStiffnessMatrixFlag, 
+                  CalculateStiffnessMatrixFlag,
                   CalculateResidualVectorFlag);
 }
 
@@ -138,8 +138,8 @@ void ImmersedPointForce::CalculateRightHandSide( VectorType& rRightHandSideVecto
 /**
  * calculates this contact element's local contributions
  */
-void ImmersedPointForce::CalculateLocalSystem( MatrixType& rLeftHandSideMatrix, 
-                                          VectorType& rRightHandSideVector, 
+void ImmersedPointForce::CalculateLocalSystem( MatrixType& rLeftHandSideMatrix,
+                                          VectorType& rRightHandSideVector,
                                           ProcessInfo& rCurrentProcessInfo)
 {
     //calculation flags
@@ -153,10 +153,10 @@ void ImmersedPointForce::CalculateLocalSystem( MatrixType& rLeftHandSideMatrix,
 //************************************************************************************/
 /**
  * This function calculates all system contributions of the immersed point force to the system.
- * All Conditions are assumed to be defined in 2D/3D space and having 2/3 DOFs per node 
+ * All Conditions are assumed to be defined in 2D/3D space and having 2/3 DOFs per node
  */
-void ImmersedPointForce::CalculateAll( MatrixType& rLeftHandSideMatrix, 
-                                  VectorType& rRightHandSideVector, 
+void ImmersedPointForce::CalculateAll( MatrixType& rLeftHandSideMatrix,
+                                  VectorType& rRightHandSideVector,
                                   ProcessInfo& rCurrentProcessInfo,
                                   bool CalculateStiffnessMatrixFlag,
                                   bool CalculateResidualVectorFlag)
@@ -179,7 +179,7 @@ void ImmersedPointForce::CalculateAll( MatrixType& rLeftHandSideMatrix,
     {
         if(rLeftHandSideMatrix.size1() != MatSize || rLeftHandSideMatrix.size2() != MatSize)
             rLeftHandSideMatrix.resize(MatSize, MatSize, false);
-        noalias(rLeftHandSideMatrix) = ZeroMatrix(MatSize, MatSize); 
+        noalias(rLeftHandSideMatrix) = ZeroMatrix(MatSize, MatSize);
     }
 //KRATOS_WATCH(mpMasterElement->Id())
 //KRATOS_WATCH(mpMasterElement->GetValue(IS_INACTIVE))
@@ -224,10 +224,10 @@ void ImmersedPointForce::CalculateAll( MatrixType& rLeftHandSideMatrix,
 //************************************************************************************
 //************************************************************************************
 /**
-* Setting up the EquationIdVector for the current partners.    
+* Setting up the EquationIdVector for the current partners.
 * All conditions are assumed to be defined in 2D/3D space with 2/3 DOFs per node.
 */
-void ImmersedPointForce::EquationIdVector( EquationIdVectorType& rResult, 
+void ImmersedPointForce::EquationIdVector( EquationIdVectorType& rResult,
                                       ProcessInfo& CurrentProcessInfo)
 {
     //determining size of DOF list

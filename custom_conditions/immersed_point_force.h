@@ -1,6 +1,6 @@
 // see finite_cell_structural_application/LICENSE.txt
-//   
-//   Project Name:        Kratos       
+//
+//   Project Name:        Kratos
 //   Last Modified by:    $Author: hbui $
 //   Date:                $Date: 24 Feb 17 $
 //   Revision:            $Revision: 1.0 $
@@ -10,7 +10,7 @@
 #define  KRATOS_IMMERSED_POINT_FORCE_H_INCLUDED
 
 
-// External includes 
+// External includes
 #include "boost/smart_ptr.hpp"
 
 // Project includes
@@ -33,8 +33,8 @@ class ImmersedPointForce : public Condition
     public:
         // Counted pointer of ImmersedPointForce
         KRATOS_CLASS_POINTER_DEFINITION(ImmersedPointForce);
-        
-        /** 
+
+        /**
          * Default constructor.
          */
         ImmersedPointForce();
@@ -58,7 +58,7 @@ class ImmersedPointForce : public Condition
          * Destructor.
          */
         virtual ~ImmersedPointForce();
-  
+
         /**
          * Operations.
          */
@@ -72,20 +72,20 @@ class ImmersedPointForce : public Condition
         /**
          * Calculates the local system contributions for this contact element
          */
-        void CalculateLocalSystem( MatrixType& rLeftHandSideMatrix, 
-                                   VectorType& rRightHandSideVector, 
+        void CalculateLocalSystem( MatrixType& rLeftHandSideMatrix,
+                                   VectorType& rRightHandSideVector,
                                    ProcessInfo& rCurrentProcessInfo);
 
-        void CalculateRightHandSide( VectorType& rRightHandSideVector, 
+        void CalculateRightHandSide( VectorType& rRightHandSideVector,
                                      ProcessInfo& rCurrentProcessInfo);
 
-        void EquationIdVector( EquationIdVectorType& rResult, 
+        void EquationIdVector( EquationIdVectorType& rResult,
                                ProcessInfo& rCurrentProcessInfo);
 
         void GetDofList( DofsVectorType& ConditionalDofList,
                          ProcessInfo& CurrentProcessInfo);
 
-        void Initialize();
+        void Initialize(const ProcessInfo& rCurrentProcessInfo);
 
         void SetMagnitude(const double& P);
 
@@ -94,7 +94,7 @@ class ImmersedPointForce : public Condition
          * (DEACTIVATED)
          */
         //std::string Info();
-  
+
         /**
          * Print information about this object.
          * (DEACTIVATED)
@@ -106,10 +106,10 @@ class ImmersedPointForce : public Condition
          * (DEACTIVATED)
          */
         //virtual void PrintData(std::ostream& rOStream) const;
-  
+
     protected:
-    
-    
+
+
     private:
 
         friend class Serializer;
@@ -124,7 +124,7 @@ class ImmersedPointForce : public Condition
             KRATOS_SERIALIZE_LOAD_BASE_CLASS ( rSerializer, Condition )
         }
 
-        void CalculateAll( MatrixType& rLeftHandSideMatrix, 
+        void CalculateAll( MatrixType& rLeftHandSideMatrix,
                            VectorType& rRightHandSideVector,
                            ProcessInfo& rCurrentProcessInfo,
                            bool CalculateStiffnessMatrixFlag,
@@ -136,10 +136,10 @@ class ImmersedPointForce : public Condition
         Point<3> mMasterLocalPoint;
         Element::Pointer mpMasterElement;
 
-}; // Class ImmersedPointForce 
+}; // Class ImmersedPointForce
 
 }  // namespace Kratos.
-  
 
-#endif // KRATOS_IMMERSED_POINT_FORCE_H_INCLUDED defined 
+
+#endif // KRATOS_IMMERSED_POINT_FORCE_H_INCLUDED defined
 

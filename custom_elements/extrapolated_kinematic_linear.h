@@ -101,7 +101,7 @@ public:
 
     virtual Element::Pointer Create( IndexType NewId, GeometryType::Pointer pGeom, PropertiesType::Pointer pProperties ) const;
 
-    void Initialize();
+    void Initialize(const ProcessInfo& rCurrentProcessInfo);
 
     void ResetConstitutiveLaw();
 

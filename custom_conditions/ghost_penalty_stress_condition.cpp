@@ -76,9 +76,9 @@ Condition::Pointer GhostPenaltyStressCondition::Create(IndexType NewId,
 //************************************************************************************
 //************************************************************************************
 
-void GhostPenaltyStressCondition::Initialize()
+void GhostPenaltyStressCondition::Initialize(const ProcessInfo& rCurrentProcessInfo)
 {
-    GhostPenaltyCondition::Initialize();
+    GhostPenaltyCondition::Initialize(rCurrentProcessInfo);
 
     //number of integration points used, mThisIntegrationMethod refers to the
     //integration method defined in the constructor

@@ -64,7 +64,7 @@ class GhostPenaltyStressCondition : public GhostPenaltyCondition
          * Operations.
          */
 
-        virtual void Initialize();
+        virtual void Initialize(const ProcessInfo& rCurrentProcessInfo);
 
         /**
          * Calculates the local system contributions for this contact element

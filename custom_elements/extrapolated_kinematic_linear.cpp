@@ -70,7 +70,7 @@ namespace Kratos
      * Initialization of the element, called at the begin of each simulation.
      * Membervariables and the Material law are initialized here
      */
-    void ExtrapolatedKinematicLinear::Initialize()
+    void ExtrapolatedKinematicLinear::Initialize(const ProcessInfo& rCurrentProcessInfo)
     {
         KRATOS_TRY//EXCEPTION HANDLING (see corresponing KRATOS_CATCH("") )
 
