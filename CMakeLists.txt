@@ -5,6 +5,7 @@ message("**** configuring KratosFiniteCellStructuralApplication ****")
 ######### add include directory here
 include_directories( ${CMAKE_SOURCE_DIR}/kratos )
 include_directories( ${CMAKE_SOURCE_DIR}/applications )
+include_directories( ${CMAKE_SOURCE_DIR}/applications/brep_application )
 include_directories( ${CMAKE_SOURCE_DIR}/applications/finite_cell_application )
 include_directories( ${CMAKE_SOURCE_DIR}/applications/structural_application )
 #######################################################################
@@ -26,6 +27,7 @@ set( KRATOS_FINITE_CELL_STRUCTURAL_APPLICATION_SOURCES
 
 ## define library Kratos which defines the basic python interface
 add_library(KratosFiniteCellStructuralApplication SHARED ${KRATOS_FINITE_CELL_STRUCTURAL_APPLICATION_SOURCES})
+target_link_libraries(KratosFiniteCellStructuralApplication KratosBRepApplication)
 target_link_libraries(KratosFiniteCellStructuralApplication KratosStructuralApplication)
 target_link_libraries(KratosFiniteCellStructuralApplication KratosFiniteCellApplication)
 target_link_libraries(KratosFiniteCellStructuralApplication KratosCore)

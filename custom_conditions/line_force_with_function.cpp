@@ -16,9 +16,10 @@
 
 
 // Project includes
+#include "includes/legacy_structural_app_vars.h"
 #include "custom_conditions/line_force_with_function.h"
-#include "finite_cell_application/finite_cell_application.h"
-#include "structural_application/structural_application.h"
+#include "brep_application/custom_algebra/function/function.h"
+#include "brep_application/brep_application.h"
 
 namespace Kratos
 {

@@ -31,11 +31,11 @@
 #include "includes/element.h"
 #include "includes/model_part.h"
 #include "geometries/point_3d.h"
-#include "finite_cell_application/custom_algebra/function/function.h"
+#include "brep_application/custom_algebra/function/function.h"
 #include "finite_cell_application/custom_utilities/immersed_boundary_utility.h"
 #include "custom_conditions/immersed_point_force.h"
 #include "custom_utilities/finite_cell_auxiliary_utility.h"
-#include "finite_cell_application.h"
+#include "brep_application/brep_application.h"
 
 
 namespace Kratos
