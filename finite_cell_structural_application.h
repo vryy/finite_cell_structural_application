@@ -28,6 +28,7 @@
 #include "structural_application/custom_elements/total_lagrangian.h"
 #include "structural_application/custom_elements/unsaturated_soils_element_2phase_small_strain.h"
 #include "custom_conditions/line_force_with_function.h"
+#include "custom_conditions/face_force_with_function.h"
 #include "custom_conditions/immersed_point_force.h"
 #include "custom_elements/extrapolated_kinematic_linear.h"
 #include "custom_elements/extrapolated_constant_stress_kinematic_linear.h"
@@ -243,6 +244,12 @@ namespace Kratos
         const LineForceWithFunction mLineForceWithFunction2D3N;
         const LineForceWithFunction mLineForceWithFunction3D2N;
         const LineForceWithFunction mLineForceWithFunction3D3N;
+
+        const FaceForceWithFunction mFaceForceWithFunction3D3N;
+        const FaceForceWithFunction mFaceForceWithFunction3D6N;
+        const FaceForceWithFunction mFaceForceWithFunction3D4N;
+        const FaceForceWithFunction mFaceForceWithFunction3D8N;
+        const FaceForceWithFunction mFaceForceWithFunction3D9N;
 
         const ImmersedPointForce mImmersedPointForce3D;
 

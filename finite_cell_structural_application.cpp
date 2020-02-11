@@ -20,6 +20,9 @@
 #include "geometries/quadrilateral_2d_4.h"
 #include "geometries/quadrilateral_2d_8.h"
 #include "geometries/quadrilateral_2d_9.h"
+#include "geometries/quadrilateral_3d_4.h"
+#include "geometries/quadrilateral_3d_8.h"
+#include "geometries/quadrilateral_3d_9.h"
 #include "geometries/triangle_2d_3.h"
 #include "geometries/triangle_2d_6.h"
 #include "geometries/triangle_3d_3.h"
@@ -98,6 +101,11 @@ namespace Kratos
     , mLineForceWithFunction2D3N( 0, Element::GeometryType::Pointer( new Line2D3 <Node<3> >( Element::GeometryType::PointsArrayType( 3, Node<3>() ) ) ) )
     , mLineForceWithFunction3D2N( 0, Element::GeometryType::Pointer( new Line3D2 <Node<3> >( Element::GeometryType::PointsArrayType( 2, Node<3>() ) ) ) )
     , mLineForceWithFunction3D3N( 0, Element::GeometryType::Pointer( new Line3D3 <Node<3> >( Element::GeometryType::PointsArrayType( 3, Node<3>() ) ) ) )
+    , mFaceForceWithFunction3D3N( 0, Element::GeometryType::Pointer( new Triangle3D3 <Node<3> >( Element::GeometryType::PointsArrayType( 3, Node<3>() ) ) ) )
+    , mFaceForceWithFunction3D6N( 0, Element::GeometryType::Pointer( new Triangle3D6 <Node<3> >( Element::GeometryType::PointsArrayType( 6, Node<3>() ) ) ) )
+    , mFaceForceWithFunction3D4N( 0, Element::GeometryType::Pointer( new Quadrilateral3D4 <Node<3> >( Element::GeometryType::PointsArrayType( 4, Node<3>() ) ) ) )
+    , mFaceForceWithFunction3D8N( 0, Element::GeometryType::Pointer( new Quadrilateral3D8 <Node<3> >( Element::GeometryType::PointsArrayType( 8, Node<3>() ) ) ) )
+    , mFaceForceWithFunction3D9N( 0, Element::GeometryType::Pointer( new Quadrilateral3D9 <Node<3> >( Element::GeometryType::PointsArrayType( 9, Node<3>() ) ) ) )
     , mImmersedPointForce3D( 0, Element::GeometryType::Pointer( new Point3D <Node<3> >( Element::GeometryType::PointsArrayType( 1, Node<3>() ) ) ) )
     {}
 
@@ -167,6 +175,12 @@ namespace Kratos
         KRATOS_REGISTER_CONDITION( "LineForceWithFunction2D3N", mLineForceWithFunction2D3N )
         KRATOS_REGISTER_CONDITION( "LineForceWithFunction3D2N", mLineForceWithFunction3D2N )
         KRATOS_REGISTER_CONDITION( "LineForceWithFunction3D3N", mLineForceWithFunction3D3N )
+
+        KRATOS_REGISTER_CONDITION( "FaceForceWithFunction3D3N", mFaceForceWithFunction3D3N )
+        KRATOS_REGISTER_CONDITION( "FaceForceWithFunction3D6N", mFaceForceWithFunction3D6N )
+        KRATOS_REGISTER_CONDITION( "FaceForceWithFunction3D4N", mFaceForceWithFunction3D4N )
+        KRATOS_REGISTER_CONDITION( "FaceForceWithFunction3D8N", mFaceForceWithFunction3D8N )
+        KRATOS_REGISTER_CONDITION( "FaceForceWithFunction3D9N", mFaceForceWithFunction3D9N )
 
         KRATOS_REGISTER_CONDITION( "ImmersedPointForce3D", mImmersedPointForce3D )
 
