@@ -93,11 +93,11 @@ void FiniteCellStructuralApplication_AddCustomUtilitiesToPython()
     ////////////////////////////////////////////////////
 
     ModelPart::ConditionsContainerType(ImmersedBoundaryLoadUtility::*pointer_to_SetupImmersedPointForceCondition)(
-        ModelPart&, Condition::Pointer&, Properties::Pointer, const int&, const FunctionR3R3::Pointer&, const bool&, const int&) const
+        ModelPart&, ModelPart::ElementsContainerType&, Condition::Pointer&, Properties::Pointer, const int&, const FunctionR3R3::Pointer&, const bool&, const int&) const
         = &ImmersedBoundaryLoadUtility::SetupImmersedPointForce<Condition, 0>;
 
     ModelPart::ConditionsContainerType(ImmersedBoundaryLoadUtility::*pointer_to_SetupImmersedPointForceConditionWithBin)(
-        ModelPart&, Condition::Pointer&, Properties::Pointer, const int&, const FunctionR3R3::Pointer&, const bool&, const int&) const
+        ModelPart&, ModelPart::ElementsContainerType&, Condition::Pointer&, Properties::Pointer, const int&, const FunctionR3R3::Pointer&, const bool&, const int&) const
         = &ImmersedBoundaryLoadUtility::SetupImmersedPointForce<Condition, 1>;
 
     ////////////////////////////////////////////////////
