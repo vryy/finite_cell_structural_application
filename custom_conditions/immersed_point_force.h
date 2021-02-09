@@ -131,7 +131,6 @@ class ImmersedPointForce : public Condition
                            bool CalculateResidualVectorFlag);
 
         array_1d<double, 3> mPointForceDirection;
-        double mPointForceMagnitude;
         double mWeight; // Weight * DetJ
         Point<3> mMasterLocalPoint;
         Element::Pointer mpMasterElement;

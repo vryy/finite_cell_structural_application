@@ -51,13 +51,13 @@ ImmersedPointForce::ImmersedPointForce( IndexType NewId,
         mPointForceDirection[0] = 1.0/sqrt(3.0);
         mPointForceDirection[1] = 1.0/sqrt(3.0);
         mPointForceDirection[2] = 1.0/sqrt(3.0);
-        mPointForceMagnitude = 0.0;
     }
     else
     {
         noalias(mPointForceDirection) = rForce/norm_force;
-        mPointForceMagnitude = norm_force;
     }
+
+    this->SetValue(FORCE_MAGNITUDE, norm_force);
 }
 
 ImmersedPointForce::ImmersedPointForce( IndexType NewId,
@@ -76,13 +76,13 @@ ImmersedPointForce::ImmersedPointForce( IndexType NewId,
         mPointForceDirection[0] = 1.0/sqrt(3.0);
         mPointForceDirection[1] = 1.0/sqrt(3.0);
         mPointForceDirection[2] = 1.0/sqrt(3.0);
-        mPointForceMagnitude = 0.0;
     }
     else
     {
         noalias(mPointForceDirection) = rForce/norm_force;
-        mPointForceMagnitude = norm_force;
     }
+
+    this->SetValue(FORCE_MAGNITUDE, norm_force);
 }
 
 /**
@@ -192,16 +192,10 @@ void ImmersedPointForce::CalculateAll( MatrixType& rLeftHandSideMatrix,
     if( !CalculateStiffnessMatrixFlag && !CalculateResidualVectorFlag )
         return;
 
-    double PointForceMagnitude;
-    if( this->Has(FORCE_MAGNITUDE) )
-    {
-        PointForceMagnitude = this->GetValue(FORCE_MAGNITUDE);
-    }
-    else
-        PointForceMagnitude = mPointForceMagnitude;
+    const double PointForceMagnitude = this->GetValue(FORCE_MAGNITUDE);
 //KRATOS_WATCH(PointForceMagnitude)
-//KRATOS_WATCH(mPointForceMagnitude)
 //KRATOS_WATCH(mPointForceDirection)
+
     Vector ShapeFunctionValuesOnMaster;
     ShapeFunctionValuesOnMaster = mpMasterElement->GetGeometry().ShapeFunctionsValues(ShapeFunctionValuesOnMaster, mMasterLocalPoint);
 

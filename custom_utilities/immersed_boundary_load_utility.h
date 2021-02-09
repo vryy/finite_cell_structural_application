@@ -250,13 +250,13 @@ public:
             pEntity->GetGeometry().GlobalCoordinates(Points[point], integration_points[point]);
             Weights[point] = DetJ[point] * integration_points[point].Weight();
             Forces[point] = pLoadFunction->GetValue(Points[point]);
-            if(echo_level > 3)
-            {
-                KRATOS_WATCH(Points[point])
-                KRATOS_WATCH(pLoadFunction->GetValue(Points[point]))
-                KRATOS_WATCH(DetJ[point])
-                KRATOS_WATCH(integration_points[point])
-            }
+            // if(echo_level > 3)
+            // {
+            //     KRATOS_WATCH(Points[point])
+            //     KRATOS_WATCH(pLoadFunction->GetValue(Points[point]))
+            //     KRATOS_WATCH(DetJ[point])
+            //     KRATOS_WATCH(integration_points[point])
+            // }
         }
 
         // setup the immersed point force
@@ -327,10 +327,11 @@ public:
             Element::Pointer pElem;
 
             bool found;
+            bool force_active = true;
             if(TSearchType == 0)
-                found = ImmersedBoundaryUtility::SearchPartner(rPoints[i], pMasterElements, pElem, LocalPoint, echo_level);
+                found = ImmersedBoundaryUtility::SearchPartner(rPoints[i], pMasterElements, pElem, LocalPoint, force_active, echo_level);
             else if(TSearchType == 1)
-                found = this->SearchPartnerWithBin(rPoints[i], pMasterElements, pElem, LocalPoint, echo_level);
+                found = this->SearchPartnerWithBin(rPoints[i], pMasterElements, pElem, LocalPoint, force_active, echo_level);
 
             if(found)
             {
@@ -357,8 +358,26 @@ public:
                     pNewCond->Set(ACTIVE, true);
 
                     ImmersedConditions.push_back(pNewCond);
-                    if((echo_level & _REPORT_CONDITION_CREATED) == _REPORT_CONDITION_CREATED)
+                    if((echo_level & _REPORT_CONDITION_CREATED_) == _REPORT_CONDITION_CREATED_)
                         std::cout << "Point force is added in element " << pElem->Id() << std::endl;
+                }
+                else
+                {
+                    if((echo_level & _WARNING_ELEMENT_IS_INACTIVE_) == _WARNING_ELEMENT_IS_INACTIVE_)
+                    {
+                        std::cout << "WARNING: Point force at point " << rPoints[i]
+                                  << ": the parent element is inactive"
+                                  << std::endl;
+                    }
+                }
+            }
+            else
+            {
+                if((echo_level & _WARNING_FOUND_NO_ELEMENT_) == _WARNING_FOUND_NO_ELEMENT_)
+                {
+                    std::cout << "WARNING: Point force at point " << rPoints[i]
+                              << ": no parent element can be found"
+                              << std::endl;
                 }
             }
         }
@@ -367,7 +386,7 @@ public:
                 it != ImmersedConditions.ptr_end(); ++it)
             r_model_part.Conditions().push_back(*it);
 
-        if((echo_level & _REPORT_NUMBER_OF_CREATED_CONDITIONS) == _REPORT_NUMBER_OF_CREATED_CONDITIONS)
+        if((echo_level & _REPORT_NUMBER_OF_CREATED_CONDITIONS_) == _REPORT_NUMBER_OF_CREATED_CONDITIONS_)
             std::cout << "Setup point forces completed, "
                   << ImmersedConditions.size() << " point force conditions was added to model_part" << std::endl;
 
