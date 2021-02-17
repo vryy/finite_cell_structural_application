@@ -20,7 +20,7 @@ see finite_cell_structural_application/LICENSE.txt
 #include "utilities/math_utils.h"
 #include "structural_application/custom_utilities/sd_math_utils.h"
 #include "finite_cell_application/finite_cell_application.h"
-#include "structural_application/structural_application.h"
+#include "structural_application/structural_application_variables.h"
 #include "finite_cell_structural_application/finite_cell_structural_application.h"
 
 //#define ENABLE_DEBUG_CONSTITUTIVE_LAW

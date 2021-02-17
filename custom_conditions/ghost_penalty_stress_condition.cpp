@@ -14,7 +14,7 @@
 #include "includes/ublas_interface.h"
 #include "utilities/math_utils.h"
 #include "finite_cell_application/custom_utilities/ghost_penalty_utility.h"
-#include "structural_application/structural_application.h"
+#include "structural_application/structural_application_variables.h"
 #include "finite_cell_structural_application/finite_cell_structural_application.h"
 
 #define DEBUG_GHOST_PENALTY_STRESS
