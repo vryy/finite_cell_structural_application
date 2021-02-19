@@ -68,7 +68,7 @@ Condition::Pointer GhostPenaltyStressCondition::Create(IndexType NewId,
             GeometryType::Pointer pGeometry,
             Element::Pointer pSlaveElement,
             Element::Pointer pMasterElement,
-            PropertiesType::Pointer pProperties)
+            PropertiesType::Pointer pProperties) const
 {
     return Condition::Pointer( new GhostPenaltyStressCondition(NewId, pGeometry, pSlaveElement, pMasterElement, pProperties) );
 }
@@ -144,7 +144,7 @@ void GhostPenaltyStressCondition::Initialize(const ProcessInfo& rCurrentProcessI
  * calculates only the RHS vector (certainly to be removed due to contact algorithm)
  */
 void GhostPenaltyStressCondition::CalculateRightHandSide( VectorType& rRightHandSideVector,
-        ProcessInfo& rCurrentProcessInfo)
+        const ProcessInfo& rCurrentProcessInfo)
 {
     //calculation flags
     bool CalculateStiffnessMatrixFlag = false;
@@ -163,7 +163,7 @@ void GhostPenaltyStressCondition::CalculateRightHandSide( VectorType& rRightHand
  */
 void GhostPenaltyStressCondition::CalculateLocalSystem( MatrixType& rLeftHandSideMatrix,
                                           VectorType& rRightHandSideVector,
-                                          ProcessInfo& rCurrentProcessInfo)
+                                          const ProcessInfo& rCurrentProcessInfo)
 {
     //calculation flags
     bool CalculateStiffnessMatrixFlag = true;
@@ -179,7 +179,7 @@ void GhostPenaltyStressCondition::CalculateLocalSystem( MatrixType& rLeftHandSid
  */
 void GhostPenaltyStressCondition::CalculateAll( MatrixType& rLeftHandSideMatrix,
                                   VectorType& rRightHandSideVector,
-                                  ProcessInfo& rCurrentProcessInfo,
+                                  const ProcessInfo& rCurrentProcessInfo,
                                   bool CalculateStiffnessMatrixFlag,
                                   bool CalculateResidualVectorFlag)
 {
@@ -452,8 +452,7 @@ void GhostPenaltyStressCondition::CalculateAll( MatrixType& rLeftHandSideMatrix,
 * All conditions are assumed to be defined in 2D/3D space with 2/3 DOFs per node.
 * All Equation IDs are given Master first, Slave second
 */
-void GhostPenaltyStressCondition::EquationIdVector( EquationIdVectorType& rResult,
-                                      ProcessInfo& CurrentProcessInfo)
+void GhostPenaltyStressCondition::EquationIdVector( EquationIdVectorType& rResult, const ProcessInfo& CurrentProcessInfo) const
 {
     unsigned int dim = ( GetGeometry().WorkingSpaceDimension() );
     unsigned int mat_size = ( pSlave()->GetGeometry().size() + pMaster()->GetGeometry().size() ) * dim;
@@ -488,7 +487,7 @@ void GhostPenaltyStressCondition::EquationIdVector( EquationIdVectorType& rResul
  */
 //************************************************************************************
 //************************************************************************************
-void GhostPenaltyStressCondition::GetDofList( DofsVectorType& ConditionalDofList, ProcessInfo& CurrentProcessInfo)
+void GhostPenaltyStressCondition::GetDofList( DofsVectorType& ConditionalDofList, const ProcessInfo& CurrentProcessInfo) const
 {
     unsigned int dim = GetGeometry().WorkingSpaceDimension();
 

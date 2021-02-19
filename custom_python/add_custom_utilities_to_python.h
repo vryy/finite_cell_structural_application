@@ -15,11 +15,8 @@
 // System includes
 
 // External includes
-#include <boost/python.hpp>
-#include "boost/smart_ptr.hpp"
 
 // Project includes
-#include "includes/define.h"
 
 
 namespace Kratos
@@ -27,8 +24,6 @@ namespace Kratos
 
 namespace Python
 {
-
-using namespace boost::python;
 
 void  FiniteCellStructuralApplication_AddCustomUtilitiesToPython();
 

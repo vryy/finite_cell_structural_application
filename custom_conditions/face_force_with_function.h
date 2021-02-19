@@ -17,11 +17,9 @@
 
 
 // External includes
-#include "boost/smart_ptr.hpp"
 
 
 // Project includes
-#include "includes/define.h"
 #include "includes/serializer.h"
 #include "includes/condition.h"
 #include "includes/ublas_interface.h"
@@ -62,37 +60,37 @@ public:
     Condition::Pointer Create(
         IndexType NewId,
         NodesArrayType const& ThisNodes,
-        PropertiesType::Pointer pProperties ) const;
+        PropertiesType::Pointer pProperties ) const final;
 
     Condition::Pointer Create(
         IndexType NewId,
         GeometryType::Pointer pGeom,
-        PropertiesType::Pointer pProperties ) const;
+        PropertiesType::Pointer pProperties ) const final;
 
     void EquationIdVector(
         EquationIdVectorType& rResult,
-        ProcessInfo& rCurrentProcessInfo );
+        const ProcessInfo& rCurrentProcessInfo ) const final;
 
     void GetDofList(
         DofsVectorType& ElementalDofList,
-        ProcessInfo& rCurrentProcessInfo );
+        const ProcessInfo& rCurrentProcessInfo ) const final;
 
     void CalculateRightHandSide(
         VectorType& rRightHandSideVector,
-        ProcessInfo& rCurrentProcessInfo );
+        const ProcessInfo& rCurrentProcessInfo ) final;
 
     void CalculateLocalSystem(
         MatrixType& rLeftHandSideMatrix,
         VectorType& rRightHandSideVector,
-        ProcessInfo& rCurrentProcessInfo );
+        const ProcessInfo& rCurrentProcessInfo ) final;
 
     void CalculateMassMatrix(
         MatrixType& rMassMatrix,
-        ProcessInfo& rCurrentProcessInfo );
+        const ProcessInfo& rCurrentProcessInfo ) final;
 
     void CalculateDampingMatrix(
         MatrixType& rDampingMatrix,
-        ProcessInfo& rCurrentProcessInfo );
+        const ProcessInfo& rCurrentProcessInfo ) final;
 
 //    void GetValuesVector(
 //        Vector& values,
@@ -113,7 +111,7 @@ public:
      * or that no common error is found.
      * @param rCurrentProcessInfo
      */
-    virtual int Check( const ProcessInfo& rCurrentProcessInfo );
+    int Check( const ProcessInfo& rCurrentProcessInfo ) const final;
 
 
 protected:
@@ -135,12 +133,12 @@ private:
 
     // A private default constructor necessary for serialization
 
-    virtual void save( Serializer& rSerializer ) const
+    void save( Serializer& rSerializer ) const final
     {
         KRATOS_SERIALIZE_SAVE_BASE_CLASS( rSerializer, Condition );
     }
 
-    virtual void load( Serializer& rSerializer )
+    void load( Serializer& rSerializer ) final
     {
         KRATOS_SERIALIZE_LOAD_BASE_CLASS( rSerializer, Condition );
     }

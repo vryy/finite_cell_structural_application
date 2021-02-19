@@ -10,15 +10,8 @@
 
 
 // External includes
-#include "boost/smart_ptr.hpp"
 
 // Project includes
-#include "includes/define.h"
-#include "includes/element.h"
-#include "includes/condition.h"
-#include "includes/serializer.h"
-#include "includes/ublas_interface.h"
-#include "includes/variables.h"
 #include "finite_cell_application/custom_conditions/ghost_penalty_condition.h"
 
 namespace Kratos
@@ -54,33 +47,33 @@ class GhostPenaltyStressCondition : public GhostPenaltyCondition
          */
         virtual ~GhostPenaltyStressCondition();
 
-        virtual Condition::Pointer Create(IndexType NewId,
+        Condition::Pointer Create(IndexType NewId,
             GeometryType::Pointer pGeometry,
             Element::Pointer pSlaveElement,
             Element::Pointer pMasterElement,
-            PropertiesType::Pointer pProperties);
+            PropertiesType::Pointer pProperties) const final;
 
         /**
          * Operations.
          */
 
-        virtual void Initialize(const ProcessInfo& rCurrentProcessInfo);
+        void Initialize(const ProcessInfo& rCurrentProcessInfo) final;
 
         /**
          * Calculates the local system contributions for this contact element
          */
-        virtual void CalculateLocalSystem( MatrixType& rLeftHandSideMatrix,
+        void CalculateLocalSystem( MatrixType& rLeftHandSideMatrix,
                                    VectorType& rRightHandSideVector,
-                                   ProcessInfo& rCurrentProcessInfo);
+                                   const ProcessInfo& rCurrentProcessInfo) final;
 
-        virtual void CalculateRightHandSide( VectorType& rRightHandSideVector,
-                                     ProcessInfo& rCurrentProcessInfo);
+        void CalculateRightHandSide( VectorType& rRightHandSideVector,
+                                     const ProcessInfo& rCurrentProcessInfo) final;
 
-        virtual void EquationIdVector( EquationIdVectorType& rResult,
-                               ProcessInfo& rCurrentProcessInfo);
+        void EquationIdVector( EquationIdVectorType& rResult,
+                                const ProcessInfo& rCurrentProcessInfo) const final;
 
-        virtual void GetDofList( DofsVectorType& ConditionalDofList,
-                         ProcessInfo& CurrentProcessInfo);
+        void GetDofList( DofsVectorType& ConditionalDofList,
+                                const ProcessInfo& CurrentProcessInfo) const final;
 
         /**
          * Turn back information as a string.
@@ -108,19 +101,19 @@ class GhostPenaltyStressCondition : public GhostPenaltyCondition
 
         friend class Serializer;
 
-        virtual void save ( Serializer& rSerializer ) const
+        void save ( Serializer& rSerializer ) const final
         {
             KRATOS_SERIALIZE_SAVE_BASE_CLASS ( rSerializer, Condition )
         }
 
-        virtual void load ( Serializer& rSerializer )
+        void load ( Serializer& rSerializer ) final
         {
             KRATOS_SERIALIZE_LOAD_BASE_CLASS ( rSerializer, Condition )
         }
 
         void CalculateAll( MatrixType& rLeftHandSideMatrix,
                            VectorType& rRightHandSideVector,
-                           ProcessInfo& rCurrentProcessInfo,
+                           const ProcessInfo& rCurrentProcessInfo,
                            bool CalculateStiffnessMatrixFlag,
                            bool CalculateResidualVectorFlag);
 

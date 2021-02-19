@@ -61,7 +61,7 @@ Condition::Pointer GhostPenaltyDisplacementGradientCondition::Create(IndexType N
             GeometryType::Pointer pGeometry,
             Element::Pointer pSlaveElement,
             Element::Pointer pMasterElement,
-            PropertiesType::Pointer pProperties)
+            PropertiesType::Pointer pProperties) const
 {
     return Condition::Pointer( new GhostPenaltyDisplacementGradientCondition(NewId, pGeometry, pSlaveElement, pMasterElement, pProperties) );
 }
@@ -74,7 +74,7 @@ Condition::Pointer GhostPenaltyDisplacementGradientCondition::Create(IndexType N
  * calculates only the RHS vector (certainly to be removed due to contact algorithm)
  */
 void GhostPenaltyDisplacementGradientCondition::CalculateRightHandSide( VectorType& rRightHandSideVector,
-        ProcessInfo& rCurrentProcessInfo)
+        const ProcessInfo& rCurrentProcessInfo)
 {
     //calculation flags
     bool CalculateStiffnessMatrixFlag = false;
@@ -93,7 +93,7 @@ void GhostPenaltyDisplacementGradientCondition::CalculateRightHandSide( VectorTy
  */
 void GhostPenaltyDisplacementGradientCondition::CalculateLocalSystem( MatrixType& rLeftHandSideMatrix,
                                           VectorType& rRightHandSideVector,
-                                          ProcessInfo& rCurrentProcessInfo)
+                                          const ProcessInfo& rCurrentProcessInfo)
 {
     //calculation flags
     bool CalculateStiffnessMatrixFlag = true;
@@ -109,7 +109,7 @@ void GhostPenaltyDisplacementGradientCondition::CalculateLocalSystem( MatrixType
  */
 void GhostPenaltyDisplacementGradientCondition::CalculateAll( MatrixType& rLeftHandSideMatrix,
                                   VectorType& rRightHandSideVector,
-                                  ProcessInfo& rCurrentProcessInfo,
+                                  const ProcessInfo& rCurrentProcessInfo,
                                   bool CalculateStiffnessMatrixFlag,
                                   bool CalculateResidualVectorFlag)
 {
@@ -302,7 +302,7 @@ void GhostPenaltyDisplacementGradientCondition::CalculateAll( MatrixType& rLeftH
 * All Equation IDs are given Master first, Slave second
 */
 void GhostPenaltyDisplacementGradientCondition::EquationIdVector( EquationIdVectorType& rResult,
-                                      ProcessInfo& CurrentProcessInfo)
+                                      const ProcessInfo& CurrentProcessInfo) const
 {
     unsigned int dim = ( GetGeometry().WorkingSpaceDimension() );
     unsigned int mat_size = GetGeometry().size() * dim;
@@ -329,7 +329,8 @@ void GhostPenaltyDisplacementGradientCondition::EquationIdVector( EquationIdVect
  */
 //************************************************************************************
 //************************************************************************************
-void GhostPenaltyDisplacementGradientCondition::GetDofList( DofsVectorType& ConditionalDofList, ProcessInfo& CurrentProcessInfo)
+void GhostPenaltyDisplacementGradientCondition::GetDofList( DofsVectorType& ConditionalDofList,
+                                        const ProcessInfo& CurrentProcessInfo) const
 {
     unsigned int dim = GetGeometry().WorkingSpaceDimension();
 

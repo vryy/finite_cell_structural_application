@@ -19,7 +19,6 @@ see finite_cell_structural_application/LICENSE.txt
 
 
 // External includes
-#include "boost/smart_ptr.hpp"
 
 
 // Project includes
@@ -97,78 +96,78 @@ public:
     ///@}
     ///@name Operations
     ///@{
-    IntegrationMethod GetIntegrationMethod() const;
+    IntegrationMethod GetIntegrationMethod() const final;
 
-    virtual Element::Pointer Create( IndexType NewId, NodesArrayType const& ThisNodes,  PropertiesType::Pointer pProperties ) const;
+    Element::Pointer Create( IndexType NewId, NodesArrayType const& ThisNodes,  PropertiesType::Pointer pProperties ) const final;
 
-    virtual Element::Pointer Create( IndexType NewId, GeometryType::Pointer pGeom, PropertiesType::Pointer pProperties ) const;
+    Element::Pointer Create( IndexType NewId, GeometryType::Pointer pGeom, PropertiesType::Pointer pProperties ) const final;
 
-    void Initialize(const ProcessInfo& rCurrentProcessInfo);
+    void Initialize(const ProcessInfo& rCurrentProcessInfo) final;
 
-    void ResetConstitutiveLaw();
+    void ResetConstitutiveLaw() final;
 
-    void CalculateLocalSystem( MatrixType& rLeftHandSideMatrix, VectorType& rRightHandSideVector, ProcessInfo& rCurrentProcessInfo );
+    void CalculateLocalSystem( MatrixType& rLeftHandSideMatrix, VectorType& rRightHandSideVector, const ProcessInfo& rCurrentProcessInfo ) final;
 
-    void CalculateRightHandSide( VectorType& rRightHandSideVector, ProcessInfo& rCurrentProcessInfo );
+    void CalculateRightHandSide( VectorType& rRightHandSideVector, const ProcessInfo& rCurrentProcessInfo ) final;
 
-    void EquationIdVector( EquationIdVectorType& rResult, ProcessInfo& rCurrentProcessInfo );
+    void EquationIdVector( EquationIdVectorType& rResult, const ProcessInfo& rCurrentProcessInfo ) const final;
 
-    void GetDofList( DofsVectorType& ElementalDofList, ProcessInfo& CurrentProcessInfo );
+    void GetDofList( DofsVectorType& ElementalDofList, const ProcessInfo& CurrentProcessInfo ) const final;
 
-    void MassMatrix( MatrixType& rMassMatrix, ProcessInfo& rCurrentProcessInfo );
+    void MassMatrix( MatrixType& rMassMatrix, const ProcessInfo& rCurrentProcessInfo ) final;
 
-    void CalculateMassMatrix( MatrixType& rMassMatrix, ProcessInfo& rCurrentProcessInfo );
+    void CalculateMassMatrix( MatrixType& rMassMatrix, const ProcessInfo& rCurrentProcessInfo ) final;
 
-    void DampMatrix( MatrixType& rDampMatrix, ProcessInfo& rCurrentProcessInfo );
+    void DampMatrix( MatrixType& rDampMatrix, const ProcessInfo& rCurrentProcessInfo ) final;
 
-    void CalculateDampingMatrix( MatrixType& rDampMatrix, ProcessInfo& rCurrentProcessInfo );
+    void CalculateDampingMatrix( MatrixType& rDampMatrix, const ProcessInfo& rCurrentProcessInfo ) final;
 
-    void FinalizeSolutionStep( ProcessInfo& CurrentProcessInfo );
+    void FinalizeSolutionStep( const ProcessInfo& CurrentProcessInfo ) final;
 
-    void InitializeSolutionStep( ProcessInfo& CurrentProcessInfo );
+    void InitializeSolutionStep( const ProcessInfo& CurrentProcessInfo ) final;
 
-    void InitializeNonLinearIteration( ProcessInfo& CurrentProcessInfo );
+    void InitializeNonLinearIteration( const ProcessInfo& CurrentProcessInfo ) final;
 
-    void FinalizeNonLinearIteration( ProcessInfo& CurrentProcessInfo );
+    void FinalizeNonLinearIteration( const ProcessInfo& CurrentProcessInfo ) final;
 
-    void GetValueOnIntegrationPoints( const Variable<Matrix>& rVariable, std::vector<Matrix>& rValues, const ProcessInfo& rCurrentProcessInfo );
+    void CalculateOnIntegrationPoints( const Variable<Matrix>& rVariable, std::vector<Matrix>& rValues, const ProcessInfo& rCurrentProcessInfo ) final;
 
-    void GetValueOnIntegrationPoints( const Variable<Vector>& rVariable, std::vector<Vector>& rValues, const ProcessInfo& rCurrentProcessInfo );
+    void CalculateOnIntegrationPoints( const Variable<Vector>& rVariable, std::vector<Vector>& rValues, const ProcessInfo& rCurrentProcessInfo ) final;
 
-    void GetValueOnIntegrationPoints(const Variable<array_1d<double, 3> >& rVariable, std::vector<array_1d<double, 3> >& rValues, const ProcessInfo& rCurrentProcessInfo);
+    void CalculateOnIntegrationPoints(const Variable<array_1d<double, 3> >& rVariable, std::vector<array_1d<double, 3> >& rValues, const ProcessInfo& rCurrentProcessInfo) final;
 
-    void GetValueOnIntegrationPoints( const Variable<double>& rVariable, std::vector<double>& rValues, const ProcessInfo& rCurrentProcessInfo );
+    void CalculateOnIntegrationPoints( const Variable<double>& rVariable, std::vector<double>& rValues, const ProcessInfo& rCurrentProcessInfo ) final;
 
-    void GetValueOnIntegrationPoints( const Variable<int>& rVariable, std::vector<int>& rValues, const ProcessInfo& rCurrentProcessInfo );
+    void CalculateOnIntegrationPoints( const Variable<int>& rVariable, std::vector<int>& rValues, const ProcessInfo& rCurrentProcessInfo ) final;
 
-    void GetValueOnIntegrationPoints( const Variable<std::string>& rVariable, std::vector<std::string>& rValues, const ProcessInfo& rCurrentProcessInfo );
+    void CalculateOnIntegrationPoints( const Variable<std::string>& rVariable, std::vector<std::string>& rValues, const ProcessInfo& rCurrentProcessInfo ) final;
 
-    void GetValueOnIntegrationPoints( const Variable<ConstitutiveLaw::Pointer>& rVariable, std::vector<ConstitutiveLaw::Pointer>& rValues, const ProcessInfo& rCurrentProcessInfo );
+    void CalculateOnIntegrationPoints( const Variable<ConstitutiveLaw::Pointer>& rVariable, std::vector<ConstitutiveLaw::Pointer>& rValues, const ProcessInfo& rCurrentProcessInfo ) final;
 
-    void SetValueOnIntegrationPoints( const Variable<double>& rVariable, std::vector<double>& rValues, const ProcessInfo& rCurrentProcessInfo );
+    void SetValuesOnIntegrationPoints( const Variable<double>& rVariable, const std::vector<double>& rValues, const ProcessInfo& rCurrentProcessInfo ) final;
 
-    void SetValueOnIntegrationPoints( const Variable<int>& rVariable, std::vector<int>& rValues, const ProcessInfo& rCurrentProcessInfo );
+    void SetValuesOnIntegrationPoints( const Variable<int>& rVariable, const std::vector<int>& rValues, const ProcessInfo& rCurrentProcessInfo ) final;
 
-    void SetValueOnIntegrationPoints( const Variable<Matrix>& rVariable, std::vector<Matrix>& rValues, const ProcessInfo& rCurrentProcessInfo );
+    void SetValuesOnIntegrationPoints( const Variable<Matrix>& rVariable, const std::vector<Matrix>& rValues, const ProcessInfo& rCurrentProcessInfo ) final;
 
-    void SetValueOnIntegrationPoints( const Variable<Vector>& rVariable, std::vector<Vector>& rValues, const ProcessInfo& rCurrentProcessInfo );
+    void SetValuesOnIntegrationPoints( const Variable<Vector>& rVariable, const std::vector<Vector>& rValues, const ProcessInfo& rCurrentProcessInfo ) final;
 
-    void SetValueOnIntegrationPoints( const Variable<ConstitutiveLaw::Pointer>& rVariable, std::vector<ConstitutiveLaw::Pointer>& rValues, const ProcessInfo& rCurrentProcessInfo );
+    void SetValuesOnIntegrationPoints( const Variable<ConstitutiveLaw::Pointer>& rVariable, const std::vector<ConstitutiveLaw::Pointer>& rValues, const ProcessInfo& rCurrentProcessInfo ) final;
 
-    void CalculateOnIntegrationPoints( const Variable<double>& rVariable, std::vector<double>& Output, const ProcessInfo& rCurrentProcessInfo );
+    void GetValuesVector( Vector& values, int Step = 0 ) const final;
 
-    void CalculateOnIntegrationPoints( const Variable<array_1d<double, 3> >& rVariable, std::vector< array_1d<double, 3> >& rOutput, const ProcessInfo& rCurrentProcessInfo);
+    void GetFirstDerivativesVector( Vector& values, int Step = 0 ) const final;
 
-    void CalculateOnIntegrationPoints( const Variable<Vector>& rVariable, std::vector<Vector>& Output, const ProcessInfo& rCurrentProcessInfo );
+    void GetSecondDerivativesVector( Vector& values, int Step = 0 ) const final;
 
-    void CalculateOnIntegrationPoints( const Variable<Matrix>& rVariable, std::vector<Matrix>& Output, const ProcessInfo& rCurrentProcessInfo );
-
-    void GetValuesVector( Vector& values, int Step = 0 );
-
-    void GetFirstDerivativesVector( Vector& values, int Step = 0 );
-
-    void GetSecondDerivativesVector( Vector& values, int Step = 0 );
-
+    /**
+     * This function provides the place to perform checks on the completeness of the input.
+     * It is designed to be called only once (or anyway, not often) typically at the beginning
+     * of the calculations, so to verify that nothing is missing from the input
+     * or that no common error is found.
+     * @param rCurrentProcessInfo
+     */
+    int Check( const ProcessInfo& rCurrentProcessInfo ) const final;
 
     ///@}
     ///@name Access
@@ -234,7 +233,7 @@ protected:
     // A private default constructor necessary for serialization
     ExtrapolatedConstantStressKinematicLinear() {}
 
-    virtual void save( Serializer& rSerializer ) const
+    void save( Serializer& rSerializer ) const final
     {
         KRATOS_SERIALIZE_SAVE_BASE_CLASS( rSerializer,  Element );
         rSerializer.save( "mIsInitialized", mIsInitialized );
@@ -243,7 +242,7 @@ protected:
         rSerializer.save( "mTotalDomainInitialSize", mTotalDomainInitialSize );
     }
 
-    virtual void load( Serializer& rSerializer )
+    void load( Serializer& rSerializer ) final
     {
         KRATOS_SERIALIZE_LOAD_BASE_CLASS( rSerializer,  Element );
         rSerializer.load( "mIsInitialized", mIsInitialized );
@@ -251,16 +250,6 @@ protected:
 //        rSerializer.load( "mThisIntegrationMethod", mThisIntegrationMethod );
         rSerializer.load( "mTotalDomainInitialSize", mTotalDomainInitialSize );
     }
-
-    /**
-     * This function provides the place to perform checks on the completeness of the input.
-     * It is designed to be called only once (or anyway, not often) typically at the beginning
-     * of the calculations, so to verify that nothing is missing from the input
-     * or that no common error is found.
-     * @param rCurrentProcessInfo
-     */
-    virtual int Check( const ProcessInfo& rCurrentProcessInfo );
-
 
     ///@}
     ///@name Protected  Access
@@ -292,7 +281,7 @@ private:
     ///@{
     /** K += weight*Btrans*D*B */
     void CalculateAll( MatrixType& rLeftHandSideMatrix, VectorType& rRightHandSideVector,
-                       ProcessInfo& rCurrentProcessInfo,
+                       const ProcessInfo& rCurrentProcessInfo,
                        bool CalculateStiffnessMatrixFlag,
                        bool CalculateResidualVectorFlag );
 
@@ -325,7 +314,7 @@ private:
 
     void CalculateStrain( const Matrix& B, const Matrix& Displacements, Vector& StrainVector );
 
-//     Matrix GetValueOnIntegrationPoints( const Variable<Matrix>& rVariable, int PointNumber );
+//     Matrix CalculateOnIntegrationPoints( const Variable<Matrix>& rVariable, int PointNumber );
 
     void CalculateBoperator( Matrix& B_Operator, const Matrix& DN_DX );
 

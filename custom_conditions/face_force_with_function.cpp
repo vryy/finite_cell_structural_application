@@ -75,7 +75,7 @@ FaceForceWithFunction::~FaceForceWithFunction()
 //***********************************************************************************
 //***********************************************************************************
 void FaceForceWithFunction::EquationIdVector( EquationIdVectorType& rResult,
-                                    ProcessInfo& rCurrentProcessInfo )
+                                    const ProcessInfo& rCurrentProcessInfo ) const
 {
     KRATOS_TRY
 
@@ -96,7 +96,7 @@ void FaceForceWithFunction::EquationIdVector( EquationIdVectorType& rResult,
 //***********************************************************************************
 //***********************************************************************************
 void FaceForceWithFunction::GetDofList( DofsVectorType& ElementalDofList,
-                              ProcessInfo& rCurrentProcessInfo )
+                              const ProcessInfo& rCurrentProcessInfo ) const
 {
     const unsigned int dim = GetGeometry().WorkingSpaceDimension();
 
@@ -114,7 +114,7 @@ void FaceForceWithFunction::GetDofList( DofsVectorType& ElementalDofList,
 //***********************************************************************************
 //***********************************************************************************
 void FaceForceWithFunction::CalculateRightHandSide( VectorType& rRightHandSideVector,
-        ProcessInfo& rCurrentProcessInfo )
+        const ProcessInfo& rCurrentProcessInfo )
 {
     KRATOS_TRY
 
@@ -260,7 +260,7 @@ void FaceForceWithFunction::CalculateRightHandSide( VectorType& rRightHandSideVe
 //***********************************************************************************
 void FaceForceWithFunction::CalculateLocalSystem( MatrixType& rLeftHandSideMatrix,
                                         VectorType& rRightHandSideVector,
-                                        ProcessInfo& rCurrentProcessInfo )
+                                        const ProcessInfo& rCurrentProcessInfo )
 {
     const unsigned int number_of_nodes = GetGeometry().size();
     const unsigned int dim = GetGeometry().WorkingSpaceDimension();
@@ -271,7 +271,7 @@ void FaceForceWithFunction::CalculateLocalSystem( MatrixType& rLeftHandSideMatri
 //***********************************************************************************
 //***********************************************************************************
 void FaceForceWithFunction::CalculateMassMatrix( MatrixType& rMassMatrix,
-                              ProcessInfo& rCurrentProcessInfo )
+                              const ProcessInfo& rCurrentProcessInfo )
 {
     KRATOS_TRY
     rMassMatrix.resize( 0, 0, false );
@@ -281,7 +281,7 @@ void FaceForceWithFunction::CalculateMassMatrix( MatrixType& rMassMatrix,
 //***********************************************************************************
 //***********************************************************************************
 void FaceForceWithFunction::CalculateDampingMatrix( MatrixType& rDampingMatrix,
-                              ProcessInfo& rCurrentProcessInfo )
+                              const ProcessInfo& rCurrentProcessInfo )
 {
     KRATOS_TRY
     rDampingMatrix.resize( 0, 0, false );
@@ -295,7 +295,7 @@ void FaceForceWithFunction::CalculateDampingMatrix( MatrixType& rDampingMatrix,
  * or that no common error is found.
  * @param rCurrentProcessInfo
  */
-int FaceForceWithFunction::Check( const Kratos::ProcessInfo& rCurrentProcessInfo )
+int FaceForceWithFunction::Check( const ProcessInfo& rCurrentProcessInfo ) const
 {
     return 0;
 }

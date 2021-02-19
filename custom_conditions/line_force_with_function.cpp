@@ -75,7 +75,7 @@ LineForceWithFunction::~LineForceWithFunction()
 //***********************************************************************************
 //***********************************************************************************
 void LineForceWithFunction::EquationIdVector( EquationIdVectorType& rResult,
-                                    ProcessInfo& rCurrentProcessInfo )
+                                    const ProcessInfo& rCurrentProcessInfo ) const
 {
     KRATOS_TRY
 
@@ -96,7 +96,7 @@ void LineForceWithFunction::EquationIdVector( EquationIdVectorType& rResult,
 //***********************************************************************************
 //***********************************************************************************
 void LineForceWithFunction::GetDofList( DofsVectorType& ElementalDofList,
-                              ProcessInfo& rCurrentProcessInfo )
+                              const ProcessInfo& rCurrentProcessInfo ) const
 {
     const unsigned int dim = GetGeometry().WorkingSpaceDimension();
 
@@ -114,7 +114,7 @@ void LineForceWithFunction::GetDofList( DofsVectorType& ElementalDofList,
 //***********************************************************************************
 //***********************************************************************************
 void LineForceWithFunction::CalculateRightHandSide( VectorType& rRightHandSideVector,
-        ProcessInfo& rCurrentProcessInfo )
+        const ProcessInfo& rCurrentProcessInfo )
 {
     KRATOS_TRY
 
@@ -250,7 +250,7 @@ void LineForceWithFunction::CalculateRightHandSide( VectorType& rRightHandSideVe
 //***********************************************************************************
 void LineForceWithFunction::CalculateLocalSystem( MatrixType& rLeftHandSideMatrix,
                                         VectorType& rRightHandSideVector,
-                                        ProcessInfo& rCurrentProcessInfo )
+                                        const ProcessInfo& rCurrentProcessInfo )
 {
     const unsigned int number_of_nodes = GetGeometry().size();
     const unsigned int dim = GetGeometry().WorkingSpaceDimension();
@@ -261,7 +261,7 @@ void LineForceWithFunction::CalculateLocalSystem( MatrixType& rLeftHandSideMatri
 //***********************************************************************************
 //***********************************************************************************
 void LineForceWithFunction::CalculateMassMatrix( MatrixType& rMassMatrix,
-                              ProcessInfo& rCurrentProcessInfo )
+                              const ProcessInfo& rCurrentProcessInfo )
 {
     KRATOS_TRY
     rMassMatrix.resize( 0, 0, false );
@@ -271,7 +271,7 @@ void LineForceWithFunction::CalculateMassMatrix( MatrixType& rMassMatrix,
 //***********************************************************************************
 //***********************************************************************************
 void LineForceWithFunction::CalculateDampingMatrix( MatrixType& rDampingMatrix,
-                              ProcessInfo& rCurrentProcessInfo )
+                              const ProcessInfo& rCurrentProcessInfo )
 {
     KRATOS_TRY
     rDampingMatrix.resize( 0, 0, false );
@@ -285,7 +285,7 @@ void LineForceWithFunction::CalculateDampingMatrix( MatrixType& rDampingMatrix,
  * or that no common error is found.
  * @param rCurrentProcessInfo
  */
-int LineForceWithFunction::Check( const Kratos::ProcessInfo& rCurrentProcessInfo )
+int LineForceWithFunction::Check( const ProcessInfo& rCurrentProcessInfo ) const
 {
     return 0;
 }

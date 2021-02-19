@@ -121,7 +121,7 @@ void ImmersedPointForce::Initialize(const ProcessInfo& rCurrentProcessInfo)
  * calculates only the RHS vector (certainly to be removed due to contact algorithm)
  */
 void ImmersedPointForce::CalculateRightHandSide( VectorType& rRightHandSideVector,
-        ProcessInfo& rCurrentProcessInfo)
+        const ProcessInfo& rCurrentProcessInfo)
 {
     //calculation flags
     bool CalculateStiffnessMatrixFlag = false;
@@ -140,7 +140,7 @@ void ImmersedPointForce::CalculateRightHandSide( VectorType& rRightHandSideVecto
  */
 void ImmersedPointForce::CalculateLocalSystem( MatrixType& rLeftHandSideMatrix,
                                           VectorType& rRightHandSideVector,
-                                          ProcessInfo& rCurrentProcessInfo)
+                                          const ProcessInfo& rCurrentProcessInfo)
 {
     //calculation flags
     bool CalculateStiffnessMatrixFlag = true;
@@ -157,7 +157,7 @@ void ImmersedPointForce::CalculateLocalSystem( MatrixType& rLeftHandSideMatrix,
  */
 void ImmersedPointForce::CalculateAll( MatrixType& rLeftHandSideMatrix,
                                   VectorType& rRightHandSideVector,
-                                  ProcessInfo& rCurrentProcessInfo,
+                                  const ProcessInfo& rCurrentProcessInfo,
                                   bool CalculateStiffnessMatrixFlag,
                                   bool CalculateResidualVectorFlag)
 {
@@ -221,8 +221,7 @@ void ImmersedPointForce::CalculateAll( MatrixType& rLeftHandSideMatrix,
 * Setting up the EquationIdVector for the current partners.
 * All conditions are assumed to be defined in 2D/3D space with 2/3 DOFs per node.
 */
-void ImmersedPointForce::EquationIdVector( EquationIdVectorType& rResult,
-                                      ProcessInfo& CurrentProcessInfo)
+void ImmersedPointForce::EquationIdVector( EquationIdVectorType& rResult, const ProcessInfo& CurrentProcessInfo) const
 {
     //determining size of DOF list
     unsigned int Dim = mpMasterElement->GetGeometry().WorkingSpaceDimension();
@@ -256,7 +255,7 @@ void ImmersedPointForce::EquationIdVector( EquationIdVectorType& rResult,
  */
 //************************************************************************************
 //************************************************************************************
-void ImmersedPointForce::GetDofList( DofsVectorType& ConditionalDofList, ProcessInfo& CurrentProcessInfo)
+void ImmersedPointForce::GetDofList( DofsVectorType& ConditionalDofList, const ProcessInfo& CurrentProcessInfo) const
 {
     ConditionalDofList.resize(0);
 
