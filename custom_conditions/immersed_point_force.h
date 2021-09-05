@@ -78,6 +78,9 @@ class ImmersedPointForce : public Condition
         void CalculateRightHandSide( VectorType& rRightHandSideVector,
                                      const ProcessInfo& rCurrentProcessInfo);
 
+        void CalculateDampingMatrix( MatrixType& rDampMatrix,
+                                     const ProcessInfo& rCurrentProcessInfo) final;
+
         void EquationIdVector( EquationIdVectorType& rResult,
                                const ProcessInfo& rCurrentProcessInfo) const final;
 

@@ -151,6 +151,14 @@ void ImmersedPointForce::CalculateLocalSystem( MatrixType& rLeftHandSideMatrix,
 
 //************************************************************************************/
 //************************************************************************************/
+void ImmersedPointForce::CalculateDampingMatrix( MatrixType& rDampMatrix,
+                                    const ProcessInfo& rCurrentProcessInfo)
+{
+    rDampMatrix.resize(0, 0, false);
+}
+
+//************************************************************************************/
+//************************************************************************************/
 /**
  * This function calculates all system contributions of the immersed point force to the system.
  * All Conditions are assumed to be defined in 2D/3D space and having 2/3 DOFs per node
