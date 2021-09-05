@@ -35,7 +35,7 @@
 #include "finite_cell_application/custom_utilities/immersed_boundary_utility.h"
 #include "custom_conditions/immersed_point_force.h"
 #include "custom_utilities/finite_cell_auxiliary_utility.h"
-#include "brep_application/brep_application.h"
+#include "brep_application/brep_application_variables.h"
 
 
 namespace Kratos
