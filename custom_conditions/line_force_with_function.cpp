@@ -12,14 +12,13 @@
 
 
 // External includes
-#include <boost/python.hpp>
 
 
 // Project includes
 #include "includes/legacy_structural_app_vars.h"
 #include "custom_conditions/line_force_with_function.h"
 #include "brep_application/custom_algebra/function/function.h"
-#include "brep_application/brep_application.h"
+#include "brep_application/brep_application_variables.h"
 
 namespace Kratos
 {
@@ -181,23 +180,14 @@ void LineForceWithFunction::CalculateRightHandSide( VectorType& rRightHandSideVe
     Vector t( dim );
     PointType GlobalCoords;
 
-    FunctionR3Rn::Pointer pLoadFuntion;
+    FunctionR3Rn::Pointer pLoadFunction;
 
     #pragma omp critical
     {
-        boost::python::object pyObject = GetProperties()[LOAD_FUNCTION];
-        try
-        {
-            pLoadFuntion = boost::python::extract<FunctionR3Rn::Pointer>(pyObject);
-        }
-        catch (boost::python::error_already_set&)
-        {
-            std::cout << "Extracting load function has some problem" << std::endl;
-            PyErr_Print();
-        }
+        pLoadFunction = GetProperties()[LOAD_FUNCTION];
     }
 
-    if(pLoadFuntion == NULL)
+    if(pLoadFunction == NULL)
         KRATOS_THROW_ERROR(std::logic_error, "LOAD_FUNCTION is not provided for LineForceWithFunction", Id())
 
     for ( unsigned int PointNumber = 0; PointNumber < integration_points.size(); ++PointNumber )
@@ -206,7 +196,7 @@ void LineForceWithFunction::CalculateRightHandSide( VectorType& rRightHandSideVe
         for ( unsigned int i = 0; i < GetGeometry().size(); ++i )
             noalias(GlobalCoords) += Ncontainer(PointNumber, i) * GetGeometry()[i].GetInitialPosition();
 
-        noalias( Load ) = pLoadFuntion->GetValue(GlobalCoords);
+        noalias( Load ) = pLoadFunction->GetValue(GlobalCoords);
 //        KRATOS_WATCH(GlobalCoords)
 //        KRATOS_WATCH(Load)
 
