@@ -77,21 +77,13 @@ class GhostPenaltyStressCondition : public GhostPenaltyCondition
 
         /**
          * Turn back information as a string.
-         * (DEACTIVATED)
          */
-        //std::string Info();
-
-        /**
-         * Print information about this object.
-         * (DEACTIVATED)
-         */
-        //virtual void PrintInfo(std::ostream& rOStream) const;
-
-        /**
-         * Print object's data.
-         * (DEACTIVATED)
-         */
-        //virtual void PrintData(std::ostream& rOStream) const;
+        std::string Info() const final
+        {
+            std::stringstream buffer;
+            buffer << "GhostPenaltyStressCondition #" << Id();
+            return buffer.str();
+        }
 
     private:
 
