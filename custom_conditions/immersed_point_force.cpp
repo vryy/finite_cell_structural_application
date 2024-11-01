@@ -46,7 +46,7 @@ ImmersedPointForce::ImmersedPointForce( IndexType NewId,
 , mWeight(rWeight), mMasterLocalPoint(rMasterLocalPoint), mpMasterElement(pMasterElement)
 {
     double norm_force = norm_2(rForce);
-    if(norm_force == 0.0)
+    if(norm_force < 1.0e-13)
     {
         mPointForceDirection[0] = 1.0/sqrt(3.0);
         mPointForceDirection[1] = 1.0/sqrt(3.0);
@@ -71,7 +71,7 @@ ImmersedPointForce::ImmersedPointForce( IndexType NewId,
 , mWeight(rWeight), mMasterLocalPoint(rMasterLocalPoint), mpMasterElement(pMasterElement)
 {
     double norm_force = norm_2(rForce);
-    if(norm_force == 0.0)
+    if(norm_force < 1.0e-13)
     {
         mPointForceDirection[0] = 1.0/sqrt(3.0);
         mPointForceDirection[1] = 1.0/sqrt(3.0);
