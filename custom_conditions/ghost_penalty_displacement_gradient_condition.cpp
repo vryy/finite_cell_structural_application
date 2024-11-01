@@ -236,7 +236,6 @@ void GhostPenaltyDisplacementGradientCondition::CalculateAll( MatrixType& rLeftH
             }
         }
 
-//        KRATOS_WATCH(rRightHandSideVector)
     }
 
     if ( CalculateStiffnessMatrixFlag == true )
@@ -288,7 +287,6 @@ void GhostPenaltyDisplacementGradientCondition::CalculateAll( MatrixType& rLeftH
             }
         }
 
-//        KRATOS_WATCH(rLeftHandSideMatrix)
     }
 
     KRATOS_CATCH("")

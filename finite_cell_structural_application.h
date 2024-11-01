@@ -26,7 +26,6 @@
 #include "includes/kratos_application.h"
 #include "structural_application/custom_elements/kinematic_linear.h"
 #include "structural_application/custom_elements/total_lagrangian.h"
-#include "structural_application/custom_elements/unsaturated_soils_element_2phase_small_strain.h"
 #include "custom_conditions/line_force_with_function.h"
 #include "custom_conditions/face_force_with_function.h"
 #include "custom_conditions/immersed_point_force.h"
@@ -109,20 +108,20 @@ namespace Kratos
         ///@{
 
         /// Turn back information as a string.
-        virtual std::string Info() const
+        std::string Info() const override
         {
             return "Finite Cell Method for structural simulation";
         }
 
         /// Print information about this object.
-        virtual void PrintInfo(std::ostream& rOStream) const
+        void PrintInfo(std::ostream& rOStream) const override
         {
             rOStream << Info();
             PrintData(rOStream);
         }
 
         ///// Print object's data.
-        virtual void PrintData(std::ostream& rOStream) const
+        void PrintData(std::ostream& rOStream) const override
         {
             rOStream << "in KratosFiniteCellStructuralApplication:";
             KRATOS_WATCH(KratosComponents<VariableData>::GetComponents().size());
@@ -212,11 +211,6 @@ namespace Kratos
         const TotalLagrangian mTotalLagrangianFiniteCell3D20N;
         const TotalLagrangian mTotalLagrangianFiniteCell3D27N;
 
-        const UnsaturatedSoilsElement_2phase_SmallStrain mUnsaturatedSoilsElement2PhaseSmallStrainFiniteCell3D4N;
-        const UnsaturatedSoilsElement_2phase_SmallStrain mUnsaturatedSoilsElement2PhaseSmallStrainFiniteCell3D10N;
-        const UnsaturatedSoilsElement_2phase_SmallStrain mUnsaturatedSoilsElement2PhaseSmallStrainFiniteCell3D8N;
-        const UnsaturatedSoilsElement_2phase_SmallStrain mUnsaturatedSoilsElement2PhaseSmallStrainFiniteCell3D20N;
-        const UnsaturatedSoilsElement_2phase_SmallStrain mUnsaturatedSoilsElement2PhaseSmallStrainFiniteCell3D27N;
 
         const ExtrapolatedKinematicLinear mExtrapolatedKinematicLinearFiniteCell2D3N;
         const ExtrapolatedKinematicLinear mExtrapolatedKinematicLinearFiniteCell2D6N;
