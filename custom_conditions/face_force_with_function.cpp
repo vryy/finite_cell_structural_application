@@ -131,23 +131,23 @@ void FaceForceWithFunction::CalculateRightHandSide( VectorType& rRightHandSideVe
     {
         if(GetProperties()[INTEGRATION_ORDER] == 1)
         {
-            ThisIntegrationMethod = GeometryData::GI_GAUSS_1;
+            ThisIntegrationMethod = GeometryData::IntegrationMethod::GI_GAUSS_1;
         }
         else if(GetProperties()[INTEGRATION_ORDER] == 2)
         {
-            ThisIntegrationMethod = GeometryData::GI_GAUSS_2;
+            ThisIntegrationMethod = GeometryData::IntegrationMethod::GI_GAUSS_2;
         }
         else if(GetProperties()[INTEGRATION_ORDER] == 3)
         {
-            ThisIntegrationMethod = GeometryData::GI_GAUSS_3;
+            ThisIntegrationMethod = GeometryData::IntegrationMethod::GI_GAUSS_3;
         }
         else if(GetProperties()[INTEGRATION_ORDER] == 4)
         {
-            ThisIntegrationMethod = GeometryData::GI_GAUSS_4;
+            ThisIntegrationMethod = GeometryData::IntegrationMethod::GI_GAUSS_4;
         }
         else if(GetProperties()[INTEGRATION_ORDER] == 5)
         {
-            ThisIntegrationMethod = GeometryData::GI_GAUSS_5;
+            ThisIntegrationMethod = GeometryData::IntegrationMethod::GI_GAUSS_5;
         }
         else
             KRATOS_THROW_ERROR(std::logic_error, "Does not support for more integration points", *this)
