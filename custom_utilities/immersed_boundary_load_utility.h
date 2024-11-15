@@ -233,7 +233,7 @@ public:
     {
         // get the integration point on the geometry
         GeometryData::IntegrationMethod ThisIntegrationMethod
-            = Function<double, double>::GetIntegrationMethod(integration_order);
+            = BRepMathUtility<>::GetIntegrationMethod(integration_order);
 
         const GeometryType::IntegrationPointsArrayType& integration_points
             = pEntity->GetGeometry().IntegrationPoints( ThisIntegrationMethod );
