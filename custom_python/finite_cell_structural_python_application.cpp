@@ -13,11 +13,9 @@
 
 // External includes
 #if defined(KRATOS_PYTHON)
-#include <boost/python.hpp>
-
 
 // Project includes
-#include "includes/define.h"
+#include "includes/define_python.h"
 #include "finite_cell_structural_application.h"
 #include "custom_python/add_custom_utilities_to_python.h"
 #include "custom_python/add_custom_conditions_to_python.h"
@@ -28,9 +26,10 @@ namespace Kratos
 namespace Python
 {
 
-    using namespace boost::python;
     BOOST_PYTHON_MODULE(KratosFiniteCellStructuralApplication)
     {
+
+        using namespace boost::python;
 
         class_<KratosFiniteCellStructuralApplication, KratosFiniteCellStructuralApplication::Pointer, bases<KratosApplication>, boost::noncopyable>
         ("KratosFiniteCellStructuralApplication");
