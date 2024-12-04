@@ -129,28 +129,28 @@ void LineForceWithFunction::CalculateRightHandSide( VectorType& rRightHandSideVe
     GeometryData::IntegrationMethod ThisIntegrationMethod;
     if(GetProperties().Has( INTEGRATION_ORDER ) == true)
     {
-        if(GetProperties()[INTEGRATION_ORDER] == 1)
+        if (GetProperties()[INTEGRATION_ORDER] == 1)
         {
             ThisIntegrationMethod = GeometryData::IntegrationMethod::GI_GAUSS_1;
         }
-        else if(GetProperties()[INTEGRATION_ORDER] == 2)
+        else if (GetProperties()[INTEGRATION_ORDER] == 2)
         {
             ThisIntegrationMethod = GeometryData::IntegrationMethod::GI_GAUSS_2;
         }
-        else if(GetProperties()[INTEGRATION_ORDER] == 3)
+        else if (GetProperties()[INTEGRATION_ORDER] == 3)
         {
             ThisIntegrationMethod = GeometryData::IntegrationMethod::GI_GAUSS_3;
         }
-        else if(GetProperties()[INTEGRATION_ORDER] == 4)
+        else if (GetProperties()[INTEGRATION_ORDER] == 4)
         {
             ThisIntegrationMethod = GeometryData::IntegrationMethod::GI_GAUSS_4;
         }
-        else if(GetProperties()[INTEGRATION_ORDER] == 5)
+        else if (GetProperties()[INTEGRATION_ORDER] == 5)
         {
             ThisIntegrationMethod = GeometryData::IntegrationMethod::GI_GAUSS_5;
         }
         else
-            KRATOS_THROW_ERROR(std::logic_error, "Does not support for more integration points", *this)
+            KRATOS_ERROR << "Does not support for more integration method " << ThisIntegrationMethod;
     }
     else
         ThisIntegrationMethod = GetGeometry().GetDefaultIntegrationMethod(); // default method

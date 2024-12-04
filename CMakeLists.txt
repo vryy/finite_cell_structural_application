@@ -28,10 +28,14 @@ set( KRATOS_FINITE_CELL_STRUCTURAL_APPLICATION_SOURCES
 
 ## define library Kratos which defines the basic python interface
 add_library(KratosFiniteCellStructuralApplication SHARED ${KRATOS_FINITE_CELL_STRUCTURAL_APPLICATION_SOURCES})
+if(MSVC)
+    target_compile_options(KratosFiniteCellStructuralApplication PRIVATE $<$<CONFIG:Debug>:/bigobj>)
+endif()
 target_link_libraries(KratosFiniteCellStructuralApplication KratosBRepApplication)
 target_link_libraries(KratosFiniteCellStructuralApplication KratosStructuralApplication)
 target_link_libraries(KratosFiniteCellStructuralApplication KratosFiniteCellApplication)
 target_link_libraries(KratosFiniteCellStructuralApplication KratosCore)
+set_target_properties(KratosFiniteCellStructuralApplication PROPERTIES COMPILE_DEFINITIONS "FINITE_CELL_STRUCTURAL_APPLICATION=EXPORT,API")
 set_target_properties(KratosFiniteCellStructuralApplication PROPERTIES PREFIX "")
 install(TARGETS KratosFiniteCellStructuralApplication DESTINATION libs )
 #######################################################################
