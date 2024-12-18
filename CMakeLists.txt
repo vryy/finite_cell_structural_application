@@ -35,7 +35,7 @@ target_link_libraries(KratosFiniteCellStructuralApplication KratosBRepApplicatio
 target_link_libraries(KratosFiniteCellStructuralApplication KratosStructuralApplication)
 target_link_libraries(KratosFiniteCellStructuralApplication KratosFiniteCellApplication)
 target_link_libraries(KratosFiniteCellStructuralApplication KratosCore)
-set_target_properties(KratosFiniteCellStructuralApplication PROPERTIES COMPILE_DEFINITIONS "FINITE_CELL_STRUCTURAL_APPLICATION=EXPORT,API")
+set_target_properties(KratosFiniteCellStructuralApplication PROPERTIES COMPILE_DEFINITIONS "KRATOS_CORE=IMPORT;FINITE_CELL_STRUCTURAL_APPLICATION=EXPORT;FINITE_CELL_APPLICATION=IMPORT;STRUCTURAL_APPLICATION=IMPORT;BREP_APPLICATION=IMPORT")
 set_target_properties(KratosFiniteCellStructuralApplication PROPERTIES PREFIX "")
 install(TARGETS KratosFiniteCellStructuralApplication DESTINATION libs )
 #######################################################################
