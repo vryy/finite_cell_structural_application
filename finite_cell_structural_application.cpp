@@ -170,8 +170,6 @@ namespace Kratos
         KRATOS_REGISTER_CONDITION( "FaceForceWithFunction3D9N", mFaceForceWithFunction3D9N )
 
         KRATOS_REGISTER_CONDITION( "ImmersedPointForce3D", mImmersedPointForce3D )
-
     }
 
 } // namespace Kratos
-

@@ -80,7 +80,7 @@ namespace Kratos
         KratosFiniteCellStructuralApplication();
 
         /// Destructor.
-        virtual ~KratosFiniteCellStructuralApplication(){}
+        ~KratosFiniteCellStructuralApplication() override {}
 
         ///@}
         ///@name Operators
@@ -91,7 +91,7 @@ namespace Kratos
         ///@name Operations
         ///@{
 
-        virtual void Register();
+        void Register() override;
 
         ///@}
         ///@name Access
@@ -300,4 +300,3 @@ namespace Kratos
 } // namespace Kratos
 
 #endif // KRATOS_FINITE_CELL_STRUCTURAL_APPLICATION_H_INCLUDED defined
-

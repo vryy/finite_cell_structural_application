@@ -22,11 +22,6 @@
 
 namespace Kratos
 {
-//***********************************************************************************
-//***********************************************************************************
-// -------- //
-//  PUBLIC  //
-// -------- //
 
 // Constructor
 LineForceWithFunction::LineForceWithFunction()
@@ -150,7 +145,7 @@ void LineForceWithFunction::CalculateRightHandSide( VectorType& rRightHandSideVe
             ThisIntegrationMethod = GeometryData::IntegrationMethod::GI_GAUSS_5;
         }
         else
-            KRATOS_ERROR << "Does not support for more integration method " << ThisIntegrationMethod;
+            KRATOS_ERROR << "Does not support for integration order " << GetProperties()[INTEGRATION_ORDER];
     }
     else
         ThisIntegrationMethod = GetGeometry().GetDefaultIntegrationMethod(); // default method
@@ -180,15 +175,16 @@ void LineForceWithFunction::CalculateRightHandSide( VectorType& rRightHandSideVe
     Vector t( dim );
     PointType GlobalCoords;
 
-    FunctionR3Rn::Pointer pLoadFunction;
+    FunctionR3Rn::Pointer pLoadFunction = nullptr;
 
     #pragma omp critical
     {
-        pLoadFunction = GetProperties()[LOAD_FUNCTION];
+        pLoadFunction = GetProperties().GetValue(LOAD_FUNCTION);
     }
 
-    if(pLoadFunction == NULL)
-        KRATOS_THROW_ERROR(std::logic_error, "LOAD_FUNCTION is not provided for LineForceWithFunction", Id())
+    if(pLoadFunction == nullptr)
+        KRATOS_ERROR << "LOAD_FUNCTION is not provided for LineForceWithFunction " << Id()
+                     << " with properties " << GetProperties().Id();
 
     for ( unsigned int PointNumber = 0; PointNumber < integration_points.size(); ++PointNumber )
     {
@@ -205,7 +201,7 @@ void LineForceWithFunction::CalculateRightHandSide( VectorType& rRightHandSideVe
 
         if(dim == 2) IntegrationWeight *= GetProperties()[THICKNESS];
 
-        noalias( t ) = ZeroVector( dim );//tangential vector
+        noalias( t ) = ZeroVector( dim ); //tangential vector
         for ( unsigned int n = 0; n < GetGeometry().size(); ++n )
         {
             t[0] += GetGeometry().GetPoint( n ).X0() * DN_DeContainer[PointNumber]( n, 0 );
@@ -280,6 +276,4 @@ int LineForceWithFunction::Check( const ProcessInfo& rCurrentProcessInfo ) const
     return 0;
 }
 
-//***********************************************************************************
-//***********************************************************************************
 } // Namespace Kratos.

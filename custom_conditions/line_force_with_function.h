@@ -52,7 +52,7 @@ public:
     LineForceWithFunction( IndexType NewId, GeometryType::Pointer pGeometry, PropertiesType::Pointer pProperties );
 
     // Destructor
-    virtual ~LineForceWithFunction();
+    ~LineForceWithFunction() override;
 
 
     // Name Operations
