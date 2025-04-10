@@ -103,8 +103,6 @@ namespace Kratos
 
     void KratosFiniteCellStructuralApplication::Register()
     {
-        // calling base class register to register Kratos components
-        KratosApplication::Register();
         std::cout << "Initializing KratosFiniteCellStructuralApplication... " << std::endl;
 
         KRATOS_REGISTER_VARIABLE( FORCE_MAGNITUDE )
