@@ -1,14 +1,4 @@
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
 message("**** configuring KratosFiniteCellStructuralApplication ****")
-
-######### add include directory here
-include_directories( ${CMAKE_SOURCE_DIR}/kratos )
-include_directories( ${CMAKE_SOURCE_DIR}/applications )
-include_directories( ${CMAKE_SOURCE_DIR}/applications/brep_application )
-include_directories( ${CMAKE_SOURCE_DIR}/applications/finite_cell_application )
-include_directories( ${CMAKE_SOURCE_DIR}/applications/structural_application )
-#######################################################################
 
 ######### add compilation units here
 set( KRATOS_FINITE_CELL_STRUCTURAL_APPLICATION_SOURCES
@@ -22,7 +12,7 @@ set( KRATOS_FINITE_CELL_STRUCTURAL_APPLICATION_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/finite_cell_structural_application.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/custom_python/add_custom_conditions_to_python.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/custom_python/add_custom_utilities_to_python.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/custom_python/finite_cell_structural_python_application.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/custom_python/finite_cell_structural_python_application.cpp
 )
 #######################################################################
 
@@ -31,25 +21,29 @@ add_library(KratosFiniteCellStructuralApplication SHARED ${KRATOS_FINITE_CELL_ST
 if(MSVC)
     target_compile_options(KratosFiniteCellStructuralApplication PRIVATE $<$<CONFIG:Debug>:/bigobj>)
 endif()
-target_link_libraries(KratosFiniteCellStructuralApplication KratosBRepApplication)
-target_link_libraries(KratosFiniteCellStructuralApplication KratosStructuralApplication)
-target_link_libraries(KratosFiniteCellStructuralApplication KratosFiniteCellApplication)
-target_link_libraries(KratosFiniteCellStructuralApplication KratosCore)
-set_target_properties(KratosFiniteCellStructuralApplication PROPERTIES COMPILE_DEFINITIONS "KRATOS_CORE=IMPORT;FINITE_CELL_STRUCTURAL_APPLICATION=EXPORT;FINITE_CELL_APPLICATION=IMPORT;STRUCTURAL_APPLICATION=IMPORT;BREP_APPLICATION=IMPORT")
+target_link_libraries(KratosFiniteCellStructuralApplication PUBLIC KratosCore)
+target_link_libraries(KratosFiniteCellStructuralApplication PUBLIC KratosBRepApplication)
+target_link_libraries(KratosFiniteCellStructuralApplication PUBLIC KratosStructuralApplication)
+target_link_libraries(KratosFiniteCellStructuralApplication PUBLIC KratosFiniteCellApplication)
+target_compile_definitions(KratosFiniteCellStructuralApplication PRIVATE KRATOS_CORE=IMPORT)
+target_compile_definitions(KratosFiniteCellStructuralApplication PRIVATE FINITE_CELL_STRUCTURAL_APPLICATION=EXPORT)
+target_compile_definitions(KratosFiniteCellStructuralApplication PRIVATE FINITE_CELL_APPLICATION=IMPORT)
+target_compile_definitions(KratosFiniteCellStructuralApplication PRIVATE STRUCTURAL_APPLICATION=IMPORT)
+target_compile_definitions(KratosFiniteCellStructuralApplication PRIVATE BREP_APPLICATION=IMPORT)
 set_target_properties(KratosFiniteCellStructuralApplication PROPERTIES PREFIX "")
 install(TARGETS KratosFiniteCellStructuralApplication DESTINATION libs )
 #######################################################################
 
 ## changing the .dll suffix to .pyd for Windows compatibility
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	set_target_properties(KratosFiniteCellStructuralApplication PROPERTIES SUFFIX .pyd)
+    set_target_properties(KratosFiniteCellStructuralApplication PROPERTIES SUFFIX .pyd)
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 #######################################################################
 
 ## install application's python script if required
 if(${INSTALL_PYTHON_FILES} MATCHES ON)
-  get_filename_component (CURRENT_DIR_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-  install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python_scripts DESTINATION applications/${CURRENT_DIR_NAME}  FILES_MATCHING PATTERN "*.py"  PATTERN ".svn" EXCLUDE)
+    get_filename_component (CURRENT_DIR_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python_scripts DESTINATION applications/${CURRENT_DIR_NAME}  FILES_MATCHING PATTERN "*.py"  PATTERN ".svn" EXCLUDE)
 endif(${INSTALL_PYTHON_FILES} MATCHES ON)
 #######################################################################
 
